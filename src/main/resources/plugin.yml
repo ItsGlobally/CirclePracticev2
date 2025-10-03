@@ -3,5 +3,5 @@ version: '${project.version}'
 main: top.itsglobally.circlenetwork.circlepractice.CirclePractice
 prefix: Circle Practice
 load: STARTUP
-depend: [DiscordSRV PlaceholderAPI]
+depend: ["DiscordSRV", "PlaceholderAPI", "NontageLib"]
 authors: [ItsGlobally]

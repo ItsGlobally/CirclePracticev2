@@ -5,29 +5,29 @@ import org.bukkit.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Arena {
+public class GameArena {
     private final String name;
-    private final List<String> kits = new ArrayList<>();
+    private List<String> kits = new ArrayList<>();
     private Location pos1;
     private Location pos2;
     private Location spectatorSpawn;
     private boolean inUse;
     private String worldName;
-    public Arena(String name) {
+
+    public GameArena(String name, String worldName) {
         this.name = name;
         this.inUse = false;
+        this.worldName = worldName;
+    }
+    public void convertFromArena(Arena a) {
+        setPos1(a.getPos1());
+        setPos2(a.getPos2());
+        setSpectatorSpawn(a.getSpectatorSpawn());
+        kits = a.getKits();
 
     }
     public String getName() {
         return name;
-    }
-
-    public String getWorldName() {
-        return worldName;
-    }
-
-    public void setWorldName(String worldName) {
-        this.worldName = worldName;
     }
 
     public Location getPos1() {
@@ -53,8 +53,13 @@ public class Arena {
     public void setSpectatorSpawn(Location spectatorSpawn) {
         this.spectatorSpawn = spectatorSpawn;
     }
-    public void addKits(String kit) {
-        kits.add(kit);
+
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
     }
 
     public List<String> getKits() {

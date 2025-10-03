@@ -1,6 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.data;
 
-public enum States {
+public enum PlayerState {
     SPAWN, FFA, DUEL, SPECTATING, EDITING
 }
 
