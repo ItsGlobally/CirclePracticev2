@@ -10,7 +10,7 @@ public class PracticePlayer {
     private final Player player;
     private PlayerState state;
     private Game currentGame = null;
-
+    private String queuedKit;
 
 
     public PracticePlayer(Player p) {
@@ -32,12 +32,12 @@ public class PracticePlayer {
         return state;
     }
 
-    public UUID getUuid() {
-        return uuid;
-    }
-
     public void setState(PlayerState state) {
         this.state = state;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public Game getCurrentGame() {
@@ -59,7 +59,22 @@ public class PracticePlayer {
     public boolean isSpectating() {
         return state == PlayerState.SPECTATING;
     }
+
     public boolean isInSpawn() {
         return state == PlayerState.SPAWN || state == PlayerState.EDITING;
+    }
+    public boolean isInSpawnNotEditing() {
+        return state == PlayerState.SPAWN;
+    }
+    public boolean isEditing() {
+        return state == PlayerState.EDITING || state == PlayerState.EDITINGGLOBALLY;
+    }
+
+    public String getQueuedKit() {
+        return queuedKit;
+    }
+
+    public void setQueuedKit(String queuedKit) {
+        this.queuedKit = queuedKit;
     }
 }

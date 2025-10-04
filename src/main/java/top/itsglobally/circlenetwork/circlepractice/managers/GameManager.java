@@ -1,6 +1,5 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
-import com.avaje.ebeaninternal.server.core.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -8,27 +7,27 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
-import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
 
 import java.util.*;
 
-public class GameManager extends Managers{
-
-    private final Map<Player, List<DuelRequest>> duelRequests = new HashMap<>();
+public class GameManager extends Managers {
+    private final Map<Player, List<DuelRequest>> duelRequests;
+    private final Map<UUID, Game> games;
 
 
     public GameManager() {
-
+        games = new HashMap<>();
+        duelRequests = new HashMap<>();
     }
 
     public void sendDuelRequest(Player p1, Player p2, String kit) {
-        if (!plugin.getKm().kitAlreadyExist(kit)) {
+        if (!plugin.getKitManager().kitAlreadyExist(kit)) {
             MessageUtil.sendMessage(p1, "&cThe kit does not exist.");
             return;
         }
 
-        PracticePlayer pp1 = plugin.getPm().getPlayer(p1);
-        PracticePlayer pp2 = plugin.getPm().getPlayer(p2);
+        PracticePlayer pp1 = plugin.getPlayerManager().getPlayer(p1);
+        PracticePlayer pp2 = plugin.getPlayerManager().getPlayer(p2);
 
         if (!pp2.isInSpawn()) {
             MessageUtil.sendMessage(p1, "&cThat player is not available.");
@@ -39,6 +38,7 @@ public class GameManager extends Managers{
 
         BukkitTask task = new BukkitRunnable() {
             int time = 60;
+
             @Override
             public void run() {
                 if (time-- <= 0) {
@@ -91,35 +91,33 @@ public class GameManager extends Managers{
         MessageUtil.sendMessage(p1, "&a" + p2.getName() + " accepted your duel request!");
         MessageUtil.sendMessage(p2, "&aYou accepted the duel request from " + p1.getName() + "!");
 
-        processNewGame(p1, p2, plugin.getKm().getKit(kit));
+        processNewGame(p1, p2, plugin.getKitManager().getKit(kit));
     }
 
 
     public void processNewGame(Player p1, Player p2, Kit kit) {
         GameArena ga = null;
 
-        for (GameArena gas : plugin.getCm().getGameArenas()) {
-            if (!gas.isInUse()) {
+        for (GameArena gas : plugin.getDataManager().getGameArenas()) {
+            if (!gas.isInUse() && kit.equals(gas.getKit())) {
                 ga = gas;
                 break;
             }
         }
 
         if (ga == null) {
+            List<Arena> allArenas = new ArrayList<>(plugin.getDataManager().getArenas());
+            if (allArenas.isEmpty()) {
+                MessageUtil.sendMessage(p1, p2, "&cNo configured arenas exist!");
+                return;
+            }
+            ga = plugin.getArenaManager().createGameArena(kit);
+        }
+        if (ga == null) {
             MessageUtil.sendMessage(p1, p2, "&cNo arenas are available now!");
-            return;
         }
 
-        List<Arena> allArenas = new ArrayList<>(plugin.getCm().getArenas());
-        if (allArenas.isEmpty()) {
-            MessageUtil.sendMessage(p1, p2, "&cNo configured arenas exist!");
-            return;
-        }
-        Arena randomed = allArenas.get(RandomUtil.getRandomInt(0, allArenas.size() - 1));
-
-        ga.convertFromArena(randomed, kit);
-
-        startNewGame(plugin.getPm().getPlayer(p1), plugin.getPm().getPlayer(p2), kit, ga);
+        startNewGame(plugin.getPlayerManager().getPlayer(p1), plugin.getPlayerManager().getPlayer(p2), kit, ga);
     }
 
     public void startNewGame(PracticePlayer pp1, PracticePlayer pp2, Kit kit, GameArena arena) {
@@ -131,7 +129,9 @@ public class GameManager extends Managers{
         game.setState(GameStete.STARTING);
         game.getArena().setInUse(true);
         startCooldown(game);
+        games.put(game.getId(), game);
     }
+
     public void startCooldown(Game game) {
         new BukkitRunnable() {
 
@@ -167,5 +167,35 @@ public class GameManager extends Managers{
                 }
             }
         }.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    public void endGame(Game game, PracticePlayer winner) {
+        game.setState(GameStete.ENDING);
+        Player p1 = Bukkit.getPlayer(game.getPlayer1().getUuid());
+        Player p2 = Bukkit.getPlayer(game.getPlayer2().getUuid());
+
+        game.getPlayer1().setState(PlayerState.SPAWN);
+        game.getPlayer2().setState(PlayerState.SPAWN);
+        game.getPlayer1().setCurrentGame(null);
+        game.getPlayer2().setCurrentGame(null);
+
+        game.getArena().setInUse(false);
+
+        String message = "&f-------------------------\n&bWinner: &f" + winner.getName() + "&r | &cLoser: &f" + game.getOpponent(winner).getName() + "&r\n&f-------------------------";
+        if (p1 != null) {
+            plugin.getDataManager().teleportToSpawn(p1);
+        }
+        if (p2 != null) {
+            plugin.getDataManager().teleportToSpawn(p2);
+        }
+
+        if (winner != null) {
+            Player winnerPlayer = Bukkit.getPlayer(winner.getUuid());
+
+            if (p1 != null) MessageUtil.sendMessage(p1, message);
+            if (p2 != null) MessageUtil.sendMessage(p2, message);
+        }
+
+        games.remove(game.getId());
     }
 }

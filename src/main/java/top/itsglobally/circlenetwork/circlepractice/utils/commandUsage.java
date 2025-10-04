@@ -8,7 +8,8 @@ public class commandUsage {
     public static String getCommandUsage(String cmd) {
         return getCommandUsage(cmd, false);
     }
-    public static String getCommandUsage(String cmd, boolean raw) {
+
+    public static String getCommandUsage(String cmd, boolean format) {
         String usage;
         switch (cmd) {
             case "duel": {
@@ -18,8 +19,9 @@ public class commandUsage {
                 usage = "&cINVALID";
             }
         }
-        return raw ? MessageUtil.formatMessage(usage) : usage;
+        return format ? MessageUtil.formatMessage(usage) : usage;
     }
+
     public static void sendCommandUsage(Player p, String cmd) {
         MessageUtil.sendMessage(p, cmd);
     }

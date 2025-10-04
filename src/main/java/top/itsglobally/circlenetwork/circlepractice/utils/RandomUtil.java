@@ -8,7 +8,8 @@ public final class RandomUtil {
 
     private static final Random RANDOM = new Random();
 
-    private RandomUtil() {}
+    private RandomUtil() {
+    }
 
     public static <T> T getRandom(List<T> list) {
         if (list == null || list.isEmpty()) return null;

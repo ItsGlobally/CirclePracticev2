@@ -2,71 +2,80 @@ package top.itsglobally.circlenetwork.circlepractice;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.itsglobally.circlenetwork.circlepractice.managers.*;
+import top.nontage.nontagelib.command.NontageCommandLoader;
+import top.nontage.nontagelib.listener.ListenerRegister;
 
 public final class CirclePractice extends JavaPlugin {
 
     static CirclePractice plugin;
-
-    private GameManager dm;
+    private static BukkitAudiences adventure;
+    private GameManager gm;
     private KitManager km;
     private PlayerManager pm;
-    private DataManager cm;
+    private DataManager dm;
     private PluginManager plm;
     private ArenaManager am;
-    private static BukkitAudiences adventure;
+    private static LuckPerms luckPerms;
+
+    public static CirclePractice getPlugin() {
+        return plugin;
+    }
+
+    public static Audience audience(Player player) {
+        return adventure.player(player);
+    }
 
     @Override
     public void onEnable() {
         plugin = this;
-        // Plugin startup logic
-
+        NontageCommandLoader.registerAll(this);
+        ListenerRegister.registerAll(this);
+        initManagers();
     }
 
     private void initManagers() {
-        dm = new GameManager();
+        luckPerms = LuckPermsProvider.get();
+        gm = new GameManager();
         km = new KitManager();
         pm = new PlayerManager();
-        cm = new DataManager();
+        dm = new DataManager();
         plm = new PluginManager();
         am = new ArenaManager();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
     }
 
-    public static CirclePractice getPlugin() {
-        return plugin;
+    public GameManager getGameManager() {
+        return gm;
     }
 
-    public GameManager getDm() {
-        return dm;
-    }
-
-    public KitManager getKm() {
+    public KitManager getKitManager() {
         return km;
     }
 
-    public PlayerManager getPm() {
+    public PlayerManager getPlayerManager() {
         return pm;
     }
 
-    public ArenaManager getAm() {
+    public ArenaManager getArenaManager() {
         return am;
     }
 
-    public DataManager getCm() {
-        return cm;
+    public DataManager getDataManager() {
+        return dm;
     }
 
-    public PluginManager getPlm() {
+    public PluginManager getPluginManager() {
         return plm;
     }
-    public static Audience audience(Player player) {
-        return adventure.player(player);
+    public LuckPerms getLuckPerms() {
+        return luckPerms;
     }
 }

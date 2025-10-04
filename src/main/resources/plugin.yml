@@ -3,5 +3,8 @@ version: '${project.version}'
 main: top.itsglobally.circlenetwork.circlepractice.CirclePractice
 prefix: Circle Practice
 load: STARTUP
-depend: ["DiscordSRV", "PlaceholderAPI", "NontageLib"]
+depend: ["NontageLib"]
 authors: [ItsGlobally]
+permissions:
+  circlepractice.admin:
+    default: op

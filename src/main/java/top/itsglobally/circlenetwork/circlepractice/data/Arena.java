@@ -1,5 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.data;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -11,13 +12,15 @@ public class Arena {
     private Location pos1;
     private Location pos2;
     private Location spectatorSpawn;
-    private boolean inUse;
+    private final boolean inUse;
     private String worldName;
+
     public Arena(String name) {
         this.name = name;
         this.inUse = false;
 
     }
+
     public String getName() {
         return name;
     }
@@ -53,11 +56,16 @@ public class Arena {
     public void setSpectatorSpawn(Location spectatorSpawn) {
         this.spectatorSpawn = spectatorSpawn;
     }
+
     public void addKits(String kit) {
         kits.add(kit);
     }
 
     public List<String> getKits() {
         return kits;
+    }
+
+    public boolean isComplete() {
+        return pos1 != null && pos2 != null && spectatorSpawn != null && Bukkit.getWorld(worldName) != null;
     }
 }

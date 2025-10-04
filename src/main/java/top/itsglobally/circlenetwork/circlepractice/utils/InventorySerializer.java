@@ -24,21 +24,6 @@ public class InventorySerializer {
     public static ItemStack[][] deserializeInventory(String data) {
         return deserialize(data, true);
     }
-
-    /**
-     * Serialize FFA inventory contents only.
-     */
-    public static String serializeInventoryFFA(ItemStack[] contents) {
-        return serialize(contents);
-    }
-
-    /**
-     * Deserialize FFA inventory contents only.
-     */
-    public static ItemStack[][] deserializeInventoryFFA(String data) {
-        return deserialize(data, false);
-    }
-
     // ----------------- Internal helpers -----------------
 
     private static String serialize(ItemStack[] contents, ItemStack... armor) {

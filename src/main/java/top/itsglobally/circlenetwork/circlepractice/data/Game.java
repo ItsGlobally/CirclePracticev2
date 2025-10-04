@@ -43,12 +43,12 @@ public class Game {
         return player1;
     }
 
-    public void setState(GameStete state) {
-        this.state = state;
-    }
-
     public GameStete getState() {
         return state;
+    }
+
+    public void setState(GameStete state) {
+        this.state = state;
     }
 
     public PracticePlayer getPlayer2() {
@@ -59,6 +59,10 @@ public class Game {
         return countdown;
     }
 
+    public void setCountdown(int countdown) {
+        this.countdown = countdown;
+    }
+
     public Kit getKit() {
         return kit;
     }
@@ -67,7 +71,11 @@ public class Game {
         return id;
     }
 
-    public void setCountdown(int countdown) {
-        this.countdown = countdown;
+    public int getPlayer1OrPlayer2(PracticePlayer player) {
+        return player.equals(player1) ? 1 : 2;
+    }
+
+    public PracticePlayer getOpponent(PracticePlayer player) {
+        return player.equals(player1) ? player2 : player1;
     }
 }

@@ -2,6 +2,7 @@ package top.itsglobally.circlenetwork.circlepractice.managers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
@@ -13,15 +14,19 @@ import top.nontage.nontagelib.config.BaseConfig;
 import java.io.File;
 import java.util.*;
 
-public class DataManager {
-
-    private static File configDir;
-    private static ArenaConfig arenaConfig;
-    private static KitConfig kitConfig;
+public class DataManager extends Managers {
 
     private static final Map<String, Arena> arenaMap = new LinkedHashMap<>();
     private static final Map<String, GameArena> gameArenaMap = new LinkedHashMap<>();
     private static final Map<String, Kit> kitMap = new LinkedHashMap<>();
+    private static File configDir;
+    private static ArenaConfig arenaConfig;
+    private static KitConfig kitConfig;
+    private static MainConfig mainConfig;
+
+    public DataManager() {
+        init(plugin);
+    }
 
     // -------------------- 初始化 --------------------
     public void init(JavaPlugin plugin) {
@@ -30,7 +35,7 @@ public class DataManager {
 
         arenaConfig = register(new ArenaConfig(), "arenas");
         kitConfig = register(new KitConfig(), "kits");
-
+        mainConfig = register(new MainConfig(), "config");
         reload();
     }
 
@@ -51,10 +56,21 @@ public class DataManager {
             arenaMap.put(entry.getKey(), deserializeArena(entry.getValue()));
         }
 
-        kitMap.clear();
+        List<Kit> kits = new ArrayList<>();
         for (Map.Entry<String, Map<String, Object>> entry : kitConfig.kits.entrySet()) {
-            kitMap.put(entry.getKey(), deserializeKit(entry.getValue()));
+            kits.add(deserializeKit(entry.getValue()));
         }
+        plugin.getKitManager().setKits(kits);
+    }
+    public void saveAllKits() {
+        KitManager km = plugin.getKitManager();
+        kitConfig.kits.clear();
+
+        for (Kit kit : km.getKits()) {
+            kitConfig.kits.put(kit.getName(), serializeKit(kit));
+        }
+
+        kitConfig.save();
     }
 
     // -------------------- Arena API --------------------
@@ -72,13 +88,24 @@ public class DataManager {
         return arenaMap.values();
     }
 
+    public Collection<Arena> getAvailableArenas() {
+        Collection<Arena> list = new ArrayList<>();
+        for (Arena a : getArenas()) {
+            if (a.isComplete()) {
+                list.add(a);
+            }
+        }
+        return list;
+    }
+
     public void removeArena(String name) {
         arenaConfig.arenas.remove(name);
         arenaConfig.save();
         arenaMap.remove(name);
     }
+
     public void addGameArena(GameArena arena) {
-        gameArenaMap.put(arena.getName(),arena);
+        gameArenaMap.put(arena.getName(), arena);
     }
 
     public Collection<GameArena> getGameArenas() {
@@ -88,37 +115,6 @@ public class DataManager {
     public void removeGameArena(String name) {
         gameArenaMap.remove(name);
     }
-
-    // -------------------- Kit API --------------------
-    public void addKit(Kit kit) {
-        kitConfig.kits.put(kit.getName(), serializeKit(kit));
-        kitConfig.save();
-        kitMap.put(kit.getName(), kit);
-    }
-
-    public Kit getKit(String name) {
-        return kitMap.get(name);
-    }
-
-    public Collection<Kit> getKits() {
-        return kitMap.values();
-    }
-
-    public void removeKit(String name) {
-        kitConfig.kits.remove(name);
-        kitConfig.save();
-        kitMap.remove(name);
-    }
-
-    // -------------------- Config 內部類 --------------------
-    public class ArenaConfig extends BaseConfig {
-        public Map<String, Map<String, Object>> arenas = new LinkedHashMap<>();
-    }
-
-    public class KitConfig extends BaseConfig {
-        public Map<String, Map<String, Object>> kits = new LinkedHashMap<>();
-    }
-
     // -------------------- Arena 序列化 --------------------
     private Map<String, Object> serializeArena(Arena arena) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -137,7 +133,8 @@ public class DataManager {
         if (map.containsKey("worldName")) arena.setWorldName(map.get("worldName").toString());
         if (map.containsKey("pos1")) arena.setPos1(deserializeLocation((Map<String, Object>) map.get("pos1")));
         if (map.containsKey("pos2")) arena.setPos2(deserializeLocation((Map<String, Object>) map.get("pos2")));
-        if (map.containsKey("spectatorSpawn")) arena.setSpectatorSpawn(deserializeLocation((Map<String, Object>) map.get("spectatorSpawn")));
+        if (map.containsKey("spectatorSpawn"))
+            arena.setSpectatorSpawn(deserializeLocation((Map<String, Object>) map.get("spectatorSpawn")));
         if (map.containsKey("kits")) arena.getKits().addAll((List<String>) map.get("kits"));
         return arena;
     }
@@ -193,5 +190,54 @@ public class DataManager {
                 ((Number) map.get("yaw")).floatValue(),
                 ((Number) map.get("pitch")).floatValue()
         );
+    }
+
+    public void teleportToSpawn(Player p) {
+        p.teleport(mainConfig.getSpawn());
+    }
+
+    // -------------------- Config 內部類 --------------------
+    public class ArenaConfig extends BaseConfig {
+        public Map<String, Map<String, Object>> arenas = new LinkedHashMap<>();
+    }
+
+    public class KitConfig extends BaseConfig {
+        public Map<String, Map<String, Object>> kits = new LinkedHashMap<>();
+    }
+
+    public class MainConfig extends BaseConfig {
+        // -------------------- 可配置的欄位 --------------------
+        public String defaultKit = "NoDebuff";
+        public boolean allowSpectators = true;
+        public int duelRequestExpire = 60;
+        public int maxGameTime = 900;
+        public String spawnWorld = "world";
+        public double spawnX = 0.5;
+        public double spawnY = 65;
+        public double spawnZ = 0.5;
+        public float spawnYaw = 0f;
+        public float spawnPitch = 0f;
+
+        public Location getSpawn() {
+            if (Bukkit.getWorld(spawnWorld) == null) return null;
+            return new Location(Bukkit.getWorld(spawnWorld), spawnX, spawnY, spawnZ, spawnYaw, spawnPitch);
+        }
+
+        // -------------------- API --------------------
+        public String getDefaultKit() {
+            return defaultKit;
+        }
+
+        public boolean isAllowSpectators() {
+            return allowSpectators;
+        }
+
+        public int getDuelRequestExpire() {
+            return duelRequestExpire;
+        }
+
+        public int getMaxGameTime() {
+            return maxGameTime;
+        }
     }
 }

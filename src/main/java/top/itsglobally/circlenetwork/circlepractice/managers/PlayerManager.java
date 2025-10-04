@@ -1,16 +1,19 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
+import net.luckperms.api.model.user.User;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class PlayerManager extends Managers{
+public class PlayerManager extends Managers {
+    private final Map<UUID, PracticePlayer> playerList = new HashMap();
+
     public PlayerManager() {
 
     }
-
-    private Map<UUID, PracticePlayer> playerList= new HashMap();
 
     public PracticePlayer getPlayer(UUID uuid) {
         return playerList.get(uuid);
@@ -35,6 +38,19 @@ public class PlayerManager extends Managers{
         return playerList;
     }
 
+    public String getPrefix(Player p) {
+        User user = plugin.getLuckPerms().getUserManager().getUser(p.getUniqueId());
+        return user.getCachedData().getMetaData().getPrefix();
+    }
+
+    public String getPrefixColor(Player p) {
+        User user = plugin.getLuckPerms().getUserManager().getUser(p.getUniqueId());
+        return (user.getCachedData().getMetaData().getMetaValue("prefixcolor") == null) ? user.getCachedData().getMetaData().getMetaValue("prefixcolor") : getPrefix(p).substring(0, 2);
+    }
+
+    public String getPrefixedName(Player p) {
+        return getPrefix(p) + p.getName();
+    }
 
 
 }

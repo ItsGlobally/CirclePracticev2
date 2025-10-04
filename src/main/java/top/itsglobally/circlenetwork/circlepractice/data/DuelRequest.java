@@ -1,7 +1,7 @@
 package top.itsglobally.circlenetwork.circlepractice.data;
 
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 public class DuelRequest {
     private final Player sender;
@@ -15,11 +15,22 @@ public class DuelRequest {
         this.kit = kit;
     }
 
-    public Player getSender() { return sender; }
-    public Player getTarget() { return target; }
-    public String getKit() { return kit; }
+    public Player getSender() {
+        return sender;
+    }
 
-    public void setTask(BukkitTask task) { this.task = task; }
+    public Player getTarget() {
+        return target;
+    }
+
+    public String getKit() {
+        return kit;
+    }
+
+    public void setTask(BukkitTask task) {
+        this.task = task;
+    }
+
     public void cancelTask() {
         if (task != null) {
             task.cancel();

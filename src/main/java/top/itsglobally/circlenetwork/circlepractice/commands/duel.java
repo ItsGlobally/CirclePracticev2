@@ -12,7 +12,7 @@ import top.nontage.nontagelib.command.NontageCommand;
 
 import java.util.List;
 
-@CommandInfo(name="duel")
+@CommandInfo(name = "duel")
 public class duel implements NontageCommand, ICommand {
 
     @Override
@@ -30,11 +30,11 @@ public class duel implements NontageCommand, ICommand {
             return;
         }
         String kit = strings[0];
-        if (!plugin.getKm().kitAlreadyExist(kit)) {
+        if (!plugin.getKitManager().kitAlreadyExist(kit)) {
             MessageUtil.sendMessage(p, "&cThat kit does not exist");
             return;
         }
-        plugin.getDm().sendDuelRequest(p, tg, kit);
+        plugin.getGameManager().sendDuelRequest(p, tg, kit);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class duel implements NontageCommand, ICommand {
                     .toList();
         }
         if (args.length == 2) {
-            return plugin.getKm().getKits().stream()
+            return plugin.getKitManager().getKits().stream()
                     .map(Kit::getName)
                     .toList();
         }

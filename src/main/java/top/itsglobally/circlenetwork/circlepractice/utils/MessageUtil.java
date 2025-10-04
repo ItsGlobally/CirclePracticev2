@@ -14,6 +14,7 @@ public class MessageUtil {
     public static void sendMessage(Player player, String message) {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
+
     public static void sendMessage(Player player1, Player player2, String message) {
         player1.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         player2.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
