@@ -11,6 +11,7 @@ import com.grinderwolf.swm.api.world.properties.SlimeProperties;
 import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.GameArena;
+import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
 
 import java.io.IOException;
@@ -45,14 +46,14 @@ public class ArenaManager extends Managers {
         }
     }
 
-    public GameArena createGameArena(Arena a) {
+    public GameArena createGameArena(Arena a, Kit kit) {
         String newWorldName = "arena_" + UUID.randomUUID().toString().substring(0, 8);
         Collection<Arena> arenas = plugin.getCm().getArenas();
         List<Arena> list = new ArrayList<>(arenas);
         Arena na = list.get(RandomUtil.getRandomInt(0, list.toArray().length -1));
         cloneArena(na, newWorldName);
         GameArena ga = new GameArena(na.getName(), newWorldName);
-        ga.convertFromArena(na);
+        ga.convertFromArena(na, kit);
         return ga;
     }
 

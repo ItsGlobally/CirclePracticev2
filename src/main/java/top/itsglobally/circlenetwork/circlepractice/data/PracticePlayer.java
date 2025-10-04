@@ -47,4 +47,19 @@ public class PracticePlayer {
     public void setCurrentGame(Game currentGame) {
         this.currentGame = currentGame;
     }
+
+    public boolean isInDuel() {
+        return state == PlayerState.DUEL;
+    }
+
+    public boolean isInFFA() {
+        return state == PlayerState.FFA;
+    }
+
+    public boolean isSpectating() {
+        return state == PlayerState.SPECTATING;
+    }
+    public boolean isInSpawn() {
+        return state == PlayerState.SPAWN || state == PlayerState.EDITING;
+    }
 }

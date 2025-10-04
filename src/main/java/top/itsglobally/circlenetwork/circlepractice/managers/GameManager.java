@@ -1,29 +1,127 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
+import com.avaje.ebeaninternal.server.core.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
+import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
+
+import java.util.*;
 
 public class GameManager extends Managers{
+
+    private final Map<Player, List<DuelRequest>> duelRequests = new HashMap<>();
+
 
     public GameManager() {
 
     }
+
+    public void sendDuelRequest(Player p1, Player p2, String kit) {
+        if (!plugin.getKm().kitAlreadyExist(kit)) {
+            MessageUtil.sendMessage(p1, "&cThe kit does not exist.");
+            return;
+        }
+
+        PracticePlayer pp1 = plugin.getPm().getPlayer(p1);
+        PracticePlayer pp2 = plugin.getPm().getPlayer(p2);
+
+        if (!pp2.isInSpawn()) {
+            MessageUtil.sendMessage(p1, "&cThat player is not available.");
+            return;
+        }
+
+        DuelRequest request = new DuelRequest(p1, p2, kit);
+
+        BukkitTask task = new BukkitRunnable() {
+            int time = 60;
+            @Override
+            public void run() {
+                if (time-- <= 0) {
+                    List<DuelRequest> list = duelRequests.getOrDefault(p2, new ArrayList<>());
+                    list.remove(request);
+                    if (list.isEmpty()) {
+                        duelRequests.remove(p2);
+                    }
+
+                    MessageUtil.sendMessage(p1, "&cYour duel request to " + p2.getName() + " has expired.");
+                    MessageUtil.sendMessage(p2, "&cThe duel request from " + p1.getName() + " has expired.");
+                    cancel();
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
+
+        request.setTask(task);
+
+        duelRequests.computeIfAbsent(p2, k -> new ArrayList<>()).add(request);
+
+        MessageUtil.sendMessage(p2, "&b" + p1.getName() + " &rhas sent a duel request with kit &e" + kit + "&r. You have 60 seconds to accept.");
+        MessageUtil.sendMessage(p1, "&aDuel request sent to &b" + p2.getName() + "&a.");
+    }
+
+
+    public void acceptDuelRequest(Player p2, Player p1) {
+        List<DuelRequest> list = duelRequests.get(p2);
+
+        if (list == null || list.isEmpty()) {
+            MessageUtil.sendMessage(p2, "&cYou don't have any pending duel requests.");
+            return;
+        }
+
+        DuelRequest request = list.stream()
+                .filter(r -> r.getSender().equals(p1))
+                .findFirst()
+                .orElse(null);
+
+        if (request == null) {
+            MessageUtil.sendMessage(p2, "&cNo duel request found from " + p1.getName());
+            return;
+        }
+
+        request.cancelTask();
+        list.remove(request);
+        if (list.isEmpty()) duelRequests.remove(p2);
+
+        String kit = request.getKit();
+
+        MessageUtil.sendMessage(p1, "&a" + p2.getName() + " accepted your duel request!");
+        MessageUtil.sendMessage(p2, "&aYou accepted the duel request from " + p1.getName() + "!");
+
+        processNewGame(p1, p2, plugin.getKm().getKit(kit));
+    }
+
+
     public void processNewGame(Player p1, Player p2, Kit kit) {
         GameArena ga = null;
+
         for (GameArena gas : plugin.getCm().getGameArenas()) {
             if (!gas.isInUse()) {
                 ga = gas;
-                return;
+                break;
             }
+        }
+
+        if (ga == null) {
             MessageUtil.sendMessage(p1, p2, "&cNo arenas are available now!");
             return;
         }
+
+        List<Arena> allArenas = new ArrayList<>(plugin.getCm().getArenas());
+        if (allArenas.isEmpty()) {
+            MessageUtil.sendMessage(p1, p2, "&cNo configured arenas exist!");
+            return;
+        }
+        Arena randomed = allArenas.get(RandomUtil.getRandomInt(0, allArenas.size() - 1));
+
+        ga.convertFromArena(randomed, kit);
+
         startNewGame(plugin.getPm().getPlayer(p1), plugin.getPm().getPlayer(p2), kit, ga);
     }
+
     public void startNewGame(PracticePlayer pp1, PracticePlayer pp2, Kit kit, GameArena arena) {
         Game game = new Game(pp1, pp2, kit, arena);
         Player p1 = game.getPlayer1().getPlayer();
@@ -68,6 +166,6 @@ public class GameManager extends Managers{
                     cancel();
                 }
             }
-        }.runTaskTimer(plugin, 0L, 0L);
+        }.runTaskTimer(plugin, 0L, 20L);
     }
 }

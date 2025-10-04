@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GameArena {
     private final String name;
-    private List<String> kits = new ArrayList<>();
+    private Kit kit;
     private Location pos1;
     private Location pos2;
     private Location spectatorSpawn;
@@ -19,12 +19,11 @@ public class GameArena {
         this.inUse = false;
         this.worldName = worldName;
     }
-    public void convertFromArena(Arena a) {
+    public void convertFromArena(Arena a, Kit kit) {
         setPos1(a.getPos1());
         setPos2(a.getPos2());
         setSpectatorSpawn(a.getSpectatorSpawn());
-        kits = a.getKits();
-
+        this.kit = kit;
     }
     public String getName() {
         return name;
@@ -62,7 +61,7 @@ public class GameArena {
         this.inUse = inUse;
     }
 
-    public List<String> getKits() {
-        return kits;
+    public Kit getKit() {
+        return kit;
     }
 }

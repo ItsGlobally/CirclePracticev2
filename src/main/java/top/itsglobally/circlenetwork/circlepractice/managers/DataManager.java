@@ -81,10 +81,6 @@ public class DataManager {
         gameArenaMap.put(arena.getName(),arena);
     }
 
-    public GameArena getGameArena(String name) {
-        return gameArenaMap.get(name);
-    }
-
     public Collection<GameArena> getGameArenas() {
         return gameArenaMap.values();
     }
@@ -151,6 +147,7 @@ public class DataManager {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", kit.getName());
         map.put("inventory", InventorySerializer.serializeInventory(kit.getContents(), kit.getArmor()));
+        map.put("hunger", kit.isHunger());
         return map;
     }
 
@@ -165,6 +162,9 @@ public class DataManager {
                 kit.setContents(items[0]);
                 if (items.length > 1) kit.setArmor(items[1]);
             }
+        }
+        if (map.containsKey("hunger")) {
+            kit.setHunger((Boolean) map.get("hunger"));
         }
 
         return kit;

@@ -9,7 +9,7 @@ public class Kit {
     private final String name;
     private ItemStack[] contents;
     private ItemStack[] armor;
-
+    private boolean hunger;
     public Kit(String name) {
         this.name = name;
     }
@@ -32,5 +32,13 @@ public class Kit {
 
     public void setContents(ItemStack[] contents) {
         this.contents = contents;
+    }
+
+    public boolean isHunger() {
+        return hunger;
+    }
+
+    public void setHunger(boolean hunger) {
+        this.hunger = hunger;
     }
 }
