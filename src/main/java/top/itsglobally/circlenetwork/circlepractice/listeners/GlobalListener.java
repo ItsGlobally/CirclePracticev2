@@ -5,18 +5,21 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
+import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.AutoListener;
 
 @AutoListener
 public class GlobalListener implements Listener, IListener {
+
     @EventHandler
     public void onPlayerVelocity(PlayerVelocityEvent e) {
         Player p = e.getPlayer();
@@ -36,18 +39,27 @@ public class GlobalListener implements Listener, IListener {
     }
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        plugin.getPlayerManager().getPlayer(e.getPlayer()).unlockAchievement(Achievement.JOIN);
         plugin.getPlayerManager().addPlayer(e.getPlayer());
     }
-    @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
-        plugin.getPlayerManager().removePlayer(e.getPlayer().getUniqueId());
-    }
+
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
         e.setFormat(MessageUtil.formatMessage(
                 plugin.getPlayerManager().getPrefixedName(e.getPlayer()) +
                         "&r » %2$s"
         ));
+    }
+    @EventHandler
+    public void died(PlayerDeathEvent e) {
+        Player p = e.getEntity();
+        p.spigot().respawn();
+    }
+    @EventHandler
+    public void onMobSpawn(CreatureSpawnEvent e) {
+        if (e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
+            e.setCancelled(true);
+        }
     }
 
 }

@@ -9,13 +9,14 @@ public class Kit {
     private boolean hunger;
     private boolean enabled;
     private boolean build;
+    private boolean forDuels;
 
     public Kit(String name) {
         this.name = name;
         this.hunger = false;
         this.enabled = false;
         this.build = false;
-
+        this.forDuels = true;
     }
 
     public String getName() {
@@ -63,5 +64,13 @@ public class Kit {
     }
     public boolean isComplate() {
         return contents != null && armor != null;
+    }
+
+    public void setForDuels(boolean forDuels) {
+        this.forDuels = forDuels;
+    }
+
+    public boolean isForDuels() {
+        return forDuels;
     }
 }

@@ -2,6 +2,8 @@ package top.itsglobally.circlenetwork.circlepractice.managers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,6 +12,7 @@ import top.itsglobally.circlenetwork.circlepractice.data.GameArena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.utils.InventorySerializer;
 import top.nontage.nontagelib.config.BaseConfig;
+import top.nontage.nontagelib.utils.item.ItemBuilder;
 
 import java.io.File;
 import java.util.*;
@@ -71,6 +74,72 @@ public class DataManager extends Managers {
         }
 
         kitConfig.save();
+    }
+
+    private void createDefaults() {
+        Kit noDebuff = new Kit("NoDebuff");
+
+        ItemStack[] armor = new ItemStack[4];
+        armor[3] = new ItemBuilder(Material.DIAMOND_HELMET)
+                .enchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 2)
+                .enchant(org.bukkit.enchantments.Enchantment.DURABILITY, 3)
+                .unBreak()
+                .build();
+        armor[2] = new ItemBuilder(Material.DIAMOND_CHESTPLATE)
+                .enchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 2)
+                .enchant(org.bukkit.enchantments.Enchantment.DURABILITY, 3)
+                .unBreak()
+                .build();
+        armor[1] = new ItemBuilder(Material.DIAMOND_LEGGINGS)
+                .enchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 2)
+                .enchant(org.bukkit.enchantments.Enchantment.DURABILITY, 3)
+                .unBreak()
+                .build();
+        armor[0] = new ItemBuilder(Material.DIAMOND_BOOTS)
+                .enchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 2)
+                .enchant(org.bukkit.enchantments.Enchantment.DURABILITY, 3)
+                .unBreak()
+                .build();
+
+        ItemStack[] contents = new ItemStack[36];
+        contents[0] = new ItemBuilder(Material.DIAMOND_SWORD)
+                .enchant(Enchantment.DAMAGE_ALL, 3)
+                .enchant(Enchantment.DURABILITY, 3)
+                .enchant(Enchantment.FIRE_ASPECT, 2)
+                .unBreak()
+                .build();
+
+        contents[1] = new ItemStack(Material.COOKED_BEEF, 64);
+
+        contents[2] = new ItemBuilder(Material.POTION)
+                .durability((short) 8194)
+                .build();
+        contents[3] = new ItemBuilder(Material.POTION)
+                .durability((short) 8195)
+                .build();
+        contents[4] = new ItemBuilder(Material.ENDER_PEARL)
+                .setAmount(16)
+                .build();
+
+        for (int i = 5; i < 32; i++) {
+            contents[i] = new ItemBuilder(Material.POTION)
+                    .durability((short) 16421)
+                    .build();
+        }
+        for (int i = 33; i < 36; i++) {
+            contents[i] = new ItemBuilder(Material.POTION)
+                    .durability((short) 8194)
+                    .build();
+        }
+        noDebuff.setArmor(armor);
+        noDebuff.setContents(contents);
+        noDebuff.setHunger(true);
+        noDebuff.setEnabled(true);
+
+        if (!plugin.getKitManager().kitAlreadyExist("NoDebuff")) {
+            plugin.getKitManager().addKit(noDebuff);
+        }
+
     }
 
     // -------------------- Arena API --------------------

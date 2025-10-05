@@ -31,10 +31,6 @@ public class KitManager extends Managers {
                 .anyMatch(k -> k.getName().equalsIgnoreCase(name));
     }
 
-    public Kit createKit(String name) {
-        return new Kit(name);
-    }
-
     public void updateKit(String name, ItemStack[] contents, ItemStack[] armor) {
         kits.removeIf(k -> k.getName().equalsIgnoreCase(name));
 
@@ -42,6 +38,10 @@ public class KitManager extends Managers {
         newKit.setContents(contents);
         newKit.setArmor(armor);
         kits.add(newKit);
+    }
+    public void updateKit(Kit kit) {
+        kits.removeIf(k -> k.getName().equalsIgnoreCase(kit.getName()));
+        kits.add(kit);
     }
 
     public void addKit(Kit kit) {

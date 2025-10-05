@@ -34,6 +34,10 @@ public class duel implements NontageCommand, ICommand {
             MessageUtil.sendMessage(p, "&cThat kit does not exist");
             return;
         }
+        if (!plugin.getKitManager().getKit(kit).isForDuels()) {
+            MessageUtil.sendMessage(p, "&cThat kit is not for duels!");
+            return;
+        }
         plugin.getGameManager().sendDuelRequest(p, tg, kit);
     }
 

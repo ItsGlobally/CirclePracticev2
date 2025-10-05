@@ -5,6 +5,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 
@@ -48,7 +49,7 @@ public class GameManager extends Managers {
                         duelRequests.remove(p2);
                     }
 
-                    MessageUtil.sendMessage(p1, "&cYour duel request to " + p2.getName() + " has expired.");
+                    MessageUtil.sendActionBar(p1, "&cYour duel request to " + p2.getName() + " has expired.");
                     MessageUtil.sendMessage(p2, "&cThe duel request from " + p1.getName() + " has expired.");
                     cancel();
                 }
@@ -61,6 +62,8 @@ public class GameManager extends Managers {
 
         MessageUtil.sendMessage(p2, "&b" + p1.getName() + " &rhas sent a duel request with kit &e" + kit + "&r. You have 60 seconds to accept.");
         MessageUtil.sendMessage(p1, "&aDuel request sent to &b" + p2.getName() + "&a.");
+        p1.playSound(p1.getLocation(), Sound.NOTE_BASS, 1f, 1f);
+        p2.playSound(p1.getLocation(), Sound.NOTE_BASS, 1f, 1f);
     }
 
 
@@ -129,6 +132,7 @@ public class GameManager extends Managers {
         game.setState(GameStete.STARTING);
         game.getArena().setInUse(true);
         startCooldown(game);
+        pp1.unlockAchievement(Achievement.FIRSTGAME);
         games.put(game.getId(), game);
     }
 
@@ -184,6 +188,7 @@ public class GameManager extends Managers {
         String message = "&f-------------------------\n&bWinner: &f" + winner.getName() + "&r | &cLoser: &f" + game.getOpponent(winner).getName() + "&r\n&f-------------------------";
         if (p1 != null) {
             plugin.getDataManager().teleportToSpawn(p1);
+
         }
         if (p2 != null) {
             plugin.getDataManager().teleportToSpawn(p2);
@@ -191,6 +196,10 @@ public class GameManager extends Managers {
 
         if (winner != null) {
             Player winnerPlayer = Bukkit.getPlayer(winner.getUuid());
+            PracticePlayer winnerPp = plugin.getPlayerManager().getPlayer(winnerPlayer);
+            PracticePlayer loser = game.getOpponent(winnerPp);
+            if (loser.getPlayer() != null)MessageUtil.sendTitle(loser.getPlayer(), "&cDEFEAT!", "You have been defeated by " + winner.getName());
+            if (winnerPp.getPlayer() != null)MessageUtil.sendTitle(winner.getPlayer(), "&aVICTORY!", "You have defeated " + loser.getName());
 
             if (p1 != null) MessageUtil.sendMessage(p1, message);
             if (p2 != null) MessageUtil.sendMessage(p2, message);

@@ -20,41 +20,59 @@ public class kit implements NontageCommand, ICommand {
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
         switch (strings[0].toLowerCase()) {
             case "create": {
-                MessageUtil.sendMessage(p, "&cNo Permission!");
+                if (!p.hasPermission("circlepractice.admin")) {
+                    MessageUtil.sendMessage(p, "&cNo Permission!");
+                    return;
+                }
                 if (plugin.getKitManager().kitAlreadyExist(a1)) {
                     return;
                 }
-                plugin.getKitManager().addKit(plugin.getKitManager().createKit(a1));
-
+                plugin.getKitManager().addKit(new Kit(a1));
+                MessageUtil.sendMessage(p, "&aCreated kit " + a1 + "!");
                 break;
             }
             case "editglobally": {
                 if (!p.hasPermission("circlepractice.admin")) {
                     MessageUtil.sendMessage(p, "&cNo Permission!");
+                    return;
                 }
                 if (pp.isInSpawnNotEditing()) {
                     if (plugin.getKitManager().kitAlreadyExist(a1)) {
                         pp.setQueuedKit(a1);
                         Kit kit = plugin.getKitManager().getKit(a1);
+                        pp.setInventory(p.getInventory().getContents());
+                        pp.setArmor(p.getInventory().getArmorContents());
                         p.getInventory().clear();
                         p.getInventory().setArmorContents(null);
                         p.getInventory().setArmorContents(kit.getArmor());
                         p.getInventory().setContents(kit.getContents());
+                        MessageUtil.sendMessage(p, "&aYou're now editing kit " + a1 + " . Do \"/kit save " + a1 + "\" to save!");
                     }
                 }
                 break;
             }
             case "save": {
-                MessageUtil.sendMessage(p, "&cNo Permission!");
                 if (pp.isEditing()) {
                     if (pp.getState() == PlayerState.EDITINGGLOBALLY) plugin.getKitManager().updateKit(a1, p.getInventory().getContents(), p.getInventory().getArmorContents());
-                    else ;
-
+                    MessageUtil.sendMessage(p, "&aSaved kit " + a1 + "!");
+                    p.getInventory().clear();
+                    p.getInventory().setArmorContents(null);
+                    p.getInventory().setContents(pp.getInventory());
+                    p.getInventory().setArmorContents(pp.getArmor());
+                    return;
                 }
+                MessageUtil.sendMessage(p, "&cYou're not editing a kit!");
             }
             case "sethunger": {
-                MessageUtil.sendMessage(p, "&cNo Permission!");
-
+                if (!p.hasPermission("circlepractice.admin")) {
+                    MessageUtil.sendMessage(p, "&cNo Permission!");
+                    return;
+                }
+                Kit kit = plugin.getKitManager().getKit(a1);
+                boolean status = kit.isHunger();
+                kit.setHunger(!status);
+                plugin.getKitManager().updateKit(kit);
+                MessageUtil.sendMessage(p, "&Set " + kit.getName() + "'s hunger status to " + kit.isHunger() + "!");
             }
 
         }

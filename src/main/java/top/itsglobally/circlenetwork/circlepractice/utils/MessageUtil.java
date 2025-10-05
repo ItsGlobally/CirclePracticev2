@@ -9,8 +9,9 @@ import top.itsglobally.circlenetwork.circlepractice.CirclePractice;
 
 public class MessageUtil {
 
-    private static final MiniMessage MINI = MiniMessage.miniMessage();
-
+    public static void sendMessage(Player player, Component message) {
+        CirclePractice.audience(player).sendMessage(message);
+    }
     public static void sendMessage(Player player, String message) {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
@@ -27,7 +28,6 @@ public class MessageUtil {
     }
 
     public static void sendTitle(Player player, String title, String subtitle) {
-        ChatColor.translateAlternateColorCodes('&', title);
 
         player.sendTitle(
                 ChatColor.translateAlternateColorCodes('&', title),
