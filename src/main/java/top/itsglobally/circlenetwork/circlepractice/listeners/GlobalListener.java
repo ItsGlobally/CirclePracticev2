@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
+import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.AutoListener;
 
@@ -76,6 +77,14 @@ public class GlobalListener implements Listener, IListener {
                     },
                     1L
             );
+        }
+    }
+    @EventHandler
+    public void damage(EntityDamageEvent e) {
+        if(e.getCause() == EntityDamageEvent.DamageCause.FALL) e.setCancelled(true);
+        if (e.getEntity() instanceof Player p) {
+            PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
+            if (pp.isInSpawn()) e.setCancelled(true);
         }
     }
 
