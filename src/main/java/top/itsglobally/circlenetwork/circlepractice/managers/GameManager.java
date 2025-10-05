@@ -3,6 +3,8 @@ package top.itsglobally.circlenetwork.circlepractice.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
@@ -30,7 +32,10 @@ public class GameManager extends Managers {
 
         PracticePlayer pp1 = plugin.getPlayerManager().getPlayer(p1);
         PracticePlayer pp2 = plugin.getPlayerManager().getPlayer(p2);
-
+        if (!pp1.isInSpawn()) {
+            MessageUtil.sendMessage(p1, "&cYou're not in the spawn.");
+            return;
+        }
         if (!pp2.isInSpawn()) {
             MessageUtil.sendMessage(p1, "&cThat player is not available.");
             return;
@@ -115,9 +120,8 @@ public class GameManager extends Managers {
         if (ga == null) {
             ga = plugin.getArenaManager().createGameArena(kit);
         }
-
         if (ga == null) {
-            Bukkit.getLogger().warning("[CirclePractice] Failed to create a new GameArena!");
+            MessageUtil.sendMessage(p1, p2, "&cError on creating arena");
             return;
         }
 
@@ -205,12 +209,18 @@ public class GameManager extends Managers {
             plugin.getDataManager().teleportToSpawn(p1);
             p1.getInventory().setArmorContents(null);
             p1.getInventory().clear();
+            for (PotionEffect pe : p1.getActivePotionEffects()) {
+                p1.removePotionEffect(pe.getType());
+            }
 
         }
         if (p2 != null) {
             plugin.getDataManager().teleportToSpawn(p2);
             p2.getInventory().setArmorContents(null);
             p2.getInventory().clear();
+            for (PotionEffect pe : p2.getActivePotionEffects()) {
+                p2.removePotionEffect(pe.getType());
+            }
         }
 
         if (winner != null) {

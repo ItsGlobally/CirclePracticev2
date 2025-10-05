@@ -1,5 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -90,7 +91,7 @@ public class kit implements NontageCommand, ICommand {
                 boolean status = kit.isForDuels();
                 kit.setForDuels(!status);
                 plugin.getKitManager().updateKit(kit);
-                MessageUtil.sendMessage(p, "&Set " + kit.getName() + "'s hunger status to " + kit.isForDuels() + "!");
+                MessageUtil.sendMessage(p, "&Set " + kit.getName() + "'s for duel status to " + kit.isForDuels() + "!");
                 break;
             }
             case "toggle": {
@@ -105,7 +106,20 @@ public class kit implements NontageCommand, ICommand {
                 MessageUtil.sendMessage(p, "&Set " + kit.getName() + "'s hunger status to " + kit.isEnabled() + "!");
                 break;
             }
+            case "togglecanbuild": {
+                if (!p.hasPermission("circlepractice.admin")) {
+                    MessageUtil.sendMessage(p, "&cNo Permission!");
+                    return;
+                }
+                Kit kit = plugin.getKitManager().getKit(a1);
+                boolean status = kit.isCanBuild();
+                kit.setCanBuild(!status);
+                plugin.getKitManager().updateKit(kit);
+                MessageUtil.sendMessage(p, "&Set " + kit.getName() + "'s canbuild status to " + kit.isCanBuild() + "!");
+                break;
+            }
             case "saveall": {
+                Bukkit.broadcastMessage("e");
                 plugin.getDataManager().saveAllKits();
                 break;
             }

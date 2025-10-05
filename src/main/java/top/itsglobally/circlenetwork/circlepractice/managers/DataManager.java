@@ -74,12 +74,13 @@ public class DataManager extends Managers {
     public void saveAllKits() {
         KitManager km = plugin.getKitManager();
         kitConfig.kits.clear();
-
         for (Kit kit : km.getKits()) {
             kitConfig.kits.put(kit.getName(), serializeKit(kit));
         }
-
         kitConfig.save();
+    }
+    public void saveAllArenas() {
+        arenaConfig.save();
     }
 
     private void createDefaults() {
@@ -229,6 +230,9 @@ public class DataManager extends Managers {
         map.put("name", kit.getName());
         map.put("inventory", InventorySerializer.serializeInventory(kit.getContents(), kit.getArmor()));
         map.put("hunger", kit.isHunger());
+        map.put("forDuel", kit.isForDuels());
+        map.put("enabled", kit.isEnabled());
+        map.put("canBuild", kit.isCanBuild());
         return map;
     }
 
@@ -246,6 +250,15 @@ public class DataManager extends Managers {
         }
         if (map.containsKey("hunger")) {
             kit.setHunger((Boolean) map.get("hunger"));
+        }
+        if (map.containsKey("enabled")) {
+            kit.setHunger((Boolean) map.get("enabled"));
+        }
+        if (map.containsKey("forDuel")) {
+            kit.setHunger((Boolean) map.get("forDuel"));
+        }
+        if (map.containsKey("canBuild")) {
+            kit.setHunger((Boolean) map.get("canBuild"));
         }
 
         return kit;
@@ -295,7 +308,7 @@ public class DataManager extends Managers {
         public boolean allowSpectators = true;
         public int duelRequestExpire = 60;
         public int maxGameTime = 900;
-        public String spawnWorld = "world";
+        public String spawnWorld = "spawn";
         public double spawnX = 0.5;
         public double spawnY = 65;
         public double spawnZ = 0.5;

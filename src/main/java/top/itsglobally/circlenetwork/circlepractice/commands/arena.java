@@ -16,7 +16,7 @@ public class arena implements NontageCommand, ICommand {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
-        if (strings.length < 3) return;
+        if (strings.length < 2) return;
         String a1 = strings[1];
         switch (strings[0]) {
             case "create": {

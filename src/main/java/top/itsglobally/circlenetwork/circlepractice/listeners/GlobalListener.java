@@ -1,11 +1,14 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -45,6 +48,7 @@ public class GlobalListener implements Listener, IListener {
     public void onJoin(PlayerJoinEvent e) {
         plugin.getPlayerManager().addPlayer(e.getPlayer());
         plugin.getPlayerManager().getPlayer(e.getPlayer()).unlockAchievement(Achievement.JOIN);
+        plugin.getDataManager().teleportToSpawn(e.getPlayer());
     }
 
     @EventHandler
@@ -86,6 +90,18 @@ public class GlobalListener implements Listener, IListener {
             PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
             if (pp.isInSpawn()) e.setCancelled(true);
         }
+    }
+    @EventHandler
+    public void bbreak(BlockBreakEvent e) {
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
+        if (pp.isInSpawn()) e.setCancelled(true);
+    }
+    @EventHandler
+    public void place(BlockPlaceEvent e) {
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
+        if (pp.isInSpawn()) e.setCancelled(true);
     }
 
 }

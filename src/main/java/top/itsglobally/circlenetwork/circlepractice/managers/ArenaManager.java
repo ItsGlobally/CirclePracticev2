@@ -46,7 +46,6 @@ public class ArenaManager extends Managers {
 
 
             if (Bukkit.getWorld(sourceWorldName) != null) {
-                Bukkit.unloadWorld(Bukkit.getWorld(sourceWorldName), true);
                 sl.unlockWorld(sourceWorldName);
             }
 

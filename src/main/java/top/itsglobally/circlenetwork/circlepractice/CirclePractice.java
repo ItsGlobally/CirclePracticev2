@@ -51,6 +51,8 @@ public final class CirclePractice extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        dm.saveAllKits();
+        dm.saveAllArenas();
     }
 
     public GameManager getGameManager() {

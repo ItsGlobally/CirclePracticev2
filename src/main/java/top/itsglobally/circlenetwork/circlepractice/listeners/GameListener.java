@@ -1,9 +1,12 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -31,22 +34,6 @@ public class GameListener implements Listener, IListener {
 
         }
     }
-
-    /*@EventHandler
-    public void move(PlayerMoveEvent e) {
-        Player p = e.getPlayer();
-        PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
-        if (pp.isInDuel()) {
-            Game game = pp.getCurrentGame();
-            if (game.getPlayer1OrPlayer2(pp) == 1) {
-                Location l = game.getArena().getPos1();
-                p.teleport(new Location(e.getFrom().getWorld(), l.getX(), l.getY(), l.getZ()));
-            } else {
-                Location l = game.getArena().getPos2();
-                p.teleport(new Location(e.getFrom().getWorld(), l.getX(), l.getY(), l.getZ()));
-            }
-        }
-    }*/
     @EventHandler
     public void damage(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player vic)) return;
@@ -91,5 +78,28 @@ public class GameListener implements Listener, IListener {
         }
 
         plugin.getPlayerManager().removePlayer(e.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void bbreak(BlockBreakEvent e) {
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
+        if (pp.isInDuel()) {
+            Game game = pp.getCurrentGame();
+            if (!game.getKit().isCanBuild()) {
+                e.setCancelled(true);
+            }
+        }
+    }
+    @EventHandler
+    public void place(BlockPlaceEvent e) {
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
+        if (pp.isInDuel()) {
+            Game game = pp.getCurrentGame();
+            if (!game.getKit().isCanBuild()) {
+                e.setCancelled(true);
+            }
+        }
     }
 }

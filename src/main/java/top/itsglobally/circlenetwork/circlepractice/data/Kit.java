@@ -8,17 +8,17 @@ public class Kit {
     private ItemStack[] armor;
     private boolean hunger;
     private boolean enabled;
-    private boolean build;
     private boolean forDuels;
+    private boolean canBuild;
 
     public Kit(String name) {
         this.name = name;
         this.hunger = false;
         this.enabled = false;
-        this.build = false;
         this.forDuels = true;
         this.contents = new ItemStack[36];
         this.armor = new ItemStack[4];
+        this.canBuild = false;
     }
 
     public String getName() {
@@ -57,13 +57,6 @@ public class Kit {
         this.enabled = enabled;
     }
 
-    public boolean isBuild() {
-        return build;
-    }
-
-    public void setBuild(boolean build) {
-        this.build = build;
-    }
     public boolean isComplate() {
         return contents != null && armor != null;
     }
@@ -74,5 +67,13 @@ public class Kit {
 
     public boolean isForDuels() {
         return forDuels;
+    }
+
+    public boolean isCanBuild() {
+        return canBuild;
+    }
+
+    public void setCanBuild(boolean canBuild) {
+        this.canBuild = canBuild;
     }
 }
