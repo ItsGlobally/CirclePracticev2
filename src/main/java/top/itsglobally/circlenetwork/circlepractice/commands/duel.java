@@ -1,12 +1,10 @@
 package top.itsglobally.circlenetwork.circlepractice.commands;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
-import top.itsglobally.circlenetwork.circlepractice.utils.commandUsage;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
 
@@ -20,7 +18,7 @@ public class duel implements NontageCommand, ICommand {
         if (!(commandSender instanceof Player p)) return;
 
         if (strings.length < 2) {
-            commandUsage.sendCommandUsage(p, "duel");
+            MessageUtil.sendMessage(p, "&cUsage: /duel player kit");
             return;
         }
         String tgn = strings[0];
