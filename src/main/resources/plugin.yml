@@ -2,7 +2,7 @@ name: CirclePractice
 version: '${project.version}'
 main: top.itsglobally.circlenetwork.circlepractice.CirclePractice
 prefix: Circle Practice
-load: STARTUP
+load: POSTWORLD
 depend: ["NontageLib"]
 authors: [ItsGlobally]
 permissions:

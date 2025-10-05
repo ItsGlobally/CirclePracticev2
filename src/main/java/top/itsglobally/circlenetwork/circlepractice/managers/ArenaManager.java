@@ -25,6 +25,7 @@ import java.util.UUID;
 public class ArenaManager extends Managers {
 
     private final SlimePlugin slime = plugin.getPluginManager().getSlimePlugin;
+    private final SlimeLoader sl = plugin.getPluginManager().getSlimePlugin.getLoader("file");
 
     public ArenaManager() {
 
@@ -32,23 +33,30 @@ public class ArenaManager extends Managers {
 
     public Arena randomArena() {
         List<Arena> allArenas = new ArrayList<>(plugin.getDataManager().getArenas());
-        return allArenas.get(RandomUtil.getRandomInt(0, allArenas.size() - 1));
+        return allArenas.get(RandomUtil.nextInt(allArenas.size()));
     }
 
     public void cloneArena(Arena a, String newWorldName) {
-        this.cloneArena(a.getWorldName(), newWorldName);
+        this.cloneArena(a.getWorldName());
     }
 
-    public void cloneArena(String sourceWorldName, String newWorldName) {
-
+    public void cloneArena(String sourceWorldName) {
         try {
             SlimeLoader loader = slime.getLoader("file");
 
-            SlimeWorld world = slime.loadWorld(loader, sourceWorldName, false, gameArenaProps());
 
-            world = world.clone(newWorldName);
+            if (Bukkit.getWorld(sourceWorldName) != null) {
+                Bukkit.unloadWorld(Bukkit.getWorld(sourceWorldName), true);
+                sl.unlockWorld(sourceWorldName);
+            }
 
-            slime.generateWorld(world);
+            SlimeWorld sourceWorld = slime.loadWorld(loader, sourceWorldName, false, gameArenaProps());
+
+            String newWorldName = sourceWorldName + "_" + System.currentTimeMillis();
+
+            SlimeWorld cloned = sourceWorld.clone(newWorldName);
+            slime.generateWorld(cloned);
+
         } catch (UnknownWorldException | IOException | CorruptedWorldException |
                  NewerFormatException | WorldInUseException ex) {
             Bukkit.broadcastMessage(MessageUtil.formatMessage("&cERROR! " + ex));
@@ -56,12 +64,14 @@ public class ArenaManager extends Managers {
         }
     }
 
+
+
     public GameArena createGameArena(Kit kit) {
         String newWorldName = "arena_" + UUID.randomUUID().toString().substring(0, 8);
         Collection<Arena> arenas = plugin.getDataManager().getAvailableArenas();
         if (arenas.isEmpty()) return null;
         List<Arena> list = new ArrayList<>(arenas);
-        Arena na = list.get(RandomUtil.getRandomInt(0, list.toArray().length - 1));
+        Arena na = list.get(RandomUtil.nextInt(list.size()));
         cloneArena(na, newWorldName);
         GameArena ga = new GameArena(na.getWorldName(), newWorldName);
         ga.convertFromArena(na, kit);

@@ -29,7 +29,7 @@ public class duel implements NontageCommand, ICommand {
             MessageUtil.sendMessage(p, "&cThat player is not online!");
             return;
         }
-        String kit = strings[0];
+        String kit = strings[1];
         if (!plugin.getKitManager().kitAlreadyExist(kit)) {
             MessageUtil.sendMessage(p, "&cThat kit does not exist");
             return;
@@ -42,7 +42,7 @@ public class duel implements NontageCommand, ICommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String label, String[] args, Location location) {
+    public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
         if (args.length == 1) {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)

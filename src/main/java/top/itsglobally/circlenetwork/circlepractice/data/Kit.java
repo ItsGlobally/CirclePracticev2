@@ -17,6 +17,8 @@ public class Kit {
         this.enabled = false;
         this.build = false;
         this.forDuels = true;
+        this.contents = new ItemStack[36];
+        this.armor = new ItemStack[4];
     }
 
     public String getName() {

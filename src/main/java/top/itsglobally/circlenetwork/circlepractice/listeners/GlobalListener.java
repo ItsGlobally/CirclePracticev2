@@ -1,5 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -10,8 +11,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
@@ -39,8 +42,8 @@ public class GlobalListener implements Listener, IListener {
     }
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        plugin.getPlayerManager().getPlayer(e.getPlayer()).unlockAchievement(Achievement.JOIN);
         plugin.getPlayerManager().addPlayer(e.getPlayer());
+        plugin.getPlayerManager().getPlayer(e.getPlayer()).unlockAchievement(Achievement.JOIN);
     }
 
     @EventHandler
@@ -59,6 +62,20 @@ public class GlobalListener implements Listener, IListener {
     public void onMobSpawn(CreatureSpawnEvent e) {
         if (e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
             e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void onPotionDrink(PlayerItemConsumeEvent event) {
+        ItemStack item = event.getItem();
+
+        if (item.getType() == Material.POTION) {
+            event.getPlayer().getServer().getScheduler().runTaskLater(
+                    plugin,
+                    () -> {
+                        event.getPlayer().getInventory().removeItem(new ItemStack(Material.GLASS_BOTTLE, 1));
+                    },
+                    1L
+            );
         }
     }
 

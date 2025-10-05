@@ -31,7 +31,7 @@ public class accept implements NontageCommand, ICommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String label, String[] args, Location location) {
+    public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
         if (args.length == 1) {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)

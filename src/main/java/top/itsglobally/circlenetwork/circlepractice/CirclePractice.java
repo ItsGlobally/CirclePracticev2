@@ -39,6 +39,7 @@ public final class CirclePractice extends JavaPlugin {
     }
 
     private void initManagers() {
+        adventure = BukkitAudiences.create(this);
         luckPerms = LuckPermsProvider.get();
         gm = new GameManager();
         km = new KitManager();

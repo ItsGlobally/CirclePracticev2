@@ -20,6 +20,9 @@ public final class RandomUtil {
         if (min >= max) throw new IllegalArgumentException("min is larger than max");
         return RANDOM.nextInt(max - min) + min;
     }
+    public static int nextInt(int i) {
+        return RANDOM.nextInt(i);
+    }
 
     public static double getRandomDouble(double min, double max) {
         if (min >= max) throw new IllegalArgumentException("min is larger than max");

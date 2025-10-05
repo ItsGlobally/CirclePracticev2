@@ -39,7 +39,10 @@ public class DataManager extends Managers {
         arenaConfig = register(new ArenaConfig(), "arenas");
         kitConfig = register(new KitConfig(), "kits");
         mainConfig = register(new MainConfig(), "config");
+        if (arenaConfig.arenas == null) arenaConfig.arenas = new LinkedHashMap<>();
+        if (kitConfig.kits == null) kitConfig.kits = new LinkedHashMap<>();
         reload();
+        createDefaults();
     }
 
     private <T extends BaseConfig> T register(T config, String name) {
@@ -53,6 +56,9 @@ public class DataManager extends Managers {
     public void reload() {
         arenaConfig.reload();
         kitConfig.reload();
+
+        if (arenaConfig.arenas == null) arenaConfig.arenas = new LinkedHashMap<>();
+        if (kitConfig.kits == null) kitConfig.kits = new LinkedHashMap<>();
 
         arenaMap.clear();
         for (Map.Entry<String, Map<String, Object>> entry : arenaConfig.arenas.entrySet()) {
@@ -121,7 +127,7 @@ public class DataManager extends Managers {
                 .setAmount(16)
                 .build();
 
-        for (int i = 5; i < 32; i++) {
+        for (int i = 5; i < 33; i++) {
             contents[i] = new ItemBuilder(Material.POTION)
                     .durability((short) 16421)
                     .build();
@@ -139,6 +145,15 @@ public class DataManager extends Managers {
         if (!plugin.getKitManager().kitAlreadyExist("NoDebuff")) {
             plugin.getKitManager().addKit(noDebuff);
         }
+
+        // arena
+        Arena arena = new Arena("arena");
+        arena.setWorldName("arena");
+        arena.setPos1(new Location(Bukkit.getWorld(arena.getWorldName()), 50, 50, 0, 0, 0));
+        arena.setPos2(new Location(Bukkit.getWorld(arena.getWorldName()), -50, 50, 0, 180, 0));
+        arena.setSpectatorSpawn(new Location(Bukkit.getWorld(arena.getWorldName()), 0, 75, 0, 90, 0));
+        arena.addKit("NoDebuff");
+        addArena(arena);
 
     }
 

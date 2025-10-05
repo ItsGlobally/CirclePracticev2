@@ -57,7 +57,7 @@ public class Arena {
         this.spectatorSpawn = spectatorSpawn;
     }
 
-    public void addKits(String kit) {
+    public void addKit(String kit) {
         kits.add(kit);
     }
 

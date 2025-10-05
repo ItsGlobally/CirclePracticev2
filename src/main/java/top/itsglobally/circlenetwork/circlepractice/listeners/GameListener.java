@@ -32,7 +32,7 @@ public class GameListener implements Listener, IListener {
         }
     }
 
-    @EventHandler
+    /*@EventHandler
     public void move(PlayerMoveEvent e) {
         Player p = e.getPlayer();
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
@@ -46,7 +46,7 @@ public class GameListener implements Listener, IListener {
                 p.teleport(new Location(e.getFrom().getWorld(), l.getX(), l.getY(), l.getZ()));
             }
         }
-    }
+    }*/
     @EventHandler
     public void damage(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player vic)) return;

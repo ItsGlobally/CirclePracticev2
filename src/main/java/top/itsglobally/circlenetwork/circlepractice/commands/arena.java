@@ -66,7 +66,7 @@ public class arena implements NontageCommand, ICommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String label, String[] args, Location location) {
-        return NontageCommand.super.onTabComplete(sender, label, args, location);
+    public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
+        return NontageCommand.super.onTabComplete(sender, label, args);
     }
 }

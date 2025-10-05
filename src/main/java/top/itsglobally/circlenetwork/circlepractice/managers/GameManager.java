@@ -8,6 +8,7 @@ import org.bukkit.scheduler.BukkitTask;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
+import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
 
 import java.util.*;
 
@@ -97,30 +98,32 @@ public class GameManager extends Managers {
         processNewGame(p1, p2, plugin.getKitManager().getKit(kit));
     }
 
+    private List<GameArena> findAvailableArenas(Kit kit) {
+        return plugin.getDataManager().getGameArenas().stream()
+                .filter(a -> !a.isInUse() && a.getKits().contains(kit.getName()))
+                .toList();
+    }
 
     public void processNewGame(Player p1, Player p2, Kit kit) {
         GameArena ga = null;
 
-        for (GameArena gas : plugin.getDataManager().getGameArenas()) {
-            if (!gas.isInUse() && kit.equals(gas.getKit())) {
-                ga = gas;
-                break;
-            }
+        List<GameArena> ngas = findAvailableArenas(kit);
+        if (!ngas.isEmpty()) {
+            ga = ngas.get(RandomUtil.nextInt(ngas.size()));
         }
 
         if (ga == null) {
-            List<Arena> allArenas = new ArrayList<>(plugin.getDataManager().getArenas());
-            if (allArenas.isEmpty()) {
-                MessageUtil.sendMessage(p1, p2, "&cNo configured arenas exist!");
-                return;
-            }
             ga = plugin.getArenaManager().createGameArena(kit);
         }
+
         if (ga == null) {
-            MessageUtil.sendMessage(p1, p2, "&cNo arenas are available now!");
+            Bukkit.getLogger().warning("[CirclePractice] Failed to create a new GameArena!");
+            return;
         }
 
-        startNewGame(plugin.getPlayerManager().getPlayer(p1), plugin.getPlayerManager().getPlayer(p2), kit, ga);
+        startNewGame(plugin.getPlayerManager().getPlayer(p1),
+                plugin.getPlayerManager().getPlayer(p2),
+                kit, ga);
     }
 
     public void startNewGame(PracticePlayer pp1, PracticePlayer pp2, Kit kit, GameArena arena) {
@@ -129,6 +132,18 @@ public class GameManager extends Managers {
         Player p2 = game.getPlayer2().getPlayer();
         p1.teleport(game.getArena().getPos1());
         p2.teleport(game.getArena().getPos2());
+        p1.getInventory().setArmorContents(kit.getArmor());
+        p1.getInventory().setContents(kit.getContents());
+        p2.getInventory().setArmorContents(kit.getArmor());
+        p2.getInventory().setContents(kit.getContents());
+        p1.setFoodLevel(20);
+        p1.setHealth(20);
+        p2.setFoodLevel(20);
+        p2.setHealth(20);
+        pp1.setState(PlayerState.DUEL);
+        pp2.setState(PlayerState.DUEL);
+        pp1.setCurrentGame(game);
+        pp2.setCurrentGame(game);
         game.setState(GameStete.STARTING);
         game.getArena().setInUse(true);
         startCooldown(game);
@@ -188,10 +203,14 @@ public class GameManager extends Managers {
         String message = "&f-------------------------\n&bWinner: &f" + winner.getName() + "&r | &cLoser: &f" + game.getOpponent(winner).getName() + "&r\n&f-------------------------";
         if (p1 != null) {
             plugin.getDataManager().teleportToSpawn(p1);
+            p1.getInventory().setArmorContents(null);
+            p1.getInventory().clear();
 
         }
         if (p2 != null) {
             plugin.getDataManager().teleportToSpawn(p2);
+            p2.getInventory().setArmorContents(null);
+            p2.getInventory().clear();
         }
 
         if (winner != null) {

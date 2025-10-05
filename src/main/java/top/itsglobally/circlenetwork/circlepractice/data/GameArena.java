@@ -2,9 +2,12 @@ package top.itsglobally.circlenetwork.circlepractice.data;
 
 import org.bukkit.Location;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameArena {
     private final String name;
-    private Kit kit;
+    private final List<String> kits = new ArrayList<>();
     private Location pos1;
     private Location pos2;
     private Location spectatorSpawn;
@@ -18,10 +21,11 @@ public class GameArena {
     }
 
     public void convertFromArena(Arena a, Kit kit) {
+
+        kits.add(kit.getName());
         setPos1(a.getPos1());
         setPos2(a.getPos2());
         setSpectatorSpawn(a.getSpectatorSpawn());
-        this.kit = kit;
     }
 
     public String getName() {
@@ -60,7 +64,12 @@ public class GameArena {
         this.inUse = inUse;
     }
 
-    public Kit getKit() {
-        return kit;
+    public void addKit(String kit) {
+        kits.add(kit);
     }
+
+    public List<String> getKits() {
+        return kits;
+    }
+
 }
