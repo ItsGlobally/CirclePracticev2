@@ -15,7 +15,8 @@ public class practice implements NontageCommand, ICommand {
         if (!(commandSender instanceof Player p)) return;
         switch (strings[0].toLowerCase()) {
             case "reload": {
-                plugin.getDataManager().reload();
+                plugin.getArenaManager().reload();
+                plugin.getKitManager().reload();
                 MessageUtil.sendMessage(p, "&aReloaded!");
             }
         }

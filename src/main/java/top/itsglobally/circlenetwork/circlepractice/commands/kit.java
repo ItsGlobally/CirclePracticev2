@@ -120,7 +120,7 @@ public class kit implements NontageCommand, ICommand {
             }
             case "saveall": {
                 Bukkit.broadcastMessage("e");
-                plugin.getDataManager().saveAllKits();
+                plugin.getKitManager().saveAllKits();
                 break;
             }
         }

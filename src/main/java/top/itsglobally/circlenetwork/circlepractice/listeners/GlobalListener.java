@@ -48,7 +48,7 @@ public class GlobalListener implements Listener, IListener {
     public void onJoin(PlayerJoinEvent e) {
         plugin.getPlayerManager().addPlayer(e.getPlayer());
         plugin.getPlayerManager().getPlayer(e.getPlayer()).unlockAchievement(Achievement.JOIN);
-        plugin.getDataManager().teleportToSpawn(e.getPlayer());
+        plugin.getConfigManager().teleportToSpawn(e.getPlayer());
     }
 
     @EventHandler

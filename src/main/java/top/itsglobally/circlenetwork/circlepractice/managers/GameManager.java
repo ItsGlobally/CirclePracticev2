@@ -104,7 +104,7 @@ public class GameManager extends Managers {
     }
 
     private List<GameArena> findAvailableArenas(Kit kit) {
-        return plugin.getDataManager().getGameArenas().stream()
+        return plugin.getArenaManager().getGameArenas().stream()
                 .filter(a -> !a.isInUse() && a.getKits().contains(kit.getName()))
                 .toList();
     }
@@ -206,7 +206,7 @@ public class GameManager extends Managers {
 
         String message = "&f-------------------------\n&bWinner: &f" + winner.getName() + "&r | &cLoser: &f" + game.getOpponent(winner).getName() + "&r\n&f-------------------------";
         if (p1 != null) {
-            plugin.getDataManager().teleportToSpawn(p1);
+            plugin.getConfigManager().teleportToSpawn(p1);
             p1.getInventory().setArmorContents(null);
             p1.getInventory().clear();
             for (PotionEffect pe : p1.getActivePotionEffects()) {
@@ -215,7 +215,7 @@ public class GameManager extends Managers {
 
         }
         if (p2 != null) {
-            plugin.getDataManager().teleportToSpawn(p2);
+            plugin.getConfigManager().teleportToSpawn(p2);
             p2.getInventory().setArmorContents(null);
             p2.getInventory().clear();
             for (PotionEffect pe : p2.getActivePotionEffects()) {

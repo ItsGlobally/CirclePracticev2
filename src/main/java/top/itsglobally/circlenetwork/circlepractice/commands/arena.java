@@ -20,42 +20,42 @@ public class arena implements NontageCommand, ICommand {
         String a1 = strings[1];
         switch (strings[0]) {
             case "create": {
-                if (plugin.getDataManager().getArena(a1) != null) {
+                if (plugin.getArenaManager().getArena(a1) != null) {
                     MessageUtil.sendMessage(p, "&cArena already exist!");
                     return;
                 }
                 Arena newA = new Arena(a1);
                 newA.setWorldName(a1);
-                plugin.getDataManager().addArena(newA);
+                plugin.getArenaManager().addArena(newA);
             }
             case "pos1": {
-                if (plugin.getDataManager().getArena(a1) == null) {
+                if (plugin.getArenaManager().getArena(a1) == null) {
                     MessageUtil.sendMessage(p, "&cArena not exist!");
                     return;
                 }
-                Arena a = plugin.getDataManager().getArena(a1);
+                Arena a = plugin.getArenaManager().getArena(a1);
                 a.setPos1(p.getLocation());
             }
             case "pos2": {
-                if (plugin.getDataManager().getArena(a1) == null) {
+                if (plugin.getArenaManager().getArena(a1) == null) {
                     MessageUtil.sendMessage(p, "&cArena not exist!");
                     return;
                 }
-                Arena a = plugin.getDataManager().getArena(a1);
+                Arena a = plugin.getArenaManager().getArena(a1);
                 a.setPos2(p.getLocation());
             }
             case "spec": {
-                if (plugin.getDataManager().getArena(a1) == null) {
+                if (plugin.getArenaManager().getArena(a1) == null) {
                     MessageUtil.sendMessage(p, "&cArena not exist!");
                     return;
                 }
-                Arena a = plugin.getDataManager().getArena(a1);
+                Arena a = plugin.getArenaManager().getArena(a1);
                 a.setSpectatorSpawn(p.getLocation());
             }
             case "list": {
                 StringBuilder sb = new StringBuilder();
                 sb.append("----------------------\n&r");
-                for (Arena a : plugin.getDataManager().getArenas()) {
+                for (Arena a : plugin.getArenaManager().getArenas()) {
                     sb.append(a.getName()).append(" ").append(a.isComplete() ? "&aComplete" : "&cIncomplete").append("\n&r");
                 }
                 sb.append("----------------------\n&r");
