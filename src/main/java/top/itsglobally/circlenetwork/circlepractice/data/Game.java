@@ -125,26 +125,29 @@ public class Game {
         }
     }
 
-    public boolean getIsEnemysBnsb(PracticePlayer pp, Location l) {
-        if (l == null || !pp.isInDuel()) return false;
-
-        GameArena arena = getArena();
-
-        if (arena == null) return false;
-
-        Location enemyBedHead = (getPlayer1OrPlayer2(pp) == 1)
-                ? arena.getBnsb2()
-                : arena.getBnsb1();
-        Location enemyBedFoot = (enemyBedHead != null) ? enemyBedHead.clone().add(1, 0, 0) : null;
-
-        if (enemyBedHead == null) return false;
-        if (!l.getWorld().equals(enemyBedHead.getWorld())) return false;
-
-        int x = l.getBlockX(), y = l.getBlockY(), z = l.getBlockZ();
-        boolean isHead = (x == enemyBedHead.getBlockX() && y == enemyBedHead.getBlockY() && z == enemyBedHead.getBlockZ());
-        boolean isFoot = (enemyBedFoot != null && x == enemyBedFoot.getBlockX() && y == enemyBedFoot.getBlockY() && z == enemyBedFoot.getBlockZ());
-
-        return isHead || isFoot;
+    public boolean isNear(Location loc1, Location loc2, int radius) {
+        return Math.abs(loc1.getBlockX() - loc2.getBlockX()) <= radius &&
+                Math.abs(loc1.getBlockY() - loc2.getBlockY()) <= radius &&
+                Math.abs(loc1.getBlockZ() - loc2.getBlockZ()) <= radius;
     }
+
+    public boolean getIsEnemyBed(PracticePlayer pp, Location loc) {
+        Location enemyBed = (getPlayer1OrPlayer2(pp) == 1) ? getArena().getBnsb2() : getArena().getBnsb1();
+        Location enemyBedHead = enemyBed.clone();
+        Location enemyBedFoot = enemyBed.clone().add(1, 0, 0);
+        return isNear(loc, enemyBedHead, 1) || isNear(loc, enemyBedFoot, 1);
+    }
+
+    public boolean getIsOwnBed(PracticePlayer pp, Location loc) {
+        Location ownBed = (getPlayer1OrPlayer2(pp) == 1) ? getArena().getBnsb1() : getArena().getBnsb2();
+        Location ownBedHead = ownBed.clone();
+        Location ownBedFoot = ownBed.clone().add(1, 0, 0);
+        return isNear(loc, ownBedHead, 1) || isNear(loc, ownBedFoot, 1);
+    }
+
+
+
+
+
 
 }

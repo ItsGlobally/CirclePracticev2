@@ -1,5 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.data;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -16,23 +17,29 @@ public class GameArena {
     private Location bnsb1;
     private Location bnsb2;
     private boolean respawnableKit;
+    private Arena orgArena;
+    private boolean remake;
 
     public GameArena(String name, String worldName) {
         this.name = name;
         this.inUse = false;
         this.worldName = worldName;
+        this.remake = false;
     }
 
     public void convertFromArena(Arena a) {
         kits.addAll(a.getKits());
-        setPos1(a.getPos1());
-        setPos2(a.getPos2());
+        Location l1n = new Location(Bukkit.getWorld(worldName), a.getPos1().getX(), a.getPos1().getY(), a.getPos1().getZ(), a.getPos1().getYaw(), a.getPos1().getPitch());
+        Location l2n = new Location(Bukkit.getWorld(worldName), a.getPos2().getX(), a.getPos2().getY(), a.getPos2().getZ(), a.getPos2().getYaw(), a.getPos2().getPitch());
+        setPos1(l1n);
+        setPos2(l2n);
         setSpectatorSpawn(a.getSpectatorSpawn());
         setRespawnableKit(a.isRespawnableKit());
         if (a.isRespawnableKit()) {
             setBnsb1(a.getBnsb1());
             setBnsb2(a.getBnsb2());
         }
+        this.orgArena = a;
     }
 
     public String getName() {
@@ -41,6 +48,10 @@ public class GameArena {
 
     public Location getPos1() {
         return pos1;
+    }
+
+    public String getWorldName() {
+        return worldName;
     }
 
     public void setPos1(Location pos1) {
@@ -103,4 +114,15 @@ public class GameArena {
         return respawnableKit;
     }
 
+    public Arena getOrgArena() {
+        return orgArena;
+    }
+
+    public boolean isRemake() {
+        return remake;
+    }
+
+    public void setRemake(boolean remake) {
+        this.remake = remake;
+    }
 }

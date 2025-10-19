@@ -7,10 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class serializer {
     public static Map<String, Object> serializeArena(Arena arena) {
@@ -56,6 +53,7 @@ public class serializer {
         map.put("canBuild", kit.isCanBuild());
         map.put("respawnable", kit.isRespawnable());
         if (kit.isRespawnable()) map.put("brokeToNoSpawn", kit.getBrokeToNoSpawn().name());
+        if (kit.isCanBuild()) map.put("allowBreakBlocks", kit.getAllowBreakBlocks().stream().toList());
         return map;
     }
 
@@ -95,6 +93,22 @@ public class serializer {
         if (map.containsKey("brokeToNoSpawn") && kit.isRespawnable()) {
             kit.setBrokeToNoSpawn(Material.valueOf((String) map.get("brokeToNoSpawn")));
         }
+        if (kit.isCanBuild() && map.containsKey("allowBreakBlocks")) {
+            Object obj = map.get("allowBreakBlocks");
+            if (obj instanceof List<?> list) {
+                Set<Material> blocks = new HashSet<>();
+                for (Object o : list) {
+                    if (o instanceof String s) {
+                        try {
+                            blocks.add(Material.valueOf(s));
+                        } catch (IllegalArgumentException ignored) {
+                        }
+                    }
+                }
+                kit.setAllowBreakBlocks(blocks);
+            }
+        }
+
 
 
         return kit;

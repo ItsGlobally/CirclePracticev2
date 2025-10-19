@@ -1,6 +1,7 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -143,6 +144,7 @@ public class GameManager extends Managers {
         Game game = new Game(pp1, pp2, kit, arena);
         Player p1 = game.getPlayer1().getPlayer();
         Player p2 = game.getPlayer2().getPlayer();
+
         p1.teleport(game.getArena().getPos1());
         p2.teleport(game.getArena().getPos2());
         p1.getInventory().setArmorContents(kit.getArmor());
@@ -246,6 +248,10 @@ public class GameManager extends Managers {
 
             if (p1 != null) MessageUtil.sendMessage(p1, message);
             if (p2 != null) MessageUtil.sendMessage(p2, message);
+        }
+
+        if (game.getArena().isRemake()) {
+            plugin.getArenaManager().removeGameArena(game.getArena());
         }
 
         games.remove(game.getId());

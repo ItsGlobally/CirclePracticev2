@@ -38,29 +38,18 @@ public class ArenaManager extends Managers {
         createDefaultArenas();
     }
 
-    public Arena randomArena() {
-        List<Arena> allArenas = new ArrayList<>(getArenas());
-        return allArenas.get(RandomUtil.nextInt(allArenas.size()));
-    }
-
     public void cloneArena(Arena a, String newWorldName) {
-        this.cloneArena(a.getWorldName());
-    }
-
-    public void cloneArena(String sourceWorldName) {
         try {
             SlimeLoader loader = slime.getLoader("file");
 
-
-            if (Bukkit.getWorld(sourceWorldName) != null) {
-                sl.unlockWorld(sourceWorldName);
+            if (Bukkit.getWorld(a.getWorldName()) != null) {
+                sl.unlockWorld(a.getWorldName());
             }
 
-            SlimeWorld sourceWorld = slime.loadWorld(loader, sourceWorldName, false, gameArenaProps());
-
-            String newWorldName = sourceWorldName + "_" + System.currentTimeMillis();
+            SlimeWorld sourceWorld = slime.loadWorld(loader, a.getWorldName(), false, gameArenaProps());
 
             SlimeWorld cloned = sourceWorld.clone(newWorldName);
+
             slime.generateWorld(cloned);
 
         } catch (UnknownWorldException | IOException | CorruptedWorldException |
@@ -70,24 +59,28 @@ public class ArenaManager extends Managers {
         }
     }
 
-
     public GameArena createGameArena(Kit kit) {
         String newWorldName = "arena_" + UUID.randomUUID().toString().substring(0, 8);
+
         Collection<Arena> arenas = getAvailableArenas();
         if (arenas.isEmpty()) return null;
+
         List<Arena> list = arenas.stream()
                 .filter(a -> a.getKits() != null && a.getKits().contains(kit.getName()))
                 .toList();
 
         if (list.isEmpty()) return null;
+
         Arena na = list.get(RandomUtil.nextInt(list.size()));
+
         cloneArena(na, newWorldName);
-        GameArena ga = new GameArena(na.getWorldName(), newWorldName);
+
+        GameArena ga = new GameArena(na.getName(), newWorldName);
         ga.convertFromArena(na);
+
         addGameArena(ga);
         return ga;
     }
-
 
     private SlimePropertyMap gameArenaProps() {
         SlimePropertyMap props = new SlimePropertyMap();
@@ -175,8 +168,19 @@ public class ArenaManager extends Managers {
         return gameArenaMap.values();
     }
 
-    public void removeGameArena(String name) {
-        gameArenaMap.remove(name);
+    public void removeGameArena(GameArena arena) {
+        if (arena != null) {
+            if (Bukkit.getWorld(arena.getWorldName()) != null) {
+                try {
+                    sl.unlockWorld(arena.getWorldName());
+                    Bukkit.unloadWorld(arena.getWorldName(), false);
+                } catch (Exception e) {
+                    Bukkit.broadcastMessage(MessageUtil.formatMessage("&cFailed to unload world: " + arena.getWorldName()));
+                    e.printStackTrace();
+                }
+            }
+            gameArenaMap.remove(arena.getName());
+        }
     }
 
 

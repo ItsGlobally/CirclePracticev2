@@ -17,7 +17,7 @@ public class Kit {
     private boolean respawnable;
     private int respawnTime;
     private Material brokeToNoSpawn;
-    private final Set<Material> allowBreakBlocks;
+    private Set<Material> allowBreakBlocks;
 
     public Kit(String name) {
         this.name = name;
@@ -118,5 +118,8 @@ public class Kit {
 
     public void addAllowBreakBlocks(Material m) {
         allowBreakBlocks.add(m);
+    }
+    public void setAllowBreakBlocks(Set<Material> sm) {
+        allowBreakBlocks = sm;
     }
 }

@@ -17,6 +17,7 @@ public class Arena {
     private boolean respawnableKit;
     private Location bnsb1;
     private Location bnsb2;
+    private boolean remake;
 
     public Arena(String name) {
         this.name = name;
@@ -96,4 +97,11 @@ public class Arena {
         return respawnableKit;
     }
 
+    public void setRemake(boolean remake) {
+        this.remake = remake;
+    }
+
+    public boolean isRemake() {
+        return remake;
+    }
 }
