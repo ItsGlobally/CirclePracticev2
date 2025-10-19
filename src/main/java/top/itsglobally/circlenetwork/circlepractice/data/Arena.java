@@ -14,6 +14,9 @@ public class Arena {
     private Location spectatorSpawn;
     private final boolean inUse;
     private String worldName;
+    private boolean respawnableKit;
+    private Location bnsb1;
+    private Location bnsb2;
 
     public Arena(String name) {
         this.name = name;
@@ -68,4 +71,29 @@ public class Arena {
     public boolean isComplete() {
         return pos1 != null && pos2 != null && spectatorSpawn != null && Bukkit.getWorld(worldName) != null;
     }
+
+    public Location getBnsb1() {
+        return bnsb1;
+    }
+
+    public Location getBnsb2() {
+        return bnsb2;
+    }
+
+    public void setBnsb1(Location bnsb1) {
+        this.bnsb1 = bnsb1;
+    }
+
+    public void setBnsb2(Location bnsb2) {
+        this.bnsb2 = bnsb2;
+    }
+
+    public void setRespawnableKit(boolean respawnableKit) {
+        this.respawnableKit = respawnableKit;
+    }
+
+    public boolean isRespawnableKit() {
+        return respawnableKit;
+    }
+
 }

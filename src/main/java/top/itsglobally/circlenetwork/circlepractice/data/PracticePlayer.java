@@ -76,9 +76,11 @@ public class PracticePlayer {
     public boolean isInSpawn() {
         return state == PlayerState.SPAWN || state == PlayerState.EDITING;
     }
+
     public boolean isInSpawnNotEditing() {
         return state == PlayerState.SPAWN;
     }
+
     public boolean isEditing() {
         return state == PlayerState.EDITING || state == PlayerState.EDITINGGLOBALLY;
     }
@@ -115,7 +117,7 @@ public class PracticePlayer {
         if (hasAchievement(a)) return;
         unlocked.add(a);
         Component c = Component.text(MessageUtil.formatMessage("&e&ke&a>> " + "Achievement Unlocked:" + "&6" + a.getTitle() + "&a<<&e&ke"))
-                .hoverEvent(HoverEvent.showText(Component.text(MessageUtil.formatMessage("&a" + a.getDescription()))));;
+                .hoverEvent(HoverEvent.showText(Component.text(MessageUtil.formatMessage("&a" + a.getDescription()))));
         MessageUtil.sendMessage(player, c);
     }
 

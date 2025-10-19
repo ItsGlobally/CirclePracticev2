@@ -8,7 +8,9 @@ import github.scarsz.discordsrv.dependencies.jda.api.interactions.commands.build
 import top.itsglobally.circlenetwork.circlepractice.listeners.IListener;
 import top.nontage.nontagelib.annotations.AutoListener;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @AutoListener
 public class SlashCommands implements SlashCommandProvider, IListener {

@@ -44,6 +44,7 @@ public class GlobalListener implements Listener, IListener {
             }
         }
     }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         plugin.getPlayerManager().addPlayer(e.getPlayer());
@@ -58,17 +59,20 @@ public class GlobalListener implements Listener, IListener {
                         "&r » %2$s"
         ));
     }
+
     @EventHandler
     public void died(PlayerDeathEvent e) {
         Player p = e.getEntity();
         p.spigot().respawn();
     }
+
     @EventHandler
     public void onMobSpawn(CreatureSpawnEvent e) {
         if (e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
             e.setCancelled(true);
         }
     }
+
     @EventHandler
     public void onPotionDrink(PlayerItemConsumeEvent event) {
         ItemStack item = event.getItem();
@@ -83,20 +87,23 @@ public class GlobalListener implements Listener, IListener {
             );
         }
     }
+
     @EventHandler
     public void damage(EntityDamageEvent e) {
-        if(e.getCause() == EntityDamageEvent.DamageCause.FALL) e.setCancelled(true);
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) e.setCancelled(true);
         if (e.getEntity() instanceof Player p) {
             PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
             if (pp.isInSpawn()) e.setCancelled(true);
         }
     }
+
     @EventHandler
     public void bbreak(BlockBreakEvent e) {
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
         if (pp.isInSpawn()) e.setCancelled(true);
     }
+
     @EventHandler
     public void place(BlockPlaceEvent e) {
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;

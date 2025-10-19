@@ -71,19 +71,23 @@ public class ArenaManager extends Managers {
     }
 
 
-
     public GameArena createGameArena(Kit kit) {
         String newWorldName = "arena_" + UUID.randomUUID().toString().substring(0, 8);
         Collection<Arena> arenas = getAvailableArenas();
         if (arenas.isEmpty()) return null;
-        List<Arena> list = new ArrayList<>(arenas);
+        List<Arena> list = arenas.stream()
+                .filter(a -> a.getKits() != null && a.getKits().contains(kit.getName()))
+                .toList();
+
+        if (list.isEmpty()) return null;
         Arena na = list.get(RandomUtil.nextInt(list.size()));
         cloneArena(na, newWorldName);
         GameArena ga = new GameArena(na.getWorldName(), newWorldName);
-        ga.convertFromArena(na, kit);
+        ga.convertFromArena(na);
         addGameArena(ga);
         return ga;
     }
+
 
     private SlimePropertyMap gameArenaProps() {
         SlimePropertyMap props = new SlimePropertyMap();
@@ -105,6 +109,7 @@ public class ArenaManager extends Managers {
             arenaMap.put(entry.getKey(), serializer.deserializeArena(entry.getValue()));
         }
     }
+
     public class ArenaConfig extends BaseConfig {
         public Map<String, Map<String, Object>> arenas = new LinkedHashMap<>();
     }
@@ -117,18 +122,25 @@ public class ArenaManager extends Managers {
             arena.setPos2(new Location(Bukkit.getWorld(arena.getWorldName()), -50, 51, 0, 180, 0));
             arena.setSpectatorSpawn(new Location(Bukkit.getWorld(arena.getWorldName()), 0, 75, 0, 90, 0));
             arena.addKit("NoDebuff");
-
+            arena.setRespawnableKit(false);
             addArena(arena);
             saveAllArenas();
         }
     }
+
     public void saveAllArenas() {
         arenaConfig.save();
     }
+
     public void addArena(Arena arena) {
         arenaConfig.arenas.put(arena.getName(), serializer.serializeArena(arena));
         arenaConfig.save();
         arenaMap.put(arena.getName(), arena);
+    }
+
+    public void updateArena(Arena arena) {
+        arenaConfig.arenas.put(arena.getName(), serializer.serializeArena(arena));
+        arenaConfig.save();
     }
 
     public Arena getArena(String name) {

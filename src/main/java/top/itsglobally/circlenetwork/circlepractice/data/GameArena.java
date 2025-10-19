@@ -13,6 +13,9 @@ public class GameArena {
     private Location spectatorSpawn;
     private boolean inUse;
     private final String worldName;
+    private Location bnsb1;
+    private Location bnsb2;
+    private boolean respawnableKit;
 
     public GameArena(String name, String worldName) {
         this.name = name;
@@ -20,9 +23,9 @@ public class GameArena {
         this.worldName = worldName;
     }
 
-    public void convertFromArena(Arena a, Kit kit) {
+    public void convertFromArena(Arena a) {
 
-        kits.add(kit.getName());
+        kits.addAll(a.getKits());
         setPos1(a.getPos1());
         setPos2(a.getPos2());
         setSpectatorSpawn(a.getSpectatorSpawn());
@@ -70,6 +73,30 @@ public class GameArena {
 
     public List<String> getKits() {
         return kits;
+    }
+
+    public Location getBnsb1() {
+        return bnsb1;
+    }
+
+    public Location getBnsb2() {
+        return bnsb2;
+    }
+
+    public void setBnsb1(Location bnsb1) {
+        this.bnsb1 = bnsb1;
+    }
+
+    public void setBnsb2(Location bnsb2) {
+        this.bnsb2 = bnsb2;
+    }
+
+    public void setRespawnableKit(boolean respawnableKit) {
+        this.respawnableKit = respawnableKit;
+    }
+
+    public boolean isRespawnableKit() {
+        return respawnableKit;
     }
 
 }

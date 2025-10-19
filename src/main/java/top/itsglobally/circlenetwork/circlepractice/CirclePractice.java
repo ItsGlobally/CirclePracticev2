@@ -77,7 +77,11 @@ public final class CirclePractice extends JavaPlugin {
     public PluginManager getPluginManager() {
         return plm;
     }
-    public ConfigManager getConfigManager() { return cm; }
+
+    public ConfigManager getConfigManager() {
+        return cm;
+    }
+
     public LuckPerms getLuckPerms() {
         return luckPerms;
     }

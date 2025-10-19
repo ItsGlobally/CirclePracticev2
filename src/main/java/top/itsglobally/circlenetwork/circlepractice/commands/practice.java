@@ -8,7 +8,7 @@ import top.nontage.nontagelib.command.NontageCommand;
 
 import java.util.List;
 
-@CommandInfo(name="practice")
+@CommandInfo(name = "practice")
 public class practice implements NontageCommand, ICommand {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {

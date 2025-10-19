@@ -7,18 +7,24 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
+import top.itsglobally.circlenetwork.circlepractice.data.Temp;
+import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.AutoListener;
+
+import java.util.Collections;
+import java.util.Set;
 
 @AutoListener
 public class GameListener implements Listener, IListener {
+
+
     @EventHandler
     public void hunger(FoodLevelChangeEvent e) {
         if (!(e.getEntity() instanceof Player p)) return;
@@ -34,6 +40,7 @@ public class GameListener implements Listener, IListener {
 
         }
     }
+
     @EventHandler
     public void damage(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player vic)) return;
@@ -41,34 +48,99 @@ public class GameListener implements Listener, IListener {
         if (vicp.isInDuel()) {
             Game game = vicp.getCurrentGame();
             if (vic.getHealth() < e.getFinalDamage()) {
-                e.setCancelled(true);
-                vic.setHealth(20.0);
-                vic.setFoodLevel(20);
-                Player winner = game.getOpponent(vicp).getPlayer();
-                winner.setHealth(20.0);
-                winner.setFoodLevel(20);
-                plugin.getGameManager().endGame(game, game.getOpponent(vicp));
+                if (game.getKit().isRespawnable()) {
+                    if (game.getPlayerRespawnable(vicp)) {
+                        e.setCancelled(true);
+                        vic.setHealth(20.0);
+                        vic.setFoodLevel(20);
+                        PracticePlayer klrpp = game.getOpponent(vicp);
+                        klrpp.getPlayer().hidePlayer(vic);
+
+                        int[] deathCountdown = {game.getKit().getRespawnTime()};
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (deathCountdown[0] <= 0) {
+                                    klrpp.getPlayer().showPlayer(vic);
+                                    vic.teleport(game.getPlayerSpawnPoint(vicp));
+                                    MessageUtil.sendMessage(vic, "You have respawned!");
+                                    cancel();
+                                    return;
+                                }
+                                MessageUtil.sendMessage(vic, "Respawning in " + deathCountdown[0] + "s...");
+                                deathCountdown[0]--;
+                            }
+                        }.runTaskTimer(plugin, 0L, 20L);
+                    } else {
+                        e.setCancelled(true);
+                        vic.setHealth(20.0);
+                        vic.setFoodLevel(20);
+                        Player winner = game.getOpponent(vicp).getPlayer();
+                        winner.setHealth(20.0);
+                        winner.setFoodLevel(20);
+                        plugin.getGameManager().endGame(game, game.getOpponent(vicp));
+                    }
+                } else {
+                    e.setCancelled(true);
+                    vic.setHealth(20.0);
+                    vic.setFoodLevel(20);
+                    Player winner = game.getOpponent(vicp).getPlayer();
+                    winner.setHealth(20.0);
+                    winner.setFoodLevel(20);
+                    plugin.getGameManager().endGame(game, game.getOpponent(vicp));
+                }
             }
         }
     }
+
     @EventHandler
     public void died(PlayerDeathEvent e) {
-        Player p = e.getEntity();
-        PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
+        Player vic = e.getEntity();
+        PracticePlayer vicp = plugin.getPlayerManager().getPlayer(vic);
 
-        if (pp.isInDuel()) {
-            Game game = pp.getCurrentGame();
-            e.setDeathMessage(null);
-            e.getDrops().clear();
-            e.setDroppedExp(0);
-            p.setHealth(20.0);
-            p.setFoodLevel(20);
-            Player winner = game.getOpponent(pp).getPlayer();
-            winner.setHealth(20.0);
-            winner.setFoodLevel(20);
-            plugin.getGameManager().endGame(game, game.getOpponent(pp));
+        if (!vicp.isInDuel()) return;
+        Game game = vicp.getCurrentGame();
+
+        e.setDeathMessage(null);
+        e.getDrops().clear();
+        e.setDroppedExp(0);
+
+        Player killer = game.getOpponent(vicp).getPlayer();
+
+        if (game.getKit().isRespawnable()) {
+            vic.spigot().respawn();
+            vic.setHealth(20.0);
+            vic.setFoodLevel(20);
+            killer.hidePlayer(vic);
+
+            int[] deathCountdown = {game.getKit().getRespawnTime()};
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (deathCountdown[0] <= 0) {
+                        killer.showPlayer(vic);
+                        vic.teleport(game.getPlayerSpawnPoint(vicp));
+                        MessageUtil.sendMessage(vic, "§aYou have respawned!");
+                        cancel();
+                        return;
+                    }
+
+                    MessageUtil.sendMessage(vic, "§eRespawning in " + deathCountdown[0] + "s...");
+                    deathCountdown[0]--;
+                }
+            }.runTaskTimer(plugin, 0L, 20L);
+
+        } else {
+            vic.spigot().respawn();
+            vic.setHealth(20.0);
+            vic.setFoodLevel(20);
+            killer.setHealth(20.0);
+            killer.setFoodLevel(20);
+            plugin.getGameManager().endGame(game, game.getOpponent(vicp));
         }
     }
+
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         Player p = e.getPlayer();
@@ -82,15 +154,34 @@ public class GameListener implements Listener, IListener {
 
     @EventHandler
     public void bbreak(BlockBreakEvent e) {
-        if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE && pp.isInSpawn()) return;
         if (pp.isInDuel()) {
             Game game = pp.getCurrentGame();
             if (!game.getKit().isCanBuild()) {
                 e.setCancelled(true);
+                return;
+            }
+            if (e.getBlock().getType() == game.getKit().getBrokeToNoSpawn()) {
+                if (game.getIsEnemysBnsb(pp, e.getBlock().getLocation())) {
+                    game.setRespawnable(game.getOpponent(pp), false);
+                    MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&cBED DESTROYED", "You won't be able to respawn again!");
+                    MessageUtil.sendMessage(e.getPlayer(), game.getOpponent(pp).getPlayer(), "BED DESTROY > &7" + game.getOpponent(pp).getPlayer() + "&r's bed has been destroyed by " + e.getPlayer().getName() + "!");
+                } else {
+                    MessageUtil.sendMessage(e.getPlayer(), "&cYou can't break your own bed!");
+                }
+            }
+            if (game.getKit().getAllowBreakBlocks().contains(e.getBlock().getType())) {
+                Set<Location> ls = Temp.DuelBlockPlaced.get(e.getPlayer().getUniqueId());
+                if (ls == null || ls.isEmpty()) {
+                    return;
+                }
+                ls.remove(e.getBlock().getLocation());
+                Temp.DuelBlockPlaced.put(e.getPlayer().getUniqueId(), ls);
             }
         }
     }
+
     @EventHandler
     public void place(BlockPlaceEvent e) {
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
@@ -99,7 +190,11 @@ public class GameListener implements Listener, IListener {
             Game game = pp.getCurrentGame();
             if (!game.getKit().isCanBuild()) {
                 e.setCancelled(true);
+                return;
             }
+            Set<Location> ls = Temp.DuelBlockPlaced.putIfAbsent(e.getPlayer().getUniqueId(), Collections.emptySet());
+            ls.add(e.getBlock().getLocation());
+            Temp.DuelBlockPlaced.put(e.getPlayer().getUniqueId(), ls);
         }
     }
 }

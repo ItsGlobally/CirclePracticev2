@@ -20,18 +20,22 @@ import java.util.Map;
 public class KitManager extends Managers {
     private static KitConfig kitConfig;
     private final List<Kit> kits = new ArrayList<>();
+
     public KitManager() {
         kitConfig = ConfigRegister.register(new KitConfig(), "kits");
         if (kitConfig.kits == null) kitConfig.kits = new LinkedHashMap<>();
         reload();
         createDefaultKits();
     }
+
     public class KitConfig extends BaseConfig {
         public Map<String, Map<String, Object>> kits = new LinkedHashMap<>();
     }
+
     public List<Kit> getKits() {
         return kits;
     }
+
     public void setKits(List<Kit> kits) {
         this.kits.clear();
         this.kits.addAll(kits);
@@ -57,6 +61,7 @@ public class KitManager extends Managers {
         newKit.setArmor(armor);
         kits.add(newKit);
     }
+
     public void updateKit(Kit kit) {
         kits.removeIf(k -> k.getName().equalsIgnoreCase(kit.getName()));
         kits.add(kit);
@@ -87,6 +92,7 @@ public class KitManager extends Managers {
         }
         setKits(kits);
     }
+
     public void saveAllKits() {
         kitConfig.kits.clear();
         for (Kit kit : getKits()) {
@@ -94,6 +100,7 @@ public class KitManager extends Managers {
         }
         kitConfig.save();
     }
+
     public void createDefaultKits() {
         if (!kitAlreadyExist("NoDebuff")) {
             Kit noDebuff = new Kit("NoDebuff");
@@ -161,10 +168,52 @@ public class KitManager extends Managers {
             noDebuff.setContents(contents);
             noDebuff.setHunger(true);
             noDebuff.setEnabled(true);
-
+            noDebuff.setRespawnable(false);
             addKit(noDebuff);
-            saveAllKits();
         }
+        if (!kitAlreadyExist("bedfight")) {
+            Kit bedFight = new Kit("bedfight");
+
+            ItemStack[] armor = new ItemStack[4];
+
+            armor[3] = new ItemBuilder(Material.LEATHER_HELMET)
+                    .unBreak()
+                    .build();
+            armor[2] = new ItemBuilder(Material.LEATHER_CHESTPLATE)
+                    .unBreak()
+                    .build();
+            armor[1] = new ItemBuilder(Material.LEATHER_LEGGINGS)
+                    .unBreak()
+                    .build();
+            armor[0] = new ItemBuilder(Material.LEATHER_BOOTS)
+                    .unBreak()
+                    .build();
+
+            ItemStack[] contents = new ItemStack[36];
+            contents[0] = new ItemBuilder(Material.WOOD_SWORD)
+                    .unBreak()
+                    .build();
+            contents[1] = new ItemBuilder(Material.WOOD_AXE)
+                    .enchant(Enchantment.DIG_SPEED, 1)
+                    .unBreak()
+                    .build();
+            contents[2] = new ItemBuilder(Material.WOOD_PICKAXE)
+                    .enchant(Enchantment.DIG_SPEED, 1)
+                    .unBreak()
+                    .build();
+            contents[3] = new ItemBuilder(Material.WOOL)
+                    .setAmount(64)
+                    .build();
+
+            bedFight.setArmor(armor);
+            bedFight.setContents(contents);
+            bedFight.setRespawnable(true);
+            bedFight.setBrokeToNoSpawn(Material.BED);
+            bedFight.setCanBuild(true);
+            bedFight.setHunger(false);
+            addKit(bedFight);
+        }
+        saveAllKits();
     }
 
 }

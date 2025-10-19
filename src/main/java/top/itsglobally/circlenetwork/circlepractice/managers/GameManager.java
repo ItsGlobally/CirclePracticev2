@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
@@ -105,9 +104,19 @@ public class GameManager extends Managers {
 
     private List<GameArena> findAvailableArenas(Kit kit) {
         return plugin.getArenaManager().getGameArenas().stream()
-                .filter(a -> !a.isInUse() && a.getKits().contains(kit.getName()))
+                .filter(a -> {
+                    boolean valid = !a.isInUse()
+                            && a.getKits().stream().anyMatch(k -> k.equalsIgnoreCase(kit.getName()));
+                    Bukkit.getLogger().info("[DEBUG] Arena=" + a.getName()
+                            + " | inUse=" + a.isInUse()
+                            + " | kits=" + a.getKits()
+                            + " | kit=" + kit.getName()
+                            + " | valid=" + valid);
+                    return valid;
+                })
                 .toList();
     }
+
 
     public void processNewGame(Player p1, Player p2, Kit kit) {
         GameArena ga = null;
@@ -152,6 +161,8 @@ public class GameManager extends Managers {
         game.getArena().setInUse(true);
         startCooldown(game);
         pp1.unlockAchievement(Achievement.FIRSTGAME);
+        Temp.DuelBlockPlaced.put(p1.getUniqueId(), Collections.emptySet());
+        Temp.DuelBlockPlaced.put(p2.getUniqueId(), Collections.emptySet());
         games.put(game.getId(), game);
     }
 
@@ -201,8 +212,9 @@ public class GameManager extends Managers {
         game.getPlayer2().setState(PlayerState.SPAWN);
         game.getPlayer1().setCurrentGame(null);
         game.getPlayer2().setCurrentGame(null);
-
         game.getArena().setInUse(false);
+        Temp.DuelBlockPlaced.remove(game.getPlayer1().getUuid());
+        Temp.DuelBlockPlaced.remove(game.getPlayer2().getUuid());
 
         String message = "&f-------------------------\n&bWinner: &f" + winner.getName() + "&r | &cLoser: &f" + game.getOpponent(winner).getName() + "&r\n&f-------------------------";
         if (p1 != null) {
@@ -227,8 +239,10 @@ public class GameManager extends Managers {
             Player winnerPlayer = Bukkit.getPlayer(winner.getUuid());
             PracticePlayer winnerPp = plugin.getPlayerManager().getPlayer(winnerPlayer);
             PracticePlayer loser = game.getOpponent(winnerPp);
-            if (loser.getPlayer() != null)MessageUtil.sendTitle(loser.getPlayer(), "&cDEFEAT!", "You have been defeated by " + winner.getName());
-            if (winnerPp.getPlayer() != null)MessageUtil.sendTitle(winner.getPlayer(), "&aVICTORY!", "You have defeated " + loser.getName());
+            if (loser.getPlayer() != null)
+                MessageUtil.sendTitle(loser.getPlayer(), "&cDEFEAT!", "You have been defeated by " + winner.getName());
+            if (winnerPp.getPlayer() != null)
+                MessageUtil.sendTitle(winner.getPlayer(), "&aVICTORY!", "You have defeated " + loser.getName());
 
             if (p1 != null) MessageUtil.sendMessage(p1, message);
             if (p2 != null) MessageUtil.sendMessage(p2, message);

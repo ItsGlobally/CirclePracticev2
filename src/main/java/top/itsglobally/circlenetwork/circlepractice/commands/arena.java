@@ -1,6 +1,5 @@
 package top.itsglobally.circlenetwork.circlepractice.commands;
 
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
@@ -16,10 +15,13 @@ public class arena implements NontageCommand, ICommand {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
-        if (strings.length < 2) return;
-        String a1 = strings[1];
         switch (strings[0]) {
+            case "reload": {
+                plugin.getArenaManager().reload();
+            }
             case "create": {
+                if (strings.length < 2) return;
+                String a1 = strings[1];
                 if (plugin.getArenaManager().getArena(a1) != null) {
                     MessageUtil.sendMessage(p, "&cArena already exist!");
                     return;
@@ -27,30 +29,115 @@ public class arena implements NontageCommand, ICommand {
                 Arena newA = new Arena(a1);
                 newA.setWorldName(a1);
                 plugin.getArenaManager().addArena(newA);
+                break;
             }
             case "pos1": {
+                if (strings.length < 2) return;
+                String a1 = strings[1];
                 if (plugin.getArenaManager().getArena(a1) == null) {
                     MessageUtil.sendMessage(p, "&cArena not exist!");
                     return;
                 }
                 Arena a = plugin.getArenaManager().getArena(a1);
                 a.setPos1(p.getLocation());
+                plugin.getArenaManager().updateArena(a);
+                break;
             }
             case "pos2": {
+                if (strings.length < 2) return;
+                String a1 = strings[1];
                 if (plugin.getArenaManager().getArena(a1) == null) {
                     MessageUtil.sendMessage(p, "&cArena not exist!");
                     return;
                 }
                 Arena a = plugin.getArenaManager().getArena(a1);
                 a.setPos2(p.getLocation());
+                plugin.getArenaManager().updateArena(a);
+                break;
             }
             case "spec": {
+                if (strings.length < 2) return;
+                String a1 = strings[1];
                 if (plugin.getArenaManager().getArena(a1) == null) {
                     MessageUtil.sendMessage(p, "&cArena not exist!");
                     return;
                 }
                 Arena a = plugin.getArenaManager().getArena(a1);
                 a.setSpectatorSpawn(p.getLocation());
+                plugin.getArenaManager().updateArena(a);
+                break;
+            }
+            case "respawnable": {
+                if (strings.length < 3) return;
+                String a1 = strings[1];
+                String a2 = strings[2];
+                if (plugin.getArenaManager().getArena(a1) == null) {
+                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                    return;
+                }
+                Arena a = plugin.getArenaManager().getArena(a1);
+                try {
+                    boolean status = Boolean.parseBoolean(a2);
+                    a.setRespawnableKit(status);
+                    plugin.getArenaManager().updateArena(a);
+                    break;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+            case "bnsb1": {
+                if (strings.length < 2) return;
+                String a1 = strings[1];
+                if (plugin.getArenaManager().getArena(a1) == null) {
+                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                    return;
+                }
+                Arena a = plugin.getArenaManager().getArena(a1);
+                if (!a.isRespawnableKit()) {
+                    MessageUtil.sendMessage(p, "&cArena not enabled respawnable!");
+                    return;
+                }
+                a.setBnsb1(p.getLocation());
+                plugin.getArenaManager().updateArena(a);
+                break;
+            }
+            case "bnsb2": {
+                if (strings.length < 2) return;
+                String a1 = strings[1];
+                if (plugin.getArenaManager().getArena(a1) == null) {
+                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                    return;
+                }
+                Arena a = plugin.getArenaManager().getArena(a1);
+                if (!a.isRespawnableKit()) {
+                    MessageUtil.sendMessage(p, "&cArena not enabled respawnable!");
+                    return;
+                }
+                a.setBnsb2(p.getLocation());
+                plugin.getArenaManager().updateArena(a);
+                break;
+            }
+            case "addkit": {
+                if (strings.length < 3) return;
+                String a1 = strings[1];
+                String a2 = strings[2];
+                if (plugin.getArenaManager().getArena(a1) == null) {
+                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                    return;
+                }
+                if (!plugin.getKitManager().kitAlreadyExist(a2)) {
+                    MessageUtil.sendMessage(p, "&cKit not exist!");
+                    return;
+                }
+                Arena a = plugin.getArenaManager().getArena(a1);
+                if (a.getKits().contains(a2)) {
+                    MessageUtil.sendMessage(p, "&cKit already added!");
+                    return;
+                }
+                a.addKit(a2);
+                plugin.getArenaManager().updateArena(a);
+                break;
             }
             case "list": {
                 StringBuilder sb = new StringBuilder();
@@ -60,7 +147,7 @@ public class arena implements NontageCommand, ICommand {
                 }
                 sb.append("----------------------\n&r");
                 MessageUtil.sendMessage(p, sb.toString());
-
+                break;
             }
         }
     }

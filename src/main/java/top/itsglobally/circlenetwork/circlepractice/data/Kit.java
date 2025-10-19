@@ -1,6 +1,10 @@
 package top.itsglobally.circlenetwork.circlepractice.data;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Kit {
     private final String name;
@@ -10,6 +14,10 @@ public class Kit {
     private boolean enabled;
     private boolean forDuels;
     private boolean canBuild;
+    private boolean respawnable;
+    private int respawnTime;
+    private Material brokeToNoSpawn;
+    private final Set<Material> allowBreakBlocks;
 
     public Kit(String name) {
         this.name = name;
@@ -19,6 +27,9 @@ public class Kit {
         this.contents = new ItemStack[36];
         this.armor = new ItemStack[4];
         this.canBuild = false;
+        this.respawnable = false;
+        this.respawnTime = 5;
+        this.allowBreakBlocks = new HashSet<>();
     }
 
     public String getName() {
@@ -75,5 +86,37 @@ public class Kit {
 
     public void setCanBuild(boolean canBuild) {
         this.canBuild = canBuild;
+    }
+
+    public boolean isRespawnable() {
+        return respawnable;
+    }
+
+    public void setRespawnable(boolean respawnable) {
+        this.respawnable = respawnable;
+    }
+
+    public int getRespawnTime() {
+        return respawnTime;
+    }
+
+    public void setRespawnTime(int respawnTime) {
+        this.respawnTime = respawnTime;
+    }
+
+    public Material getBrokeToNoSpawn() {
+        return brokeToNoSpawn;
+    }
+
+    public void setBrokeToNoSpawn(Material brokeToNoSpawn) {
+        this.brokeToNoSpawn = brokeToNoSpawn;
+    }
+
+    public Set<Material> getAllowBreakBlocks() {
+        return allowBreakBlocks;
+    }
+
+    public void addAllowBreakBlocks(Material m) {
+        allowBreakBlocks.add(m);
     }
 }

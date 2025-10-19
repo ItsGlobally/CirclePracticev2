@@ -1,7 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.commands;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
@@ -13,7 +12,7 @@ import top.nontage.nontagelib.command.NontageCommand;
 
 import java.util.List;
 
-@CommandInfo(name="kit")
+@CommandInfo(name = "kit")
 public class kit implements NontageCommand, ICommand {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
@@ -58,7 +57,8 @@ public class kit implements NontageCommand, ICommand {
             }
             case "save": {
                 if (pp.isEditing()) {
-                    if (pp.getState() == PlayerState.EDITINGGLOBALLY) plugin.getKitManager().updateKit(a1, p.getInventory().getContents(), p.getInventory().getArmorContents());
+                    if (pp.getState() == PlayerState.EDITINGGLOBALLY)
+                        plugin.getKitManager().updateKit(a1, p.getInventory().getContents(), p.getInventory().getArmorContents());
                     MessageUtil.sendMessage(p, "&aSaved kit " + a1 + "!");
                     p.getInventory().clear();
                     p.getInventory().setArmorContents(null);

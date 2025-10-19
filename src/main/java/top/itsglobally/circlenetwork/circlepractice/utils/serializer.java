@@ -2,6 +2,7 @@ package top.itsglobally.circlenetwork.circlepractice.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
@@ -20,6 +21,11 @@ public class serializer {
         map.put("pos2", serializeLocation(arena.getPos2()));
         map.put("spectatorSpawn", serializeLocation(arena.getSpectatorSpawn()));
         map.put("kits", new ArrayList<>(arena.getKits()));
+        map.put("respawnablekit", arena.isRespawnableKit());
+        if (arena.isRespawnableKit()) {
+            map.put("bnsb1", serializeLocation(arena.getBnsb1()));
+            map.put("bnsb2", serializeLocation(arena.getBnsb2()));
+        }
         return map;
     }
 
@@ -32,6 +38,11 @@ public class serializer {
         if (map.containsKey("spectatorSpawn"))
             arena.setSpectatorSpawn(deserializeLocation((Map<String, Object>) map.get("spectatorSpawn")));
         if (map.containsKey("kits")) arena.getKits().addAll((List<String>) map.get("kits"));
+        if (map.containsKey("respawnablekit")) arena.setRespawnableKit((Boolean) map.get("respawnablekit"));
+        if (arena.isRespawnableKit()) {
+            if (map.containsKey("bnsb1")) arena.setBnsb1(deserializeLocation((Map<String, Object>) map.get("bnsb1")));
+            if (map.containsKey("bnsb2")) arena.setBnsb2(deserializeLocation((Map<String, Object>) map.get("bnsb2")));
+        }
         return arena;
     }
 
@@ -43,6 +54,8 @@ public class serializer {
         map.put("forDuel", kit.isForDuels());
         map.put("enabled", kit.isEnabled());
         map.put("canBuild", kit.isCanBuild());
+        map.put("respawnable", kit.isRespawnable());
+        if (kit.isRespawnable()) map.put("brokeToNoSpawn", kit.getBrokeToNoSpawn().name());
         return map;
     }
 
@@ -50,7 +63,6 @@ public class serializer {
         String name = (String) map.getOrDefault("name", "Unknown");
         Kit kit = new Kit(name);
 
-        // Inventory
         if (map.containsKey("inventory")) {
             Object invObj = map.get("inventory");
             ItemStack[][] items = null;
@@ -77,6 +89,13 @@ public class serializer {
         if (map.containsKey("canBuild")) {
             kit.setCanBuild((Boolean) map.get("canBuild"));
         }
+        if (map.containsKey("respawnable")) {
+            kit.setRespawnable((Boolean) map.get("respawnable"));
+        }
+        if (map.containsKey("brokeToNoSpawn") && kit.isRespawnable()) {
+            kit.setBrokeToNoSpawn(Material.valueOf((String) map.get("brokeToNoSpawn")));
+        }
+
 
         return kit;
     }

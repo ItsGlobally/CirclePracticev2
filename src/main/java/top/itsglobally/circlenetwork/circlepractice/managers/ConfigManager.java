@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
 import top.nontage.nontagelib.config.BaseConfig;
 
-public class ConfigManager extends Managers{
+public class ConfigManager extends Managers {
     private static MainConfig mainConfig;
 
     public ConfigManager() {

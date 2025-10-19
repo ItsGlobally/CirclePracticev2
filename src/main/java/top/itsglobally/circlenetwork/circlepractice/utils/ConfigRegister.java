@@ -7,7 +7,8 @@ import java.io.File;
 
 public class ConfigRegister {
     private static File configDir;
-    private static CirclePractice plugin = CirclePractice.getPlugin();
+    private static final CirclePractice plugin = CirclePractice.getPlugin();
+
     public static <T extends BaseConfig> T register(T config, String name) {
         configDir = plugin.getDataFolder();
         if (!configDir.exists()) configDir.mkdirs();
