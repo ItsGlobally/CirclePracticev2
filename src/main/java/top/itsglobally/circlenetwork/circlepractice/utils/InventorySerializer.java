@@ -1,82 +1,116 @@
 package top.itsglobally.circlenetwork.circlepractice.utils;
 
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Base64;
+import java.util.*;
 
+/**
+ * InventorySerializer - YAML-friendly readable serialization.
+ * Converts inventories to List<Map<String, Object>> instead of Base64.
+ */
 public class InventorySerializer {
 
     /**
-     * Serialize inventory contents and armor.
+     * Serialize inventory contents and armor into a readable structure.
      */
-    public static String serializeInventory(ItemStack[] contents, ItemStack[] armor) {
-        return serialize(contents, armor);
+    public static Map<String, Object> serializeInventory(ItemStack[] contents, ItemStack[] armor) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("contents", serializeItemList(contents));
+        map.put("armor", serializeItemList(armor));
+        return map;
     }
 
     /**
      * Deserialize inventory contents and armor.
      */
-    public static ItemStack[][] deserializeInventory(String data) {
-        return deserialize(data, true);
+    @SuppressWarnings("unchecked")
+    public static ItemStack[][] deserializeInventory(Map<String, Object> data) {
+        if (data == null) return new ItemStack[][]{new ItemStack[0], new ItemStack[0]};
+
+        List<Map<String, Object>> contentsList = (List<Map<String, Object>>) data.get("contents");
+        List<Map<String, Object>> armorList = (List<Map<String, Object>>) data.get("armor");
+
+        ItemStack[] contents = deserializeItemList(contentsList);
+        ItemStack[] armor = deserializeItemList(armorList);
+
+        return new ItemStack[][]{contents, armor};
     }
+
     // ----------------- Internal helpers -----------------
 
-    private static String serialize(ItemStack[] contents, ItemStack... armor) {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
-
-            // Write contents
-            dataOutput.writeInt(contents.length);
-            for (ItemStack item : contents) {
-                dataOutput.writeObject(item);
-            }
-
-            // Write armor if provided
-            if (armor != null && armor.length > 0) {
-                dataOutput.writeInt(armor.length);
-                for (ItemStack item : armor) {
-                    dataOutput.writeObject(item);
-                }
-            }
-
-            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private static List<Map<String, Object>> serializeItemList(ItemStack[] items) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (items == null) return list;
+        for (ItemStack item : items) list.add(serializeItem(item));
+        return list;
     }
 
-    private static ItemStack[][] deserialize(String data, boolean withArmor) {
-        if (data == null || data.isEmpty()) return null;
-
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
-             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
-
-            // Read contents
-            int contentsLength = dataInput.readInt();
-            ItemStack[] contents = new ItemStack[contentsLength];
-            for (int i = 0; i < contentsLength; i++) {
-                contents[i] = (ItemStack) dataInput.readObject();
-            }
-
-            if (withArmor) {
-                int armorLength = dataInput.readInt();
-                ItemStack[] armor = new ItemStack[armorLength];
-                for (int i = 0; i < armorLength; i++) {
-                    armor[i] = (ItemStack) dataInput.readObject();
-                }
-                return new ItemStack[][]{contents, armor};
-            } else {
-                return new ItemStack[][]{contents};
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
+    private static ItemStack[] deserializeItemList(List<Map<String, Object>> list) {
+        if (list == null) return new ItemStack[0];
+        ItemStack[] items = new ItemStack[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            items[i] = deserializeItem(list.get(i));
         }
+        return items;
+    }
+
+    private static Map<String, Object> serializeItem(ItemStack item) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        if (item == null || item.getType() == Material.AIR) {
+            map.put("type", "AIR");
+            return map;
+        }
+
+        map.put("type", item.getType().name());
+        map.put("amount", item.getAmount());
+        map.put("durability", item.getDurability());
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (meta.hasDisplayName()) map.put("name", meta.getDisplayName());
+            if (meta.hasLore()) map.put("lore", meta.getLore());
+
+            if (meta.hasEnchants()) {
+                Map<String, Integer> enchants = new LinkedHashMap<>();
+                for (Map.Entry<Enchantment, Integer> e : meta.getEnchants().entrySet()) {
+                    enchants.put(e.getKey().getName(), e.getValue());
+                }
+                map.put("enchants", enchants);
+            }
+        }
+
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ItemStack deserializeItem(Map<String, Object> map) {
+        if (map == null || !map.containsKey("type")) return new ItemStack(Material.AIR);
+        Material type = Material.getMaterial((String) map.getOrDefault("type", "AIR"));
+        if (type == null) type = Material.AIR;
+
+        ItemStack item = new ItemStack(type);
+        item.setAmount((int) map.getOrDefault("amount", 1));
+        item.setDurability(((Number) map.getOrDefault("durability", 0)).shortValue());
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (map.containsKey("name")) meta.setDisplayName((String) map.get("name"));
+            if (map.containsKey("lore")) meta.setLore((List<String>) map.get("lore"));
+
+            if (map.containsKey("enchants")) {
+                Map<String, Integer> enchants = (Map<String, Integer>) map.get("enchants");
+                for (Map.Entry<String, Integer> e : enchants.entrySet()) {
+                    Enchantment ench = Enchantment.getByName(e.getKey());
+                    if (ench != null) meta.addEnchant(ench, e.getValue(), true);
+                }
+            }
+
+            item.setItemMeta(meta);
+        }
+
+        return item;
     }
 }

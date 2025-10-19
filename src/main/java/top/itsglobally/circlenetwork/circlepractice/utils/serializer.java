@@ -50,29 +50,37 @@ public class serializer {
         String name = (String) map.getOrDefault("name", "Unknown");
         Kit kit = new Kit(name);
 
+        // Inventory
         if (map.containsKey("inventory")) {
-            String data = (String) map.get("inventory");
-            ItemStack[][] items = InventorySerializer.deserializeInventory(data);
+            Object invObj = map.get("inventory");
+            ItemStack[][] items = null;
+
+            if (invObj instanceof Map) {
+                items = InventorySerializer.deserializeInventory((Map<String, Object>) invObj);
+            }
+
             if (items != null) {
                 kit.setContents(items[0]);
                 if (items.length > 1) kit.setArmor(items[1]);
             }
         }
+
         if (map.containsKey("hunger")) {
             kit.setHunger((Boolean) map.get("hunger"));
         }
         if (map.containsKey("enabled")) {
-            kit.setHunger((Boolean) map.get("enabled"));
+            kit.setEnabled((Boolean) map.get("enabled"));
         }
         if (map.containsKey("forDuel")) {
-            kit.setHunger((Boolean) map.get("forDuel"));
+            kit.setForDuels((Boolean) map.get("forDuel"));
         }
         if (map.containsKey("canBuild")) {
-            kit.setHunger((Boolean) map.get("canBuild"));
+            kit.setCanBuild((Boolean) map.get("canBuild"));
         }
 
         return kit;
     }
+
 
     public static Map<String, Object> serializeLocation(Location loc) {
         if (loc == null) return null;

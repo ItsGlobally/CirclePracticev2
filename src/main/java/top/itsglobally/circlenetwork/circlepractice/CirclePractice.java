@@ -1,11 +1,13 @@
 package top.itsglobally.circlenetwork.circlepractice;
 
+import github.scarsz.discordsrv.DiscordSRV;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.itsglobally.circlenetwork.circlepractice.discord.SlashCommands;
 import top.itsglobally.circlenetwork.circlepractice.managers.*;
 import top.nontage.nontagelib.command.NontageCommandLoader;
 import top.nontage.nontagelib.listener.ListenerRegister;
@@ -36,6 +38,7 @@ public final class CirclePractice extends JavaPlugin {
         NontageCommandLoader.registerAll(this);
         ListenerRegister.registerAll(this);
         initManagers();
+        DiscordSRV.api.addSlashCommandProvider(new SlashCommands());
     }
 
     private void initManagers() {
