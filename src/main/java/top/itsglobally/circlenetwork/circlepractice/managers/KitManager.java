@@ -211,6 +211,8 @@ public class KitManager extends Managers {
             bedFight.setBrokeToNoSpawn(Material.BED);
             bedFight.setCanBuild(true);
             bedFight.setHunger(false);
+            bedFight.setEnabled(true);
+            bedFight.addAllowBreakBlocks(Material.WOOL);
             addKit(bedFight);
         }
         saveAllKits();

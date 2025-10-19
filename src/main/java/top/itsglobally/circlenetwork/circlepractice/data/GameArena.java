@@ -24,11 +24,15 @@ public class GameArena {
     }
 
     public void convertFromArena(Arena a) {
-
         kits.addAll(a.getKits());
         setPos1(a.getPos1());
         setPos2(a.getPos2());
         setSpectatorSpawn(a.getSpectatorSpawn());
+        setRespawnableKit(a.isRespawnableKit());
+        if (a.isRespawnableKit()) {
+            setBnsb1(a.getBnsb1());
+            setBnsb2(a.getBnsb2());
+        }
     }
 
     public String getName() {

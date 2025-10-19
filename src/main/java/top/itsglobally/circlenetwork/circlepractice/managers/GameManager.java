@@ -157,7 +157,7 @@ public class GameManager extends Managers {
         pp2.setState(PlayerState.DUEL);
         pp1.setCurrentGame(game);
         pp2.setCurrentGame(game);
-        game.setState(GameStete.STARTING);
+        game.setState(GameState.STARTING);
         game.getArena().setInUse(true);
         startCooldown(game);
         pp1.unlockAchievement(Achievement.FIRSTGAME);
@@ -171,7 +171,7 @@ public class GameManager extends Managers {
 
             @Override
             public void run() {
-                if (game.getState() != GameStete.STARTING) {
+                if (game.getState() != GameState.STARTING) {
                     cancel();
                     return;
                 }
@@ -196,7 +196,7 @@ public class GameManager extends Managers {
                     MessageUtil.sendMessage(p2, "&aFight!");
                     p1.playSound(p1.getLocation(), Sound.FIREWORK_BLAST, 1.0f, 1.0f);
                     p2.playSound(p2.getLocation(), Sound.FIREWORK_BLAST, 1.0f, 1.0f);
-                    game.setState(GameStete.ONGOING);
+                    game.setState(GameState.ONGOING);
                     cancel();
                 }
             }
@@ -204,7 +204,7 @@ public class GameManager extends Managers {
     }
 
     public void endGame(Game game, PracticePlayer winner) {
-        game.setState(GameStete.ENDING);
+        game.setState(GameState.ENDING);
         Player p1 = Bukkit.getPlayer(game.getPlayer1().getUuid());
         Player p2 = Bukkit.getPlayer(game.getPlayer2().getUuid());
 

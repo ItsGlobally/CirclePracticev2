@@ -14,7 +14,7 @@ public class Game {
     private final GameArena arena;
     private final long startTime;
     private final List<UUID> spectators;
-    private GameStete state;
+    private GameState state;
     private int countdown;
     private boolean p1respawnable;
     private boolean p2respawnable;
@@ -27,8 +27,10 @@ public class Game {
         this.arena = arena;
         this.startTime = System.currentTimeMillis();
         this.spectators = new ArrayList<>();
-        this.state = GameStete.STARTING;
+        this.state = GameState.STARTING;
         this.countdown = 5;
+        this.p1respawnable = kit.isRespawnable();
+        this.p2respawnable = kit.isRespawnable();
     }
 
     public GameArena getArena() {
@@ -47,11 +49,11 @@ public class Game {
         return player1;
     }
 
-    public GameStete getState() {
+    public GameState getState() {
         return state;
     }
 
-    public void setState(GameStete state) {
+    public void setState(GameState state) {
         this.state = state;
     }
 

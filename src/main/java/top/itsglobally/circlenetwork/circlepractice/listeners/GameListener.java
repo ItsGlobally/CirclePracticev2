@@ -18,7 +18,7 @@ import top.itsglobally.circlenetwork.circlepractice.data.Temp;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.AutoListener;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @AutoListener
@@ -162,22 +162,28 @@ public class GameListener implements Listener, IListener {
                 e.setCancelled(true);
                 return;
             }
-            if (e.getBlock().getType() == game.getKit().getBrokeToNoSpawn()) {
+            if (game.getKit().getBrokeToNoSpawn() != null && e.getBlock().getType() == game.getKit().getBrokeToNoSpawn()) {
                 if (game.getIsEnemysBnsb(pp, e.getBlock().getLocation())) {
                     game.setRespawnable(game.getOpponent(pp), false);
                     MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&cBED DESTROYED", "You won't be able to respawn again!");
-                    MessageUtil.sendMessage(e.getPlayer(), game.getOpponent(pp).getPlayer(), "BED DESTROY > &7" + game.getOpponent(pp).getPlayer() + "&r's bed has been destroyed by " + e.getPlayer().getName() + "!");
+                    MessageUtil.sendMessage(e.getPlayer(), game.getOpponent(pp).getPlayer(), "BED DESTROY > &7" + game.getOpponent(pp).getPlayer().getName() + "&r's bed has been destroyed by " + e.getPlayer().getName() + "!");
                 } else {
                     MessageUtil.sendMessage(e.getPlayer(), "&cYou can't break your own bed!");
+                    e.setCancelled(true);
                 }
             }
             if (game.getKit().getAllowBreakBlocks().contains(e.getBlock().getType())) {
                 Set<Location> ls = Temp.DuelBlockPlaced.get(e.getPlayer().getUniqueId());
-                if (ls == null || ls.isEmpty()) {
-                    return;
+                if (ls != null && !ls.isEmpty()) {
+                    if (ls.contains(e.getBlock().getLocation())) {
+                        ls.remove(e.getBlock().getLocation());
+                        Temp.DuelBlockPlaced.put(e.getPlayer().getUniqueId(), ls);
+                    } else {
+                        e.setCancelled(true);
+                    }
+                } else {
+                    e.setCancelled(true);
                 }
-                ls.remove(e.getBlock().getLocation());
-                Temp.DuelBlockPlaced.put(e.getPlayer().getUniqueId(), ls);
             }
         }
     }
@@ -192,7 +198,10 @@ public class GameListener implements Listener, IListener {
                 e.setCancelled(true);
                 return;
             }
-            Set<Location> ls = Temp.DuelBlockPlaced.putIfAbsent(e.getPlayer().getUniqueId(), Collections.emptySet());
+            Set<Location> ls = Temp.DuelBlockPlaced.get(e.getPlayer().getUniqueId());
+            if (ls == null) {
+                ls = new HashSet<>();
+            }
             ls.add(e.getBlock().getLocation());
             Temp.DuelBlockPlaced.put(e.getPlayer().getUniqueId(), ls);
         }

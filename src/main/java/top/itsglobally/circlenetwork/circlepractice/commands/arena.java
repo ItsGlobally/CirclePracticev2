@@ -18,6 +18,7 @@ public class arena implements NontageCommand, ICommand {
         switch (strings[0]) {
             case "reload": {
                 plugin.getArenaManager().reload();
+                break;
             }
             case "create": {
                 if (strings.length < 2) return;

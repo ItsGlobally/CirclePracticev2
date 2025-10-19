@@ -68,7 +68,7 @@ public class Kit {
         this.enabled = enabled;
     }
 
-    public boolean isComplate() {
+    public boolean isComplete() {
         return contents != null && armor != null;
     }
 
