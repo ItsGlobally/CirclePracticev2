@@ -1,5 +1,7 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -162,7 +164,8 @@ public class GameManager extends Managers {
         game.setState(GameState.STARTING);
         game.getArena().setInUse(true);
         startCooldown(game);
-        pp1.unlockAchievement(Achievement.FIRSTGAME);
+        plugin.getPlayerDataManager().getData(p1).unlockAchievement(Achievement.JOIN);
+        plugin.getPlayerDataManager().getData(p2).unlockAchievement(Achievement.JOIN);
         Temp.DuelBlockPlaced.put(p1.getUniqueId(), Collections.emptySet());
         Temp.DuelBlockPlaced.put(p2.getUniqueId(), Collections.emptySet());
         games.put(game.getId(), game);
@@ -227,6 +230,7 @@ public class GameManager extends Managers {
                 p1.removePotionEffect(pe.getType());
             }
 
+
         }
         if (p2 != null) {
             plugin.getConfigManager().teleportToSpawn(p2);
@@ -248,7 +252,14 @@ public class GameManager extends Managers {
 
             if (p1 != null) MessageUtil.sendMessage(p1, message);
             if (p2 != null) MessageUtil.sendMessage(p2, message);
+            plugin.getPlayerDataManager().getData(winnerPlayer).addXps(20);
+            MessageUtil.sendMessage(winnerPlayer, "&dYou won and earned 20 xp.");
+            if (game.getOpponent(winner).getPlayer() != null) {
+                plugin.getPlayerDataManager().getData(game.getOpponent(winner).getPlayer()).addXps(10);
+                MessageUtil.sendMessage(game.getOpponent(winner).getPlayer(), "&dYou lost but still earned 10 xp.");
+            }
         }
+
 
         if (game.getArena().isRemake()) {
             plugin.getArenaManager().removeGameArena(game.getArena());

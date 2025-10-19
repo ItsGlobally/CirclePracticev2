@@ -109,21 +109,6 @@ public class PracticePlayer {
         return inventory;
     }
 
-    public boolean hasAchievement(Achievement a) {
-        return unlocked.contains(a);
-    }
-
-    public void unlockAchievement(Achievement a) {
-        if (hasAchievement(a)) return;
-        unlocked.add(a);
-        Component c = Component.text(MessageUtil.formatMessage("&e&ke&a>> " + "Achievement Unlocked:" + "&6" + a.getTitle() + "&a<<&e&ke"))
-                .hoverEvent(HoverEvent.showText(Component.text(MessageUtil.formatMessage("&a" + a.getDescription()))));
-        MessageUtil.sendMessage(player, c);
-    }
-
-    public Set<Achievement> getUnlockedAchievement() {
-        return unlocked;
-    }
 
     public boolean isPlayedFirst() {
         return playedFirst;

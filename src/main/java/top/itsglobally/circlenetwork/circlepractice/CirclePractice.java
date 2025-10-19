@@ -23,6 +23,7 @@ public final class CirclePractice extends JavaPlugin {
     private ArenaManager am;
     private ConfigManager cm;
     private static LuckPerms luckPerms;
+    private PlayerDataManager pdm;
 
     public static CirclePractice getPlugin() {
         return plugin;
@@ -50,12 +51,14 @@ public final class CirclePractice extends JavaPlugin {
         plm = new PluginManager();
         am = new ArenaManager();
         cm = new ConfigManager();
+        pdm = new PlayerDataManager();
     }
 
     @Override
     public void onDisable() {
         km.saveAllKits();
         am.saveAllArenas();
+        pdm.saveAll();
     }
 
     public GameManager getGameManager() {
@@ -84,5 +87,9 @@ public final class CirclePractice extends JavaPlugin {
 
     public LuckPerms getLuckPerms() {
         return luckPerms;
+    }
+
+    public PlayerDataManager getPlayerDataManager() {
+        return pdm;
     }
 }

@@ -4,8 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
+import top.itsglobally.circlenetwork.circlepractice.data.PlayerState;
+import top.itsglobally.circlenetwork.circlepractice.managers.PlayerDataManager;
 
 import java.util.*;
 
@@ -138,4 +141,95 @@ public class serializer {
                 ((Number) map.get("pitch")).floatValue()
         );
     }
+
+    public static Map<String, Object> serializePlayerData(PlayerDataManager.PlayerData pd) {
+        if (pd == null) return null;
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        Map<String, Object> kits = new LinkedHashMap<>();
+
+        for (Map.Entry<String, ItemStack[][]> e : pd.getAllKits().entrySet()) {
+            String kitName = e.getKey();
+            ItemStack[][] contents = e.getValue();
+            kits.put(kitName, InventorySerializer.serializeInventory(contents[0], contents[1]));
+        }
+
+        map.put("kits", kits);
+        map.put("stars", pd.getStars());
+        map.put("xp", pd.getXps());
+
+        List<String> achievements = pd.getUnlockedAchievement().stream()
+                .map(Achievement::name)
+                .toList();
+        map.put("achievements", achievements);
+
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static PlayerDataManager.PlayerData deserializePlayerData(Map<String, Object> map) {
+        if (map == null) return null;
+        if (!map.containsKey("uuid")) return null;
+        String uuidStr = String.valueOf(map.get("uuid"));
+        PlayerDataManager.PlayerData pd = new PlayerDataManager.PlayerData(UUID.fromString(uuidStr));
+
+        if (map.containsKey("kits")) {
+            Object kitsObj = map.get("kits");
+            if (kitsObj instanceof Map<?, ?> kitsMap) {
+                for (Map.Entry<?, ?> entry : kitsMap.entrySet()) {
+                    String kitName = String.valueOf(entry.getKey());
+                    Object kitData = entry.getValue();
+
+                    if (kitData instanceof Map<?, ?> kitMap) {
+                        try {
+                            ItemStack[][] contents = InventorySerializer.deserializeInventory((Map<String, Object>) kitMap);
+                            pd.setKitContents(kitName, contents);
+                        } catch (Exception ex) {
+                            System.err.println("[CirclePractice] 無法反序列化 kit: " + kitName);
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+
+        if (map.containsKey("achievements")) {
+            Object achievementsObj = map.get("achievements");
+            if (achievementsObj instanceof List<?> list) {
+                for (Object o : list) {
+                    if (o instanceof String s) {
+                        try {
+                            Achievement a = Achievement.valueOf(s);
+                            pd.unlockAchievement(a);
+                        } catch (IllegalArgumentException ignored) {
+                            System.err.println("[CirclePractice] 無效的 achievement: " + s);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (map.containsKey("stars")) {
+            Object starsObj = map.get("stars");
+            if (starsObj instanceof Number) {
+                pd.setStars(((Number) starsObj).longValue());
+            } else {
+                System.err.println("[CirclePractice] stars 欄位不是數字類型: " + starsObj);
+            }
+        }
+
+        if (map.containsKey("xp")) {
+            Object xpObj = map.get("xp");
+            if (xpObj instanceof Number) {
+                pd.setXps(((Number) xpObj).longValue());
+            } else {
+                System.err.println("[CirclePractice] xp 欄位不是數字類型: " + xpObj);
+            }
+        }
+
+        return pd;
+    }
+
+
+
 }

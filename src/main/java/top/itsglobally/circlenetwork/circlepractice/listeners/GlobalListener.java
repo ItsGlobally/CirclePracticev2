@@ -1,5 +1,7 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -22,6 +24,7 @@ import org.bukkit.util.Vector;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
+import top.itsglobally.circlenetwork.circlepractice.utils.starUtils;
 import top.nontage.nontagelib.annotations.AutoListener;
 
 @AutoListener
@@ -48,13 +51,14 @@ public class GlobalListener implements Listener, IListener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         plugin.getPlayerManager().addPlayer(e.getPlayer());
-        plugin.getPlayerManager().getPlayer(e.getPlayer()).unlockAchievement(Achievement.JOIN);
+        plugin.getPlayerDataManager().getData(e.getPlayer()).unlockAchievement(Achievement.JOIN);
         plugin.getConfigManager().teleportToSpawn(e.getPlayer());
     }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
         e.setFormat(MessageUtil.formatMessage(
+                starUtils.getColoredStars(plugin.getPlayerDataManager().getData(e.getPlayer()).getStars()) + "&r " +
                 plugin.getPlayerManager().getPrefixedName(e.getPlayer()) +
                         "&r » %2$s"
         ));
