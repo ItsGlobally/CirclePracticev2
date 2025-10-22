@@ -1,6 +1,7 @@
 package top.itsglobally.circlenetwork.circlepractice.utils;
 
 import org.bukkit.ChatColor;
+
 import java.text.DecimalFormat;
 
 public class starUtils {
@@ -15,7 +16,8 @@ public class starUtils {
             ChatColor.LIGHT_PURPLE
     };
 
-    private starUtils() {}
+    private starUtils() {
+    }
 
     public static String getColoredStars(long stars) {
         String number = formatNumber(stars);

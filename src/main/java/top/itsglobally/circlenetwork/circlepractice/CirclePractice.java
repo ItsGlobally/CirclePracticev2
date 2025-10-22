@@ -16,13 +16,13 @@ public final class CirclePractice extends JavaPlugin {
 
     static CirclePractice plugin;
     private static BukkitAudiences adventure;
+    private static LuckPerms luckPerms;
     private GameManager gm;
     private KitManager km;
     private PlayerManager pm;
     private PluginManager plm;
     private ArenaManager am;
     private ConfigManager cm;
-    private static LuckPerms luckPerms;
     private PlayerDataManager pdm;
 
     public static CirclePractice getPlugin() {

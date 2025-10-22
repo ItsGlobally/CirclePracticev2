@@ -9,11 +9,11 @@ import java.util.List;
 public class GameArena {
     private final String name;
     private final List<String> kits = new ArrayList<>();
+    private final String worldName;
     private Location pos1;
     private Location pos2;
     private Location spectatorSpawn;
     private boolean inUse;
-    private final String worldName;
     private Location bnsb1;
     private Location bnsb2;
     private boolean respawnableKit;
@@ -50,12 +50,12 @@ public class GameArena {
         return pos1;
     }
 
-    public String getWorldName() {
-        return worldName;
-    }
-
     public void setPos1(Location pos1) {
         this.pos1 = pos1;
+    }
+
+    public String getWorldName() {
+        return worldName;
     }
 
     public Location getPos2() {
@@ -94,24 +94,24 @@ public class GameArena {
         return bnsb1;
     }
 
-    public Location getBnsb2() {
-        return bnsb2;
-    }
-
     public void setBnsb1(Location bnsb1) {
         this.bnsb1 = bnsb1;
+    }
+
+    public Location getBnsb2() {
+        return bnsb2;
     }
 
     public void setBnsb2(Location bnsb2) {
         this.bnsb2 = bnsb2;
     }
 
-    public void setRespawnableKit(boolean respawnableKit) {
-        this.respawnableKit = respawnableKit;
-    }
-
     public boolean isRespawnableKit() {
         return respawnableKit;
+    }
+
+    public void setRespawnableKit(boolean respawnableKit) {
+        this.respawnableKit = respawnableKit;
     }
 
     public Arena getOrgArena() {

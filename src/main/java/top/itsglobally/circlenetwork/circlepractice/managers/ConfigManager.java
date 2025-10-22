@@ -17,6 +17,10 @@ public class ConfigManager extends Managers {
         return mainConfig;
     }
 
+    public void teleportToSpawn(Player p) {
+        p.teleport(mainConfig.getSpawn());
+    }
+
     public class MainConfig extends BaseConfig {
         // -------------------- 可配置的欄位 --------------------
         public String defaultKit = "NoDebuff";
@@ -51,9 +55,5 @@ public class ConfigManager extends Managers {
         public int getMaxGameTime() {
             return maxGameTime;
         }
-    }
-
-    public void teleportToSpawn(Player p) {
-        p.teleport(mainConfig.getSpawn());
     }
 }

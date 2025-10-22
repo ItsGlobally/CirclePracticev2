@@ -1,9 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -166,8 +163,6 @@ public class GameManager extends Managers {
         startCooldown(game);
         plugin.getPlayerDataManager().getData(p1).unlockAchievement(Achievement.JOIN);
         plugin.getPlayerDataManager().getData(p2).unlockAchievement(Achievement.JOIN);
-        Temp.DuelBlockPlaced.put(p1.getUniqueId(), Collections.emptySet());
-        Temp.DuelBlockPlaced.put(p2.getUniqueId(), Collections.emptySet());
         games.put(game.getId(), game);
     }
 
@@ -218,8 +213,6 @@ public class GameManager extends Managers {
         game.getPlayer1().setCurrentGame(null);
         game.getPlayer2().setCurrentGame(null);
         game.getArena().setInUse(false);
-        Temp.DuelBlockPlaced.remove(game.getPlayer1().getUuid());
-        Temp.DuelBlockPlaced.remove(game.getPlayer2().getUuid());
 
         String message = "&f-------------------------\n&bWinner: &f" + winner.getName() + "&r | &cLoser: &f" + game.getOpponent(winner).getName() + "&r\n&f-------------------------";
         if (p1 != null) {

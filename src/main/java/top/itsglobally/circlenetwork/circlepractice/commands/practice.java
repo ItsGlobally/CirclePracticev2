@@ -13,11 +13,26 @@ public class practice implements NontageCommand, ICommand {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
+        if (strings.length < 1) {
+            String sb = "------------------------" +
+                    "&dCircle Practice!" +
+                    "&dDeveloper: ItsGlobally" +
+                    "&dThe project is almost done by ai, thanks to them!" +
+                    "------------------------";
+            MessageUtil.sendMessage(p, sb);
+        }
         switch (strings[0].toLowerCase()) {
             case "reload": {
+                if (!p.hasPermission("circlepractice.admin")) {
+                    MessageUtil.sendMessage(p, "&cNo permission!");
+                    return;
+                }
                 plugin.getArenaManager().reload();
                 plugin.getKitManager().reload();
                 MessageUtil.sendMessage(p, "&aReloaded!");
+            }
+            default: {
+                MessageUtil.sendMessage(p, "&c/practice [reload]");
             }
         }
     }

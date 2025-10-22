@@ -28,10 +28,6 @@ public class KitManager extends Managers {
         createDefaultKits();
     }
 
-    public class KitConfig extends BaseConfig {
-        public Map<String, Map<String, Object>> kits = new LinkedHashMap<>();
-    }
-
     public List<Kit> getKits() {
         return kits;
     }
@@ -216,6 +212,10 @@ public class KitManager extends Managers {
             addKit(bedFight);
         }
         saveAllKits();
+    }
+
+    public class KitConfig extends BaseConfig {
+        public Map<String, Map<String, Object>> kits = new LinkedHashMap<>();
     }
 
 }

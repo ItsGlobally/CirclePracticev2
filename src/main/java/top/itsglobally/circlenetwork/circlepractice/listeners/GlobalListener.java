@@ -1,7 +1,5 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -59,7 +57,7 @@ public class GlobalListener implements Listener, IListener {
     public void onChat(AsyncPlayerChatEvent e) {
         e.setFormat(MessageUtil.formatMessage(
                 starUtils.getColoredStars(plugin.getPlayerDataManager().getData(e.getPlayer()).getStars()) + "&r " +
-                plugin.getPlayerManager().getPrefixedName(e.getPlayer()) +
+                        plugin.getPlayerManager().getPrefixedName(e.getPlayer()) +
                         "&r » %2$s"
         ));
     }

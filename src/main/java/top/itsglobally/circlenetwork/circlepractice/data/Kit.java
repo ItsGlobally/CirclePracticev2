@@ -72,12 +72,12 @@ public class Kit {
         return contents != null && armor != null;
     }
 
-    public void setForDuels(boolean forDuels) {
-        this.forDuels = forDuels;
-    }
-
     public boolean isForDuels() {
         return forDuels;
+    }
+
+    public void setForDuels(boolean forDuels) {
+        this.forDuels = forDuels;
     }
 
     public boolean isCanBuild() {
@@ -116,10 +116,11 @@ public class Kit {
         return allowBreakBlocks;
     }
 
-    public void addAllowBreakBlocks(Material m) {
-        allowBreakBlocks.add(m);
-    }
     public void setAllowBreakBlocks(Set<Material> sm) {
         allowBreakBlocks = sm;
+    }
+
+    public void addAllowBreakBlocks(Material m) {
+        allowBreakBlocks.add(m);
     }
 }

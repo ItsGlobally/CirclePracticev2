@@ -1,26 +1,27 @@
 package top.itsglobally.circlenetwork.circlepractice.data;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
-import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
+import top.itsglobally.circlenetwork.circlepractice.managers.PlayerDataManager;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static top.itsglobally.circlenetwork.circlepractice.commands.ICommand.plugin;
+
 public class PracticePlayer {
     private final UUID uuid;
     private final String name;
     private final Player player;
+    private final Set<Achievement> unlocked = new HashSet<>();
+    private final PlayerDataManager.PlayerData playerData;
     private PlayerState state;
     private Game currentGame = null;
     private String queuedKit;
     private ItemStack[] armor;
     private ItemStack[] inventory;
-    private final Set<Achievement> unlocked = new HashSet<>();
     private boolean playedFirst;
 
     public PracticePlayer(Player p) {
@@ -31,6 +32,7 @@ public class PracticePlayer {
         this.armor = new ItemStack[4];
         this.inventory = new ItemStack[36];
         this.playedFirst = false;
+        this.playerData = plugin.getPlayerDataManager().getData(p);
     }
 
     public Player getPlayer() {
@@ -93,22 +95,21 @@ public class PracticePlayer {
         this.queuedKit = queuedKit;
     }
 
-    public void setArmor(ItemStack[] armor) {
-        this.armor = armor;
-    }
-
-    public void setInventory(ItemStack[] inventory) {
-        this.inventory = inventory;
-    }
-
     public ItemStack[] getArmor() {
         return armor;
+    }
+
+    public void setArmor(ItemStack[] armor) {
+        this.armor = armor;
     }
 
     public ItemStack[] getInventory() {
         return inventory;
     }
 
+    public void setInventory(ItemStack[] inventory) {
+        this.inventory = inventory;
+    }
 
     public boolean isPlayedFirst() {
         return playedFirst;
@@ -116,5 +117,9 @@ public class PracticePlayer {
 
     public void setPlayedFirst(boolean playedFirst) {
         this.playedFirst = playedFirst;
+    }
+
+    public PlayerDataManager.PlayerData getPlayerData() {
+        return playerData;
     }
 }

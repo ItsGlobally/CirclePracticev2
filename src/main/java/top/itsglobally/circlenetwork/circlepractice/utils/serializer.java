@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
-import top.itsglobally.circlenetwork.circlepractice.data.PlayerState;
 import top.itsglobally.circlenetwork.circlepractice.managers.PlayerDataManager;
 
 import java.util.*;
@@ -26,6 +25,7 @@ public class serializer {
             map.put("bnsb1", serializeLocation(arena.getBnsb1()));
             map.put("bnsb2", serializeLocation(arena.getBnsb2()));
         }
+        map.put("voidY", arena.getVoidY());
         return map;
     }
 
@@ -43,6 +43,7 @@ public class serializer {
             if (map.containsKey("bnsb1")) arena.setBnsb1(deserializeLocation((Map<String, Object>) map.get("bnsb1")));
             if (map.containsKey("bnsb2")) arena.setBnsb2(deserializeLocation((Map<String, Object>) map.get("bnsb2")));
         }
+        if (map.containsKey("voidY")) arena.setVoidY((int) map.get("voidY"));
         return arena;
     }
 
@@ -111,7 +112,6 @@ public class serializer {
                 kit.setAllowBreakBlocks(blocks);
             }
         }
-
 
 
         return kit;
@@ -229,7 +229,6 @@ public class serializer {
 
         return pd;
     }
-
 
 
 }

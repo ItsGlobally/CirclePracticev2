@@ -4,7 +4,9 @@ import net.luckperms.api.model.user.User;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class PlayerManager extends Managers {
     private final Map<UUID, PracticePlayer> playerList = new HashMap();

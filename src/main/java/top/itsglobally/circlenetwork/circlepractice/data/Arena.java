@@ -9,20 +9,21 @@ import java.util.List;
 public class Arena {
     private final String name;
     private final List<String> kits = new ArrayList<>();
+    private final boolean inUse;
     private Location pos1;
     private Location pos2;
     private Location spectatorSpawn;
-    private final boolean inUse;
     private String worldName;
     private boolean respawnableKit;
     private Location bnsb1;
     private Location bnsb2;
     private boolean remake;
+    private int voidY = 0;
+
 
     public Arena(String name) {
         this.name = name;
         this.inUse = false;
-
     }
 
     public String getName() {
@@ -77,31 +78,39 @@ public class Arena {
         return bnsb1;
     }
 
-    public Location getBnsb2() {
-        return bnsb2;
-    }
-
     public void setBnsb1(Location bnsb1) {
         this.bnsb1 = bnsb1;
+    }
+
+    public Location getBnsb2() {
+        return bnsb2;
     }
 
     public void setBnsb2(Location bnsb2) {
         this.bnsb2 = bnsb2;
     }
 
+    public boolean isRespawnableKit() {
+        return respawnableKit;
+    }
+
     public void setRespawnableKit(boolean respawnableKit) {
         this.respawnableKit = respawnableKit;
     }
 
-    public boolean isRespawnableKit() {
-        return respawnableKit;
+    public boolean isRemake() {
+        return remake;
     }
 
     public void setRemake(boolean remake) {
         this.remake = remake;
     }
 
-    public boolean isRemake() {
-        return remake;
+    public int getVoidY() {
+        return voidY;
+    }
+
+    public void setVoidY(int voidY) {
+        this.voidY = voidY;
     }
 }

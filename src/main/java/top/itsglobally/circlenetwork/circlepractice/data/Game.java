@@ -93,20 +93,20 @@ public class Game {
         }
     }
 
-    public void setP1respawnable(boolean p1respawnable) {
-        this.p1respawnable = p1respawnable;
-    }
-
-    public void setP2respawnable(boolean p2respawnable) {
-        this.p2respawnable = p2respawnable;
-    }
-
     public boolean isP1respawnable() {
         return p1respawnable;
     }
 
+    public void setP1respawnable(boolean p1respawnable) {
+        this.p1respawnable = p1respawnable;
+    }
+
     public boolean isP2respawnable() {
         return p2respawnable;
+    }
+
+    public void setP2respawnable(boolean p2respawnable) {
+        this.p2respawnable = p2respawnable;
     }
 
     public boolean getPlayerRespawnable(PracticePlayer pp) {
@@ -144,10 +144,6 @@ public class Game {
         Location ownBedFoot = ownBed.clone().add(1, 0, 0);
         return isNear(loc, ownBedHead, 1) || isNear(loc, ownBedFoot, 1);
     }
-
-
-
-
 
 
 }

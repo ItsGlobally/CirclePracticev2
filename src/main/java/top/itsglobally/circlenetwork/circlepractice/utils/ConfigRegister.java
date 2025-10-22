@@ -6,8 +6,8 @@ import top.nontage.nontagelib.config.BaseConfig;
 import java.io.File;
 
 public class ConfigRegister {
-    private static File configDir;
     private static final CirclePractice plugin = CirclePractice.getPlugin();
+    private static File configDir;
 
     public static <T extends BaseConfig> T register(T config, String name) {
         configDir = plugin.getDataFolder();

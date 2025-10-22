@@ -1,9 +1,7 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
-import com.avaje.ebeaninternal.server.core.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,19 +15,16 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
-import top.itsglobally.circlenetwork.circlepractice.data.Temp;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.AutoListener;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @AutoListener
 public class GameListener implements Listener, IListener {
 
-    private HashMap<UUID, Boolean> respawning = new HashMap<>();
+    private final HashMap<UUID, Boolean> respawning = new HashMap<>();
 
     @EventHandler
     public void hunger(FoodLevelChangeEvent e) {
@@ -111,6 +106,7 @@ public class GameListener implements Listener, IListener {
             }
         }
     }
+
     @EventHandler
     public void move(PlayerMoveEvent e) {
         Player vic = e.getPlayer();
@@ -120,13 +116,13 @@ public class GameListener implements Listener, IListener {
         Game game = vicp.getCurrentGame();
 
         Player killer = game.getOpponent(vicp).getPlayer();
-        if (e.getPlayer().getLocation().getY() <= 235) {
+        if (e.getPlayer().getLocation().getY() <= game.getArena().getOrgArena().getVoidY()) {
             if (respawning.getOrDefault(vic.getUniqueId(), false)) {
                 vic.teleport(game.getPlayerSpawnPoint(vicp));
                 return;
             }
         }
-        if (e.getPlayer().getLocation().getBlockY() <= 230) {
+        if (e.getPlayer().getLocation().getY() <= game.getArena().getOrgArena().getVoidY()) {
             if (game.getKit().isRespawnable() && game.getPlayerRespawnable(vicp)) {
                 vic.setHealth(20.0);
                 vic.setFoodLevel(20);
@@ -168,6 +164,7 @@ public class GameListener implements Listener, IListener {
             }
         }
     }
+
     @EventHandler
     public void died(PlayerDeathEvent e) {
         Player vic = e.getEntity();
@@ -262,6 +259,8 @@ public class GameListener implements Listener, IListener {
                         MessageUtil.sendMessage(e.getPlayer(), game.getOpponent(pp).getPlayer(),
                                 "BED DESTROY > &7" + game.getOpponent(pp).getPlayer().getName() +
                                         "&r's bed has been destroyed by " + e.getPlayer().getName() + "!");
+                        game.getPlayer1().getPlayer().playSound(game.getPlayer1().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
+                        game.getPlayer2().getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
                         e.setCancelled(false);
                     } else if (isOwnBed) {
                         e.setCancelled(true);
@@ -305,7 +304,6 @@ public class GameListener implements Listener, IListener {
             e.setCancelled(true);
         }
     }
-
 
 
 }

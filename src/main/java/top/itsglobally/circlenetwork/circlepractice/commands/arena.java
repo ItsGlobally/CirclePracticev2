@@ -1,5 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.commands;
 
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
@@ -42,6 +43,7 @@ public class arena implements NontageCommand, ICommand {
                 Arena a = plugin.getArenaManager().getArena(a1);
                 a.setPos1(p.getLocation());
                 plugin.getArenaManager().updateArena(a);
+                MessageUtil.sendMessage(p, "&aSet player 1 spawnpoint!");
                 break;
             }
             case "pos2": {
@@ -54,6 +56,7 @@ public class arena implements NontageCommand, ICommand {
                 Arena a = plugin.getArenaManager().getArena(a1);
                 a.setPos2(p.getLocation());
                 plugin.getArenaManager().updateArena(a);
+                MessageUtil.sendMessage(p, "&aSet player 2 spawnpoint!");
                 break;
             }
             case "spec": {
@@ -66,6 +69,7 @@ public class arena implements NontageCommand, ICommand {
                 Arena a = plugin.getArenaManager().getArena(a1);
                 a.setSpectatorSpawn(p.getLocation());
                 plugin.getArenaManager().updateArena(a);
+                MessageUtil.sendMessage(p, "&aSet spec pos!");
                 break;
             }
             case "respawnable": {
@@ -77,14 +81,11 @@ public class arena implements NontageCommand, ICommand {
                     return;
                 }
                 Arena a = plugin.getArenaManager().getArena(a1);
-                try {
-                    boolean status = Boolean.parseBoolean(a2);
-                    a.setRespawnableKit(status);
-                    plugin.getArenaManager().updateArena(a);
-                    break;
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                boolean status = Boolean.parseBoolean(a2);
+                a.setRespawnableKit(status);
+                plugin.getArenaManager().updateArena(a);
+                MessageUtil.sendMessage(p, "&aSet respawnable to " + status + "!");
+                break;
 
             }
             case "bnsb1": {
@@ -99,8 +100,10 @@ public class arena implements NontageCommand, ICommand {
                     MessageUtil.sendMessage(p, "&cArena not enabled respawnable!");
                     return;
                 }
-                a.setBnsb1(p.getLocation());
+                Location l = p.getLocation();
+                a.setBnsb1(new Location(l.getWorld(), l.getX(), l.getY() - 1, l.getZ(), l.getPitch(), l.getYaw()));
                 plugin.getArenaManager().updateArena(a);
+                MessageUtil.sendMessage(p, "&aSet block(bed) for player 1!");
                 break;
             }
             case "bnsb2": {
@@ -115,8 +118,10 @@ public class arena implements NontageCommand, ICommand {
                     MessageUtil.sendMessage(p, "&cArena not enabled respawnable!");
                     return;
                 }
-                a.setBnsb2(p.getLocation());
+                Location l = p.getLocation();
+                a.setBnsb2(new Location(l.getWorld(), l.getX(), l.getY() - 1, l.getZ(), l.getPitch(), l.getYaw()));
                 plugin.getArenaManager().updateArena(a);
+                MessageUtil.sendMessage(p, "&aSet block(bed) for player 2!");
                 break;
             }
             case "addkit": {
@@ -138,7 +143,20 @@ public class arena implements NontageCommand, ICommand {
                 }
                 a.addKit(a2);
                 plugin.getArenaManager().updateArena(a);
+                MessageUtil.sendMessage(p, "&aAdded kit " + a2 + "!");
                 break;
+            }
+            case "setVoidY": {
+                if (strings.length < 3) return;
+                String a1 = strings[1];
+                String a2 = strings[2];
+                if (plugin.getArenaManager().getArena(a1) == null) {
+                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                    return;
+                }
+                Arena a = plugin.getArenaManager().getArena(a1);
+                a.setVoidY(Integer.parseInt(a2));
+                MessageUtil.sendMessage(p, "&aSet void y level!");
             }
             case "list": {
                 StringBuilder sb = new StringBuilder();

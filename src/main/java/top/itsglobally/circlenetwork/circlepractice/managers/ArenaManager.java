@@ -25,11 +25,11 @@ import java.util.*;
 
 public class ArenaManager extends Managers {
 
-    private final SlimePlugin slime = plugin.getPluginManager().getSlimePlugin;
-    private final SlimeLoader sl = plugin.getPluginManager().getSlimePlugin.getLoader("file");
-    private static ArenaConfig arenaConfig;
     private static final Map<String, Arena> arenaMap = new LinkedHashMap<>();
     private static final Map<String, GameArena> gameArenaMap = new LinkedHashMap<>();
+    private static ArenaConfig arenaConfig;
+    private final SlimePlugin slime = plugin.getPluginManager().getSlimePlugin;
+    private final SlimeLoader sl = plugin.getPluginManager().getSlimePlugin.getLoader("file");
 
     public ArenaManager() {
         arenaConfig = ConfigRegister.register(new ArenaConfig(), "arenas");
@@ -101,10 +101,6 @@ public class ArenaManager extends Managers {
         for (Map.Entry<String, Map<String, Object>> entry : arenaConfig.arenas.entrySet()) {
             arenaMap.put(entry.getKey(), serializer.deserializeArena(entry.getValue()));
         }
-    }
-
-    public class ArenaConfig extends BaseConfig {
-        public Map<String, Map<String, Object>> arenas = new LinkedHashMap<>();
     }
 
     public void createDefaultArenas() {
@@ -181,6 +177,10 @@ public class ArenaManager extends Managers {
             }
             gameArenaMap.remove(arena.getName());
         }
+    }
+
+    public class ArenaConfig extends BaseConfig {
+        public Map<String, Map<String, Object>> arenas = new LinkedHashMap<>();
     }
 
 
