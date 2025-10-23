@@ -113,8 +113,8 @@ public class PlayerDataManager extends Managers {
             kitContents.put(name, contents);
         }
 
-        public ItemStack[][] getKitContents(String name) {
-            return kitContents.getOrDefault(name, null);
+        public ItemStack[][] getKitContents(String name) { //0: contents 1: armors
+            return kitContents.getOrDefault(name.toLowerCase(), new ItemStack[][]{plugin.getKitManager().getKit(name).getContents(), plugin.getKitManager().getKit(name).getArmor()});
         }
 
         public Map<String, ItemStack[][]> getAllKits() {

@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
+import top.itsglobally.circlenetwork.circlepractice.data.GameArena;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
@@ -157,6 +158,11 @@ public class arena implements NontageCommand, ICommand {
                 Arena a = plugin.getArenaManager().getArena(a1);
                 a.setVoidY(Integer.parseInt(a2));
                 MessageUtil.sendMessage(p, "&aSet void y level!");
+            }
+            case "removeallgamearenas": {
+                for (GameArena ga : plugin.getArenaManager().getGameArenas()) {
+                    plugin.getArenaManager().removeGameArena(ga);
+                }
             }
             case "list": {
                 StringBuilder sb = new StringBuilder();

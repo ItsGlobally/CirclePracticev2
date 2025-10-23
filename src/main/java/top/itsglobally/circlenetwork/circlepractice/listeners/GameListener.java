@@ -74,8 +74,8 @@ public class GameListener implements Listener, IListener {
                                     vic.teleport(game.getPlayerSpawnPoint(vicp));
                                     vic.setAllowFlight(false);
                                     vic.setFlying(false);
-                                    vic.getInventory().setArmorContents(game.getKit().getArmor());
-                                    vic.getInventory().setContents(game.getKit().getContents());
+                                    vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
+                                    vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
                                     MessageUtil.sendMessage(vic, "&aYou have respawned!");
                                     cancel();
                                     return;
@@ -142,8 +142,8 @@ public class GameListener implements Listener, IListener {
                             vic.teleport(game.getPlayerSpawnPoint(vicp));
                             vic.setAllowFlight(false);
                             vic.setFlying(false);
-                            vic.getInventory().setArmorContents(game.getKit().getArmor());
-                            vic.getInventory().setContents(game.getKit().getContents());
+                            vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
+                            vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
                             respawning.put(vic.getUniqueId(), false);
                             MessageUtil.sendMessage(vic, "§aYou have respawned!");
                             cancel();
@@ -198,8 +198,8 @@ public class GameListener implements Listener, IListener {
                         vic.teleport(game.getPlayerSpawnPoint(vicp));
                         vic.setAllowFlight(false);
                         vic.setFlying(false);
-                        vic.getInventory().setArmorContents(game.getKit().getArmor());
-                        vic.getInventory().setContents(game.getKit().getContents());
+                        vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
+                        vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
                         MessageUtil.sendMessage(vic, "§aYou have respawned!");
                         cancel();
                         return;

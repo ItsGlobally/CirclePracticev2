@@ -146,10 +146,10 @@ public class GameManager extends Managers {
 
         p1.teleport(game.getArena().getPos1());
         p2.teleport(game.getArena().getPos2());
-        p1.getInventory().setArmorContents(kit.getArmor());
-        p1.getInventory().setContents(kit.getContents());
-        p2.getInventory().setArmorContents(kit.getArmor());
-        p2.getInventory().setContents(kit.getContents());
+        p1.getInventory().setArmorContents(pp1.getPlayerData().getKitContents(game.getKit().getName())[1]);
+        p1.getInventory().setContents(pp1.getPlayerData().getKitContents(game.getKit().getName())[0]);
+        p2.getInventory().setArmorContents(pp2.getPlayerData().getKitContents(game.getKit().getName())[1]);
+        p2.getInventory().setContents(pp2.getPlayerData().getKitContents(game.getKit().getName())[0]);
         p1.setFoodLevel(20);
         p1.setHealth(20);
         p2.setFoodLevel(20);

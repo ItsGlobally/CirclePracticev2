@@ -29,7 +29,18 @@ public class practice implements NontageCommand, ICommand {
                 }
                 plugin.getArenaManager().reload();
                 plugin.getKitManager().reload();
+                plugin.getPlayerDataManager().reload();
                 MessageUtil.sendMessage(p, "&aReloaded!");
+            }
+            case "saveall": {
+                if (!p.hasPermission("circlepractice.admin")) {
+                    MessageUtil.sendMessage(p, "&cNo permission!");
+                    return;
+                }
+                plugin.getArenaManager().saveAllArenas();
+                plugin.getKitManager().saveAllKits();
+                plugin.getPlayerDataManager().saveAll();
+                MessageUtil.sendMessage(p, "&aSaved!!");
             }
             default: {
                 MessageUtil.sendMessage(p, "&c/practice [reload]");

@@ -3,6 +3,7 @@ package top.itsglobally.circlenetwork.circlepractice.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.data.PlayerState;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
@@ -55,10 +56,35 @@ public class kit implements NontageCommand, ICommand {
                 }
                 break;
             }
+            case "edit": {
+                if (pp.isInSpawnNotEditing()) {
+                    if (plugin.getKitManager().kitAlreadyExist(a1)) {
+                        pp.setState(PlayerState.EDITING);
+                        pp.setQueuedKit(a1);
+                        Kit kit = plugin.getKitManager().getKit(a1);
+                        pp.setInventory(p.getInventory().getContents());
+                        pp.setArmor(p.getInventory().getArmorContents());
+                        p.getInventory().clear();
+                        p.getInventory().setArmorContents(null);
+                        p.getInventory().setArmorContents(kit.getArmor());
+                        p.getInventory().setContents(kit.getContents());
+                        MessageUtil.sendMessage(p, "&aYou're now editing kit " + a1 + " . Do \"/kit save " + a1 + "\" to save!");
+                        return;
+                    }
+                }
+                break;
+            }
             case "save": {
                 if (pp.isEditing()) {
                     if (pp.getState() == PlayerState.EDITINGGLOBALLY)
                         plugin.getKitManager().updateKit(a1, p.getInventory().getContents(), p.getInventory().getArmorContents());
+                    if (pp.getState() == PlayerState.EDITING) {
+                        ItemStack[][] cs = {
+                                p.getInventory().getContents(),
+                                p.getInventory().getArmorContents()
+                        };
+                        plugin.getPlayerDataManager().getData(p).setKitContents(a1, cs);
+                    }
                     MessageUtil.sendMessage(p, "&aSaved kit " + a1 + "!");
                     p.getInventory().clear();
                     p.getInventory().setArmorContents(null);
