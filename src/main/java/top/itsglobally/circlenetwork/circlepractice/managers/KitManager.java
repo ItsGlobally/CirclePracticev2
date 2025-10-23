@@ -12,6 +12,8 @@ import top.itsglobally.circlenetwork.circlepractice.utils.serializer;
 import top.nontage.nontagelib.config.BaseConfig;
 import top.nontage.nontagelib.utils.item.ItemBuilder;
 
+import org.bukkit.Bukkit;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,7 +52,12 @@ public class KitManager extends Managers {
     }
 
     public void updateKit(String name, ItemStack[] contents, ItemStack[] armor) {
-        kits.removeIf(k -> k.getName().equalsIgnoreCase(name));
+        if (name == null || name.isEmpty()) return;
+
+        Kit existingKit = getKit(name);
+        if (existingKit != null) {
+            kits.removeIf(k -> k.getName().equalsIgnoreCase(name));
+        }
 
         Kit newKit = new Kit(name);
         newKit.setContents(contents);
@@ -59,6 +66,7 @@ public class KitManager extends Managers {
     }
 
     public void updateKit(Kit kit) {
+        if (kit == null) return;
         kits.removeIf(k -> k.getName().equalsIgnoreCase(kit.getName()));
         kits.add(kit);
     }
@@ -81,12 +89,23 @@ public class KitManager extends Managers {
 
     public void reload() {
         kitConfig.reload();
-        if (kitConfig.kits == null) kitConfig.kits = new LinkedHashMap<>();
-        List<Kit> kits = new ArrayList<>();
-        for (Map.Entry<String, Map<String, Object>> entry : kitConfig.kits.entrySet()) {
-            kits.add(serializer.deserializeKit(entry.getValue()));
+        if (kitConfig.kits == null) {
+            kitConfig.kits = new LinkedHashMap<>();
         }
-        setKits(kits);
+
+        List<Kit> loadedKits = new ArrayList<>();
+        for (Map.Entry<String, Map<String, Object>> entry : kitConfig.kits.entrySet()) {
+            try {
+                Kit kit = serializer.deserializeKit(entry.getValue());
+                if (kit != null) {
+                    loadedKits.add(kit);
+                }
+            } catch (Exception e) {
+                Bukkit.getLogger().warning("Failed to deserialize kit: " + entry.getKey());
+                e.printStackTrace();
+            }
+        }
+        setKits(loadedKits);
     }
 
     public void saveAllKits() {

@@ -17,162 +17,189 @@ public class arena implements NontageCommand, ICommand {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
-        switch (strings[0]) {
+
+        if (!p.hasPermission("circlepractice.admin")) {
+            MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
+            return;
+        }
+
+        if (strings.length < 1) {
+            MessageUtil.sendMessage(p, "&d&lUsage: &f/arena <create|pos1|pos2|spec|respawnable|bnsb1|bnsb2|addkit|setVoidY|list|reload>");
+            return;
+        }
+
+        String subCommand = strings[0].toLowerCase();
+        switch (subCommand) {
             case "reload": {
                 plugin.getArenaManager().reload();
+                MessageUtil.sendMessage(p, "&d&l✓ &fReloaded all arenas!");
                 break;
             }
             case "create": {
                 if (strings.length < 2) return;
-                String a1 = strings[1];
-                if (plugin.getArenaManager().getArena(a1) != null) {
-                    MessageUtil.sendMessage(p, "&cArena already exist!");
+                String arenaName = strings[1];
+                if (plugin.getArenaManager().getArena(arenaName) != null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena already exists!");
                     return;
                 }
-                Arena newA = new Arena(a1);
-                newA.setWorldName(a1);
-                plugin.getArenaManager().addArena(newA);
+                Arena newArena = new Arena(arenaName);
+                newArena.setWorldName(arenaName);
+                plugin.getArenaManager().addArena(newArena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fCreated arena &d" + arenaName + "&f!");
                 break;
             }
             case "pos1": {
                 if (strings.length < 2) return;
-                String a1 = strings[1];
-                if (plugin.getArenaManager().getArena(a1) == null) {
-                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                String arenaName = strings[1];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
                     return;
                 }
-                Arena a = plugin.getArenaManager().getArena(a1);
-                a.setPos1(p.getLocation());
-                plugin.getArenaManager().updateArena(a);
-                MessageUtil.sendMessage(p, "&aSet player 1 spawnpoint!");
+                arena.setPos1(p.getLocation());
+                plugin.getArenaManager().updateArena(arena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fSet player 1 spawn point!");
                 break;
             }
             case "pos2": {
                 if (strings.length < 2) return;
-                String a1 = strings[1];
-                if (plugin.getArenaManager().getArena(a1) == null) {
-                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                String arenaName = strings[1];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
                     return;
                 }
-                Arena a = plugin.getArenaManager().getArena(a1);
-                a.setPos2(p.getLocation());
-                plugin.getArenaManager().updateArena(a);
-                MessageUtil.sendMessage(p, "&aSet player 2 spawnpoint!");
+                arena.setPos2(p.getLocation());
+                plugin.getArenaManager().updateArena(arena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fSet player 2 spawn point!");
                 break;
             }
             case "spec": {
                 if (strings.length < 2) return;
-                String a1 = strings[1];
-                if (plugin.getArenaManager().getArena(a1) == null) {
-                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                String arenaName = strings[1];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
                     return;
                 }
-                Arena a = plugin.getArenaManager().getArena(a1);
-                a.setSpectatorSpawn(p.getLocation());
-                plugin.getArenaManager().updateArena(a);
-                MessageUtil.sendMessage(p, "&aSet spec pos!");
+                arena.setSpectatorSpawn(p.getLocation());
+                plugin.getArenaManager().updateArena(arena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fSet spectator spawn point!");
                 break;
             }
             case "respawnable": {
                 if (strings.length < 3) return;
-                String a1 = strings[1];
-                String a2 = strings[2];
-                if (plugin.getArenaManager().getArena(a1) == null) {
-                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                String arenaName = strings[1];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
                     return;
                 }
-                Arena a = plugin.getArenaManager().getArena(a1);
-                boolean status = Boolean.parseBoolean(a2);
-                a.setRespawnableKit(status);
-                plugin.getArenaManager().updateArena(a);
-                MessageUtil.sendMessage(p, "&aSet respawnable to " + status + "!");
+                boolean status = Boolean.parseBoolean(strings[2]);
+                arena.setRespawnableKit(status);
+                plugin.getArenaManager().updateArena(arena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fSet respawnable to &d" + status + "&f!");
                 break;
-
             }
             case "bnsb1": {
                 if (strings.length < 2) return;
-                String a1 = strings[1];
-                if (plugin.getArenaManager().getArena(a1) == null) {
-                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                String arenaName = strings[1];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
                     return;
                 }
-                Arena a = plugin.getArenaManager().getArena(a1);
-                if (!a.isRespawnableKit()) {
-                    MessageUtil.sendMessage(p, "&cArena not enabled respawnable!");
+                if (!arena.isRespawnableKit()) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not have respawnable enabled!");
                     return;
                 }
-                Location l = p.getLocation();
-                a.setBnsb1(new Location(l.getWorld(), l.getX(), l.getY() - 1, l.getZ(), l.getPitch(), l.getYaw()));
-                plugin.getArenaManager().updateArena(a);
-                MessageUtil.sendMessage(p, "&aSet block(bed) for player 1!");
+                Location loc = p.getLocation();
+                arena.setBnsb1(new Location(loc.getWorld(), loc.getX(), loc.getY() - 1, loc.getZ(), loc.getPitch(), loc.getYaw()));
+                plugin.getArenaManager().updateArena(arena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fSet bed block for player 1!");
                 break;
             }
             case "bnsb2": {
                 if (strings.length < 2) return;
-                String a1 = strings[1];
-                if (plugin.getArenaManager().getArena(a1) == null) {
-                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                String arenaName = strings[1];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
                     return;
                 }
-                Arena a = plugin.getArenaManager().getArena(a1);
-                if (!a.isRespawnableKit()) {
-                    MessageUtil.sendMessage(p, "&cArena not enabled respawnable!");
+                if (!arena.isRespawnableKit()) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not have respawnable enabled!");
                     return;
                 }
-                Location l = p.getLocation();
-                a.setBnsb2(new Location(l.getWorld(), l.getX(), l.getY() - 1, l.getZ(), l.getPitch(), l.getYaw()));
-                plugin.getArenaManager().updateArena(a);
-                MessageUtil.sendMessage(p, "&aSet block(bed) for player 2!");
+                Location loc = p.getLocation();
+                arena.setBnsb2(new Location(loc.getWorld(), loc.getX(), loc.getY() - 1, loc.getZ(), loc.getPitch(), loc.getYaw()));
+                plugin.getArenaManager().updateArena(arena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fSet bed block for player 2!");
                 break;
             }
             case "addkit": {
                 if (strings.length < 3) return;
-                String a1 = strings[1];
-                String a2 = strings[2];
-                if (plugin.getArenaManager().getArena(a1) == null) {
-                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                String arenaName = strings[1];
+                String kitName = strings[2];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
                     return;
                 }
-                if (!plugin.getKitManager().kitAlreadyExist(a2)) {
-                    MessageUtil.sendMessage(p, "&cKit not exist!");
+                if (!plugin.getKitManager().kitAlreadyExist(kitName)) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fKit does not exist!");
                     return;
                 }
-                Arena a = plugin.getArenaManager().getArena(a1);
-                if (a.getKits().contains(a2)) {
-                    MessageUtil.sendMessage(p, "&cKit already added!");
+                if (arena.getKits().contains(kitName)) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fKit already added!");
                     return;
                 }
-                a.addKit(a2);
-                plugin.getArenaManager().updateArena(a);
-                MessageUtil.sendMessage(p, "&aAdded kit " + a2 + "!");
+                arena.addKit(kitName);
+                plugin.getArenaManager().updateArena(arena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fAdded kit &d" + kitName + "&f!");
                 break;
             }
-            case "setVoidY": {
+            case "setvoidy": {
                 if (strings.length < 3) return;
-                String a1 = strings[1];
-                String a2 = strings[2];
-                if (plugin.getArenaManager().getArena(a1) == null) {
-                    MessageUtil.sendMessage(p, "&cArena not exist!");
+                String arenaName = strings[1];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
                     return;
                 }
-                Arena a = plugin.getArenaManager().getArena(a1);
-                a.setVoidY(Integer.parseInt(a2));
-                MessageUtil.sendMessage(p, "&aSet void y level!");
+                try {
+                    int voidY = Integer.parseInt(strings[2]);
+                    arena.setVoidY(voidY);
+                    plugin.getArenaManager().updateArena(arena);
+                    MessageUtil.sendMessage(p, "&d&l✓ &fSet void Y level to &d" + voidY + "&f!");
+                } catch (NumberFormatException e) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fInvalid number!");
+                }
+                break;
             }
             case "removeallgamearenas": {
+                int count = plugin.getArenaManager().getGameArenas().size();
                 for (GameArena ga : plugin.getArenaManager().getGameArenas()) {
                     plugin.getArenaManager().removeGameArena(ga);
                 }
+                MessageUtil.sendMessage(p, "&d&l✓ &fRemoved &d" + count + " &fgame arenas!");
+                break;
             }
             case "list": {
                 StringBuilder sb = new StringBuilder();
-                sb.append("----------------------\n&r");
+                sb.append("&f&m                    &r\n");
+                sb.append("&d&lArena List\n");
+                sb.append("&f&m                    &r\n");
                 for (Arena a : plugin.getArenaManager().getArenas()) {
-                    sb.append(a.getName()).append(" ").append(a.isComplete() ? "&aComplete" : "&cIncomplete").append("\n&r");
+                    String status = a.isComplete() ? "&d✓ Complete" : "&f✗ Incomplete";
+                    sb.append("&f● &d").append(a.getName()).append(" ").append(status).append("\n");
                 }
-                sb.append("----------------------\n&r");
+                sb.append("&f&m                    &r");
                 MessageUtil.sendMessage(p, sb.toString());
                 break;
+            }
+            default: {
+                MessageUtil.sendMessage(p, "&d&lUsage: &f/arena <create|pos1|pos2|spec|respawnable|bnsb1|bnsb2|addkit|setVoidY|list|reload>");
             }
         }
     }

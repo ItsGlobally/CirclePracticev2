@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PlayerManager extends Managers {
-    private final Map<UUID, PracticePlayer> playerList = new HashMap();
+    private final Map<UUID, PracticePlayer> playerList = new HashMap<>();
 
     public PlayerManager() {
 
@@ -40,12 +40,18 @@ public class PlayerManager extends Managers {
 
     public String getPrefix(Player p) {
         User user = plugin.getLuckPerms().getUserManager().getUser(p.getUniqueId());
-        return user.getCachedData().getMetaData().getPrefix();
+        if (user == null) return "";
+        String prefix = user.getCachedData().getMetaData().getPrefix();
+        return prefix != null ? prefix : "";
     }
 
     public String getPrefixColor(Player p) {
         User user = plugin.getLuckPerms().getUserManager().getUser(p.getUniqueId());
-        return (user.getCachedData().getMetaData().getMetaValue("prefixcolor") == null) ? user.getCachedData().getMetaData().getMetaValue("prefixcolor") : getPrefix(p).substring(0, 2);
+        if (user == null) return "&f";
+        String prefixColor = user.getCachedData().getMetaData().getMetaValue("prefixcolor");
+        if (prefixColor != null) return prefixColor;
+        String prefix = getPrefix(p);
+        return prefix.length() >= 2 ? prefix.substring(0, 2) : "&f";
     }
 
     public String getPrefixedName(Player p) {

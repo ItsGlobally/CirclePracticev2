@@ -76,12 +76,12 @@ public class GameListener implements Listener, IListener {
                                     vic.setFlying(false);
                                     vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
                                     vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
-                                    MessageUtil.sendMessage(vic, "&aYou have respawned!");
+                                    MessageUtil.sendMessage(vic, "&d&l✓ &fYou have respawned!");
                                     cancel();
                                     return;
                                 }
                                 if (vicp.isInSpawn()) cancel();
-                                MessageUtil.sendMessage(vic, "&eRespawning in " + deathCountdown[0] + "s...");
+                                MessageUtil.sendMessage(vic, "&f⏱ &fRespawning in &d" + deathCountdown[0] + "s&f...");
                                 deathCountdown[0]--;
                             }
                         }.runTaskTimer(plugin, 0L, 20L);
@@ -145,12 +145,12 @@ public class GameListener implements Listener, IListener {
                             vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
                             vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
                             respawning.put(vic.getUniqueId(), false);
-                            MessageUtil.sendMessage(vic, "§aYou have respawned!");
+                            MessageUtil.sendMessage(vic, "&d&l✓ &fYou have respawned!");
                             cancel();
                             return;
                         }
                         if (vicp.isInSpawn()) cancel();
-                        MessageUtil.sendMessage(vic, "§eRespawning in " + deathCountdown[0] + "s...");
+                        MessageUtil.sendMessage(vic, "&f⏱ &fRespawning in &d" + deathCountdown[0] + "s&f...");
                         deathCountdown[0]--;
                     }
                 }.runTaskTimer(plugin, 0L, 20L);
@@ -255,16 +255,16 @@ public class GameListener implements Listener, IListener {
 
                     if (isEnemyBed) {
                         game.setRespawnable(game.getOpponent(pp), false);
-                        MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&cBED DESTROYED", "You won't be able to respawn again!");
+                        MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&f&lBED DESTROYED", "&fYou won't be able to respawn again!");
                         MessageUtil.sendMessage(e.getPlayer(), game.getOpponent(pp).getPlayer(),
-                                "BED DESTROY > &7" + game.getOpponent(pp).getPlayer().getName() +
-                                        "&r's bed has been destroyed by " + e.getPlayer().getName() + "!");
+                                "&d&lBED DESTROYED &f» &d" + game.getOpponent(pp).getPlayer().getName() +
+                                        "&f's bed has been destroyed by &d" + e.getPlayer().getName() + "&f!");
                         game.getPlayer1().getPlayer().playSound(game.getPlayer1().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
                         game.getPlayer2().getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
                         e.setCancelled(false);
                     } else if (isOwnBed) {
                         e.setCancelled(true);
-                        MessageUtil.sendMessage(e.getPlayer(), "&cYou can't break your own bed!");
+                        MessageUtil.sendMessage(e.getPlayer(), "&d&l✗ &fYou can't break your own bed!");
                     } else {
                         e.setCancelled(true);
                     }

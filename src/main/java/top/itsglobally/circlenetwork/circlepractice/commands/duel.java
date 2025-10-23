@@ -18,25 +18,30 @@ public class duel implements NontageCommand, ICommand {
         if (!(commandSender instanceof Player p)) return;
 
         if (strings.length < 2) {
-            MessageUtil.sendMessage(p, "&cUsage: /duel player kit");
+            MessageUtil.sendMessage(p, "&d&lUsage: &f/duel <player> <kit>");
             return;
         }
-        String tgn = strings[0];
-        Player tg = Bukkit.getPlayerExact(tgn);
-        if (tg == null) {
-            MessageUtil.sendMessage(p, "&cThat player is not online!");
+
+        String targetName = strings[0];
+        Player target = Bukkit.getPlayerExact(targetName);
+
+        if (target == null) {
+            MessageUtil.sendMessage(p, "&d&l✗ &fThat player is not online!");
             return;
         }
-        String kit = strings[1];
-        if (!plugin.getKitManager().kitAlreadyExist(kit)) {
-            MessageUtil.sendMessage(p, "&cThat kit does not exist");
+
+        String kitName = strings[1];
+        if (!plugin.getKitManager().kitAlreadyExist(kitName)) {
+            MessageUtil.sendMessage(p, "&d&l✗ &fThat kit does not exist!");
             return;
         }
-        if (!plugin.getKitManager().getKit(kit).isForDuels()) {
-            MessageUtil.sendMessage(p, "&cThat kit is not for duels!");
+
+        if (!plugin.getKitManager().getKit(kitName).isForDuels()) {
+            MessageUtil.sendMessage(p, "&d&l✗ &fThat kit is not for duels!");
             return;
         }
-        plugin.getGameManager().sendDuelRequest(p, tg, kit);
+
+        plugin.getGameManager().sendDuelRequest(p, target, kitName);
     }
 
     @Override

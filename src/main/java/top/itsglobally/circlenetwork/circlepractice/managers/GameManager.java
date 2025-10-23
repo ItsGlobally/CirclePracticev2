@@ -24,19 +24,31 @@ public class GameManager extends Managers {
     }
 
     public void sendDuelRequest(Player p1, Player p2, String kit) {
+        if (p1 == null || p2 == null || kit == null) return;
+
+        if (p1.equals(p2)) {
+            MessageUtil.sendMessage(p1, "&d&l✗ &fYou cannot duel yourself!");
+            return;
+        }
+
         if (!plugin.getKitManager().kitAlreadyExist(kit)) {
-            MessageUtil.sendMessage(p1, "&cThe kit does not exist.");
+            MessageUtil.sendMessage(p1, "&d&l✗ &fThe kit does not exist!");
             return;
         }
 
         PracticePlayer pp1 = plugin.getPlayerManager().getPlayer(p1);
         PracticePlayer pp2 = plugin.getPlayerManager().getPlayer(p2);
+
+        if (pp1 == null || pp2 == null) {
+            MessageUtil.sendMessage(p1, "&d&l✗ &fPlayer data not found!");
+            return;
+        }
         if (!pp1.isInSpawn()) {
-            MessageUtil.sendMessage(p1, "&cYou're not in the spawn.");
+            MessageUtil.sendMessage(p1, "&d&l✗ &fYou're not in the spawn!");
             return;
         }
         if (!pp2.isInSpawn()) {
-            MessageUtil.sendMessage(p1, "&cThat player is not available.");
+            MessageUtil.sendMessage(p1, "&d&l✗ &fThat player is not available!");
             return;
         }
 
@@ -54,8 +66,8 @@ public class GameManager extends Managers {
                         duelRequests.remove(p2);
                     }
 
-                    MessageUtil.sendActionBar(p1, "&cYour duel request to " + p2.getName() + " has expired.");
-                    MessageUtil.sendMessage(p2, "&cThe duel request from " + p1.getName() + " has expired.");
+                    MessageUtil.sendActionBar(p1, "&d&l✗ &fYour duel request to &d" + p2.getName() + " &fhas expired!");
+                    MessageUtil.sendMessage(p2, "&d&l✗ &fThe duel request from &d" + p1.getName() + " &fhas expired!");
                     cancel();
                 }
             }
@@ -65,18 +77,20 @@ public class GameManager extends Managers {
 
         duelRequests.computeIfAbsent(p2, k -> new ArrayList<>()).add(request);
 
-        MessageUtil.sendMessage(p2, "&b" + p1.getName() + " &rhas sent a duel request with kit &e" + kit + "&r. You have 60 seconds to accept.");
-        MessageUtil.sendMessage(p1, "&aDuel request sent to &b" + p2.getName() + "&a.");
+        MessageUtil.sendMessage(p2, "&d&l⚔ &d" + p1.getName() + " &fhas sent a duel request with kit &d" + kit + "&f. You have 60 seconds to accept!");
+        MessageUtil.sendMessage(p1, "&d&l✓ &fDuel request sent to &d" + p2.getName() + "&f!");
         p1.playSound(p1.getLocation(), Sound.NOTE_BASS, 1f, 1f);
         p2.playSound(p1.getLocation(), Sound.NOTE_BASS, 1f, 1f);
     }
 
 
     public void acceptDuelRequest(Player p2, Player p1) {
+        if (p1 == null || p2 == null) return;
+
         List<DuelRequest> list = duelRequests.get(p2);
 
         if (list == null || list.isEmpty()) {
-            MessageUtil.sendMessage(p2, "&cYou don't have any pending duel requests.");
+            MessageUtil.sendMessage(p2, "&d&l✗ &fYou don't have any pending duel requests!");
             return;
         }
 
@@ -86,7 +100,7 @@ public class GameManager extends Managers {
                 .orElse(null);
 
         if (request == null) {
-            MessageUtil.sendMessage(p2, "&cNo duel request found from " + p1.getName());
+            MessageUtil.sendMessage(p2, "&d&l✗ &fNo duel request found from &d" + p1.getName() + "&f!");
             return;
         }
 
@@ -96,8 +110,8 @@ public class GameManager extends Managers {
 
         String kit = request.getKit();
 
-        MessageUtil.sendMessage(p1, "&a" + p2.getName() + " accepted your duel request!");
-        MessageUtil.sendMessage(p2, "&aYou accepted the duel request from " + p1.getName() + "!");
+        MessageUtil.sendMessage(p1, "&d&l✓ &d" + p2.getName() + " &faccepted your duel request!");
+        MessageUtil.sendMessage(p2, "&d&l✓ &fYou accepted the duel request from &d" + p1.getName() + "&f!");
 
         processNewGame(p1, p2, plugin.getKitManager().getKit(kit));
     }
@@ -130,7 +144,7 @@ public class GameManager extends Managers {
             ga = plugin.getArenaManager().createGameArena(kit);
         }
         if (ga == null) {
-            MessageUtil.sendMessage(p1, p2, "&cError on creating arena");
+            MessageUtil.sendMessage(p1, p2, "&d&l✗ &fError creating arena!");
             return;
         }
 
@@ -140,9 +154,19 @@ public class GameManager extends Managers {
     }
 
     public void startNewGame(PracticePlayer pp1, PracticePlayer pp2, Kit kit, GameArena arena) {
+        if (pp1 == null || pp2 == null || kit == null || arena == null) {
+            Bukkit.getLogger().warning("Cannot start game: invalid parameters");
+            return;
+        }
+
         Game game = new Game(pp1, pp2, kit, arena);
         Player p1 = game.getPlayer1().getPlayer();
         Player p2 = game.getPlayer2().getPlayer();
+
+        if (p1 == null || p2 == null) {
+            Bukkit.getLogger().warning("Cannot start game: player is null");
+            return;
+        }
 
         p1.teleport(game.getArena().getPos1());
         p2.teleport(game.getArena().getPos2());
@@ -186,14 +210,14 @@ public class GameManager extends Managers {
 
                 int countdown = game.getCountdown();
                 if (countdown > 0) {
-                    MessageUtil.sendMessage(p1, "&eDuel starting in &c" + countdown + "&e...");
-                    MessageUtil.sendMessage(p2, "&eDuel starting in &c" + countdown + "&e...");
+                    MessageUtil.sendMessage(p1, "&f&lDuel starting in &d" + countdown + "&f...");
+                    MessageUtil.sendMessage(p2, "&f&lDuel starting in &d" + countdown + "&f...");
                     p1.playSound(p1.getLocation(), Sound.CLICK, 1.0f, 1.0f);
                     p2.playSound(p2.getLocation(), Sound.CLICK, 1.0f, 1.0f);
                     game.setCountdown(countdown - 1);
                 } else {
-                    MessageUtil.sendMessage(p1, "&aFight!");
-                    MessageUtil.sendMessage(p2, "&aFight!");
+                    MessageUtil.sendMessage(p1, "&d&l⚔ FIGHT!");
+                    MessageUtil.sendMessage(p2, "&d&l⚔ FIGHT!");
                     p1.playSound(p1.getLocation(), Sound.FIREWORK_BLAST, 1.0f, 1.0f);
                     p2.playSound(p2.getLocation(), Sound.FIREWORK_BLAST, 1.0f, 1.0f);
                     game.setState(GameState.ONGOING);
@@ -214,7 +238,7 @@ public class GameManager extends Managers {
         game.getPlayer2().setCurrentGame(null);
         game.getArena().setInUse(false);
 
-        String message = "&f-------------------------\n&bWinner: &f" + winner.getName() + "&r | &cLoser: &f" + game.getOpponent(winner).getName() + "&r\n&f-------------------------";
+        String message = "&f&m                    &r\n&d&lWinner: &f" + winner.getName() + " &7| &d&lLoser: &f" + game.getOpponent(winner).getName() + "\n&f&m                    &r";
         if (p1 != null) {
             plugin.getConfigManager().teleportToSpawn(p1);
             p1.getInventory().setArmorContents(null);
@@ -239,17 +263,17 @@ public class GameManager extends Managers {
             PracticePlayer winnerPp = plugin.getPlayerManager().getPlayer(winnerPlayer);
             PracticePlayer loser = game.getOpponent(winnerPp);
             if (loser.getPlayer() != null)
-                MessageUtil.sendTitle(loser.getPlayer(), "&cDEFEAT!", "You have been defeated by " + winner.getName());
+                MessageUtil.sendTitle(loser.getPlayer(), "&f&lDEFEAT!", "&fYou have been defeated by &d" + winner.getName());
             if (winnerPp.getPlayer() != null)
-                MessageUtil.sendTitle(winner.getPlayer(), "&aVICTORY!", "You have defeated " + loser.getName());
+                MessageUtil.sendTitle(winner.getPlayer(), "&d&lVICTORY!", "&fYou have defeated &d" + loser.getName());
 
             if (p1 != null) MessageUtil.sendMessage(p1, message);
             if (p2 != null) MessageUtil.sendMessage(p2, message);
             plugin.getPlayerDataManager().getData(winnerPlayer).addXps(20);
-            MessageUtil.sendMessage(winnerPlayer, "&dYou won and earned 20 xp.");
+            MessageUtil.sendMessage(winnerPlayer, "&d&l⭐ &fYou won and earned &d20 XP&f!");
             if (game.getOpponent(winner).getPlayer() != null) {
                 plugin.getPlayerDataManager().getData(game.getOpponent(winner).getPlayer()).addXps(10);
-                MessageUtil.sendMessage(game.getOpponent(winner).getPlayer(), "&dYou lost but still earned 10 xp.");
+                MessageUtil.sendMessage(game.getOpponent(winner).getPlayer(), "&d&l⭐ &fYou lost but earned &d10 XP&f!");
             }
         }
 

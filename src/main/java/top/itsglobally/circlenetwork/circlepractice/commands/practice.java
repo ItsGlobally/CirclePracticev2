@@ -14,36 +14,39 @@ public class practice implements NontageCommand, ICommand {
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
         if (strings.length < 1) {
-            String sb = "------------------------" +
-                    "&dCircle Practice!" +
-                    "&dDeveloper: ItsGlobally" +
-                    "&dThe project is almost done by ai, thanks to them!" +
-                    "------------------------";
-            MessageUtil.sendMessage(p, sb);
+            MessageUtil.sendMessage(p,
+                    "&f&m                    &r\n" +
+                    "&d&lCircle Practice\n" +
+                    "&f&lDeveloper: &dItsGlobally\n" +
+                    "&fThe project is almost done by AI, thanks to them!\n" +
+                    "&f&m                    &r");
+            return;
         }
         switch (strings[0].toLowerCase()) {
             case "reload": {
                 if (!p.hasPermission("circlepractice.admin")) {
-                    MessageUtil.sendMessage(p, "&cNo permission!");
+                    MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
                     return;
                 }
                 plugin.getArenaManager().reload();
                 plugin.getKitManager().reload();
                 plugin.getPlayerDataManager().reload();
-                MessageUtil.sendMessage(p, "&aReloaded!");
+                MessageUtil.sendMessage(p, "&d&l✓ &fReloaded all configurations!");
+                break;
             }
             case "saveall": {
                 if (!p.hasPermission("circlepractice.admin")) {
-                    MessageUtil.sendMessage(p, "&cNo permission!");
+                    MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
                     return;
                 }
                 plugin.getArenaManager().saveAllArenas();
                 plugin.getKitManager().saveAllKits();
                 plugin.getPlayerDataManager().saveAll();
-                MessageUtil.sendMessage(p, "&aSaved!!");
+                MessageUtil.sendMessage(p, "&d&l✓ &fSaved all data!");
+                break;
             }
             default: {
-                MessageUtil.sendMessage(p, "&c/practice [reload]");
+                MessageUtil.sendMessage(p, "&d&lUsage: &f/practice [reload|saveall]");
             }
         }
     }

@@ -16,16 +16,19 @@ public class accept implements NontageCommand, ICommand {
         if (!(commandSender instanceof Player p)) return;
 
         if (strings.length < 1) {
-            MessageUtil.sendMessage(p, "&cUsage: /accept player");
+            MessageUtil.sendMessage(p, "&d&lUsage: &f/accept <player>");
             return;
         }
-        String tgn = strings[0];
-        Player tg = Bukkit.getPlayerExact(tgn);
-        if (tg == null) {
-            MessageUtil.sendMessage(p, "&cThat player is not online!");
+
+        String targetName = strings[0];
+        Player target = Bukkit.getPlayerExact(targetName);
+
+        if (target == null) {
+            MessageUtil.sendMessage(p, "&d&l✗ &fThat player is not online!");
             return;
         }
-        plugin.getGameManager().acceptDuelRequest(p, tg);
+
+        plugin.getGameManager().acceptDuelRequest(p, target);
     }
 
     @Override

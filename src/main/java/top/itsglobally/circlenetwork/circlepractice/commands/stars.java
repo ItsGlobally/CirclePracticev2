@@ -14,28 +14,48 @@ public class stars implements NontageCommand, ICommand {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
-        if (strings.length < 3) return;
-        switch (strings[0]) {
-            case "addxp": {
-                Player vic = Bukkit.getPlayerExact(strings[1]);
-                if (vic == null) {
-                    MessageUtil.sendMessage(p, "&cThat player is not online!");
-                    return;
-                }
 
-                plugin.getPlayerDataManager().getData(p).addXps(Long.parseLong(strings[2]));
-                MessageUtil.sendMessage(vic, "&dYou earned " + strings[2] + "xps for no reason.");
-            }
-            case "addstar": {
-                Player vic = Bukkit.getPlayerExact(strings[1]);
-                if (vic == null) {
-                    MessageUtil.sendMessage(p, "&cThat player is not online!");
-                    return;
-                }
+        if (!p.hasPermission("circlepractice.admin")) {
+            MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
+            return;
+        }
 
-                plugin.getPlayerDataManager().getData(p).addStars(Long.parseLong(strings[2]));
-                MessageUtil.sendMessage(vic, "&dYou upgraded to " + strings[2] + "stars for no reason.");
+        if (strings.length < 3) {
+            MessageUtil.sendMessage(p, "&d&lUsage: &f/stars <addxp|addstar> <player> <amount>");
+            return;
+        }
+
+        String subCommand = strings[0].toLowerCase();
+        String targetName = strings[1];
+        Player target = Bukkit.getPlayerExact(targetName);
+
+        if (target == null) {
+            MessageUtil.sendMessage(p, "&d&l✗ &fThat player is not online!");
+            return;
+        }
+
+        try {
+            long amount = Long.parseLong(strings[2]);
+
+            switch (subCommand) {
+                case "addxp": {
+                    plugin.getPlayerDataManager().getData(target).addXps(amount);
+                    MessageUtil.sendMessage(target, "&d&l⭐ &fYou earned &d" + amount + " XP&f!");
+                    MessageUtil.sendMessage(p, "&d&l✓ &fAdded &d" + amount + " XP &fto &d" + target.getName() + "&f!");
+                    break;
+                }
+                case "addstar": {
+                    plugin.getPlayerDataManager().getData(target).addStars(amount);
+                    MessageUtil.sendMessage(target, "&d&l⭐ &fYou gained &d" + amount + " stars&f!");
+                    MessageUtil.sendMessage(p, "&d&l✓ &fAdded &d" + amount + " stars &fto &d" + target.getName() + "&f!");
+                    break;
+                }
+                default: {
+                    MessageUtil.sendMessage(p, "&d&lUsage: &f/stars <addxp|addstar> <player> <amount>");
+                }
             }
+        } catch (NumberFormatException e) {
+            MessageUtil.sendMessage(p, "&d&l✗ &fInvalid amount! Please use a number.");
         }
     }
 
