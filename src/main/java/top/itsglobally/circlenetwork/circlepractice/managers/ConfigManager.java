@@ -22,7 +22,6 @@ public class ConfigManager extends Managers {
     }
 
     public class MainConfig extends BaseConfig {
-        // -------------------- 可配置的欄位 --------------------
         public String defaultKit = "NoDebuff";
         public boolean allowSpectators = true;
         public int duelRequestExpire = 60;
@@ -39,7 +38,6 @@ public class ConfigManager extends Managers {
             return new Location(Bukkit.getWorld(spawnWorld), spawnX, spawnY, spawnZ, spawnYaw, spawnPitch);
         }
 
-        // -------------------- API --------------------
         public String getDefaultKit() {
             return defaultKit;
         }

@@ -31,6 +31,7 @@ import java.util.UUID;
 public class GameListener implements Listener, IListener {
 
     private final HashMap<UUID, Boolean> respawning = new HashMap<>();
+    private final HashMap<UUID, Boolean> gotHitted = new HashMap<>();
 
     @EventHandler
     public void hunger(FoodLevelChangeEvent e) {
@@ -64,10 +65,7 @@ public class GameListener implements Listener, IListener {
             return;
         }
 
-        if (respawning.getOrDefault(game.getOpponent(vicp).getUuid(), false)) {
-            e.setCancelled(true);
-            return;
-        }
+        gotHitted.put(vic.getUniqueId(), true);
 
         if (vic.getHealth() < e.getFinalDamage()) {
             e.setCancelled(true);
@@ -75,6 +73,7 @@ public class GameListener implements Listener, IListener {
             vic.setFoodLevel(20);
 
             if (game.getKit().isRespawnable() && game.getPlayerRespawnable(vicp)) {
+                gotHitted.put(vic.getUniqueId(), false);
                 killer.hidePlayer(vic);
                 vic.getInventory().clear();
                 vic.getInventory().setArmorContents(null);
@@ -82,8 +81,9 @@ public class GameListener implements Listener, IListener {
                 vic.setAllowFlight(true);
                 vic.setFlying(true);
 
-                game.broadcast("&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas eliminated by &d" + game.getPrefixedTeamPlayerName(killerPp));
+                game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
+                        + "&f! " + game.getPrefixedTeamPlayerName(killerPp));
 
                 int[] countdown = {game.getKit().getRespawnTime()};
                 new BukkitRunnable() {
@@ -109,7 +109,9 @@ public class GameListener implements Listener, IListener {
                 killer.setHealth(20.0);
                 killer.setFoodLevel(20);
                 game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas defeated by &d" + game.getPrefixedTeamPlayerName(killerPp) + "&f!");
+                        + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
+                        + "&f!");
+                gotHitted.put(vic.getUniqueId(), false);
                 plugin.getGameManager().endGame(game, killerPp);
             }
         }
@@ -141,7 +143,8 @@ public class GameListener implements Listener, IListener {
                 vic.getInventory().clear();
                 vic.getInventory().setArmorContents(null);
 
-                game.broadcast("&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
                         + " &ffell into the void!");
 
                 int[] countdown = {game.getKit().getRespawnTime()};
@@ -172,8 +175,9 @@ public class GameListener implements Listener, IListener {
                 vic.setFoodLevel(20);
                 killer.setHealth(20.0);
                 killer.setFoodLevel(20);
-                game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
-                        + " &ffell into the void! ");
+                game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &ffell into the void!");
                 plugin.getGameManager().endGame(game, killerPp);
             }
         }
@@ -189,7 +193,7 @@ public class GameListener implements Listener, IListener {
         e.setDeathMessage(null);
         e.getDrops().clear();
         e.setDroppedExp(0);
-
+        gotHitted.put(vic.getUniqueId(), false);
         PracticePlayer killerPp = game.getOpponent(vicp);
         Player killer = killerPp.getPlayer();
 
@@ -204,8 +208,9 @@ public class GameListener implements Listener, IListener {
             vic.getInventory().clear();
             vic.getInventory().setArmorContents(null);
 
-            game.broadcast("&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
-                    + " &fwas killed by &d" + game.getPrefixedTeamPlayerName(killerPp));
+            game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
+                    + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
+                    + "&f!");
 
             int[] countdown = {game.getKit().getRespawnTime()};
             new BukkitRunnable() {
@@ -235,7 +240,7 @@ public class GameListener implements Listener, IListener {
             killer.setFoodLevel(20);
             game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
                     + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
-                    + "&f! " + game.getPrefixedTeamPlayerName(killerPp) + " &fwins!");
+                    + "&f!");
             plugin.getGameManager().endGame(game, killerPp);
         }
     }
@@ -276,7 +281,7 @@ public class GameListener implements Listener, IListener {
 
                     if (isEnemyBed) {
                         game.setRespawnable(game.getOpponent(pp), false);
-                        MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&f&lBED DESTROYED", "&fYou won't be able to respawn again!");
+                        MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&c&lBED DESTROYED", "&fYou won't be able to respawn again!");
                         MessageUtil.sendMessage(e.getPlayer(), game.getOpponent(pp).getPlayer(),
                                 "&d&lBED DESTROYED &f» &d" + game.getOpponent(pp).getPlayer().getName() +
                                         "&f's bed has been destroyed by &d" + e.getPlayer().getName() + "&f!");
