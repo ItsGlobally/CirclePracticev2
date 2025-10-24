@@ -101,6 +101,20 @@ public class arena implements NontageCommand, ICommand {
                 MessageUtil.sendMessage(p, "&d&l✓ &fSet respawnable to &d" + status + "&f!");
                 break;
             }
+            case "remake": {
+                if (strings.length < 3) return;
+                String arenaName = strings[1];
+                Arena arena = plugin.getArenaManager().getArena(arenaName);
+                if (arena == null) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
+                    return;
+                }
+                boolean status = Boolean.parseBoolean(strings[2]);
+                arena.setRemake(status);
+                plugin.getArenaManager().updateArena(arena);
+                MessageUtil.sendMessage(p, "&d&l✓ &fSet remake to &d" + status + "&f!");
+                break;
+            }
             case "bnsb1": {
                 if (strings.length < 2) return;
                 String arenaName = strings[1];

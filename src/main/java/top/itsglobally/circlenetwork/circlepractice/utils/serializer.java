@@ -26,6 +26,7 @@ public class serializer {
             map.put("bnsb2", serializeLocation(arena.getBnsb2()));
         }
         map.put("voidY", arena.getVoidY());
+        map.put("remake", arena.isRemake());
         return map;
     }
 
@@ -44,6 +45,7 @@ public class serializer {
             if (map.containsKey("bnsb2")) arena.setBnsb2(deserializeLocation((Map<String, Object>) map.get("bnsb2")));
         }
         if (map.containsKey("voidY")) arena.setVoidY((int) map.get("voidY"));
+        if (map.containsKey("remake")) arena.setRemake(Boolean.parseBoolean((String) map.get("remake")));
         return arena;
     }
 

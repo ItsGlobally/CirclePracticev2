@@ -9,7 +9,6 @@ import java.util.List;
 public class Arena {
     private final String name;
     private final List<String> kits = new ArrayList<>();
-    private final boolean inUse;
     private Location pos1;
     private Location pos2;
     private Location spectatorSpawn;
@@ -23,7 +22,7 @@ public class Arena {
 
     public Arena(String name) {
         this.name = name;
-        this.inUse = false;
+        this.remake = false;
     }
 
     public String getName() {

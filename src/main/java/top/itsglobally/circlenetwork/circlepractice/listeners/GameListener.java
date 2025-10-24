@@ -62,6 +62,11 @@ public class GameListener implements Listener, IListener {
             return;
         }
 
+        if (respawning.getOrDefault(game.getOpponent(vicp).getUuid(), false)) {
+            e.setCancelled(true);
+            return;
+        }
+
         if (vic.getHealth() < e.getFinalDamage()) {
             e.setCancelled(true);
             vic.setHealth(20.0);
