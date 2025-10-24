@@ -220,6 +220,32 @@ public class arena implements NontageCommand, ICommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-        return NontageCommand.super.onTabComplete(sender, label, args);
+        if (args.length == 1) {
+            return List.of("create", "pos1", "pos2", "spec", "respawnable", "remake", "bnsb1", "bnsb2", "addkit", "setvoidy", "removeallgamearenas", "list", "reload");
+        }
+        if (args.length == 2) {
+            String subCommand = args[0].toLowerCase();
+            if (subCommand.equals("pos1") || subCommand.equals("pos2") ||
+                subCommand.equals("spec") || subCommand.equals("respawnable") ||
+                subCommand.equals("remake") || subCommand.equals("bnsb1") ||
+                subCommand.equals("bnsb2") || subCommand.equals("addkit") ||
+                subCommand.equals("setvoidy") || subCommand.equals("create")) {
+                return plugin.getArenaManager().getArenas().stream()
+                        .map(arena -> arena.getName())
+                        .toList();
+            }
+        }
+        if (args.length == 3) {
+            String subCommand = args[0].toLowerCase();
+            if (subCommand.equals("respawnable") || subCommand.equals("remake")) {
+                return List.of("true", "false");
+            }
+            if (subCommand.equals("addkit")) {
+                return plugin.getKitManager().getKits().stream()
+                        .map(kit -> kit.getName())
+                        .toList();
+            }
+        }
+        return List.of();
     }
 }

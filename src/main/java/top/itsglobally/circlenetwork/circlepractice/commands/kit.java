@@ -157,6 +157,14 @@ public class kit implements NontageCommand, ICommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-        return NontageCommand.super.onTabComplete(sender, label, args);
+        if (args.length == 1) {
+            return List.of("create", "editglobally", "edit", "save", "togglehunger", "toggleforduels", "toggle", "togglecanbuild", "saveall");
+        }
+        if (args.length == 2 && !args[0].equalsIgnoreCase("saveall")) {
+            return plugin.getKitManager().getKits().stream()
+                    .map(kit -> kit.getName())
+                    .toList();
+        }
+        return List.of();
     }
 }

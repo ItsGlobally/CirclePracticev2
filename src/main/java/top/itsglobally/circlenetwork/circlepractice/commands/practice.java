@@ -53,6 +53,9 @@ public class practice implements NontageCommand, ICommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-        return NontageCommand.super.onTabComplete(sender, label, args);
+        if (args.length == 1) {
+            return List.of("reload", "saveall");
+        }
+        return List.of();
     }
 }

@@ -61,6 +61,17 @@ public class stars implements NontageCommand, ICommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-        return NontageCommand.super.onTabComplete(sender, label, args);
+        if (args.length == 1) {
+            return List.of("addxp", "addstar");
+        }
+        if (args.length == 2) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .toList();
+        }
+        if (args.length == 3) {
+            return List.of("10", "50", "100", "500", "1000");
+        }
+        return List.of();
     }
 }

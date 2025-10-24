@@ -3,6 +3,7 @@ package top.itsglobally.circlenetwork.circlepractice.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -10,6 +11,7 @@ import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
+import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
 
 import java.util.*;
 
@@ -170,10 +172,14 @@ public class GameManager extends Managers {
 
         p1.teleport(game.getArena().getPos1());
         p2.teleport(game.getArena().getPos2());
-        p1.getInventory().setArmorContents(pp1.getPlayerData().getKitContents(game.getKit().getName())[1]);
-        p1.getInventory().setContents(pp1.getPlayerData().getKitContents(game.getKit().getName())[0]);
-        p2.getInventory().setArmorContents(pp2.getPlayerData().getKitContents(game.getKit().getName())[1]);
-        p2.getInventory().setContents(pp2.getPlayerData().getKitContents(game.getKit().getName())[0]);
+
+        ItemStack[][] p1Kit = pp1.getPlayerData().getKitContents(game.getKit().getName());
+        ItemStack[][] p2Kit = pp2.getPlayerData().getKitContents(game.getKit().getName());
+
+        p1.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p1Kit[1], true));
+        p1.getInventory().setContents(TeamColorUtil.colorTeamItems(p1Kit[0], true));
+        p2.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p2Kit[1], false));
+        p2.getInventory().setContents(TeamColorUtil.colorTeamItems(p2Kit[0], false));
         p1.setFoodLevel(20);
         p1.setHealth(20);
         p2.setFoodLevel(20);
