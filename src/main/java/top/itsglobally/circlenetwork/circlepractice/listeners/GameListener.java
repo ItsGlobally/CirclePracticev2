@@ -1,15 +1,19 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -46,63 +50,59 @@ public class GameListener implements Listener, IListener {
     public void damage(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player vic)) return;
         PracticePlayer vicp = plugin.getPlayerManager().getPlayer(vic);
-        if (vicp.isInDuel()) {
-            Game game = vicp.getCurrentGame();
-            if (respawning.getOrDefault(game.getOpponent(vicp).getUuid(), false)) {
-                e.setCancelled(true);
-                return;
-            }
-            if (vic.getHealth() < e.getFinalDamage()) {
-                if (game.getKit().isRespawnable()) {
-                    if (game.getPlayerRespawnable(vicp)) {
-                        e.setCancelled(true);
-                        vic.setHealth(20.0);
-                        vic.setFoodLevel(20);
-                        PracticePlayer klrpp = game.getOpponent(vicp);
-                        klrpp.getPlayer().hidePlayer(vic);
 
-                        int[] deathCountdown = {game.getKit().getRespawnTime()};
-                        vic.teleport(klrpp.getPlayer().getLocation());
-                        vic.setAllowFlight(true);
-                        vic.setFlying(true);
-                        vic.getInventory().clear();
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (deathCountdown[0] <= 0) {
-                                    klrpp.getPlayer().showPlayer(vic);
-                                    vic.teleport(game.getPlayerSpawnPoint(vicp));
-                                    vic.setAllowFlight(false);
-                                    vic.setFlying(false);
-                                    vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
-                                    vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
-                                    MessageUtil.sendMessage(vic, "&d&l✓ &fYou have respawned!");
-                                    cancel();
-                                    return;
-                                }
-                                if (vicp.isInSpawn()) cancel();
-                                MessageUtil.sendMessage(vic, "&f⏱ &fRespawning in &d" + deathCountdown[0] + "s&f...");
-                                deathCountdown[0]--;
-                            }
-                        }.runTaskTimer(plugin, 0L, 20L);
-                    } else {
-                        e.setCancelled(true);
-                        vic.setHealth(20.0);
-                        vic.setFoodLevel(20);
-                        Player winner = game.getOpponent(vicp).getPlayer();
-                        winner.setHealth(20.0);
-                        winner.setFoodLevel(20);
-                        plugin.getGameManager().endGame(game, game.getOpponent(vicp));
+        if (!vicp.isInDuel()) return;
+        Game game = vicp.getCurrentGame();
+
+        PracticePlayer killerPp = game.getOpponent(vicp);
+        Player killer = killerPp.getPlayer();
+
+        if (respawning.getOrDefault(killerPp.getUuid(), false)) {
+            e.setCancelled(true);
+            return;
+        }
+
+        if (vic.getHealth() < e.getFinalDamage()) {
+            e.setCancelled(true);
+            vic.setHealth(20.0);
+            vic.setFoodLevel(20);
+
+            if (game.getKit().isRespawnable() && game.getPlayerRespawnable(vicp)) {
+                killer.hidePlayer(vic);
+                vic.getInventory().clear();
+                vic.getInventory().setArmorContents(null);
+                vic.teleport(killer.getLocation());
+                vic.setAllowFlight(true);
+                vic.setFlying(true);
+
+                game.broadcast("&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas eliminated by &d" + game.getPrefixedTeamPlayerName(killerPp));
+
+                int[] countdown = {game.getKit().getRespawnTime()};
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (countdown[0] <= 0) {
+                            killer.showPlayer(vic);
+                            vic.teleport(game.getPlayerSpawnPoint(vicp));
+                            vic.setAllowFlight(false);
+                            vic.setFlying(false);
+                            vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
+                            vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
+                            MessageUtil.sendMessage(vic, "§dYou have respawned!");
+                            cancel();
+                            return;
+                        }
+                        MessageUtil.sendMessage(vic, "&fRespawning in &d" + countdown[0] + "s&f...");
+                        countdown[0]--;
                     }
-                } else {
-                    e.setCancelled(true);
-                    vic.setHealth(20.0);
-                    vic.setFoodLevel(20);
-                    Player winner = game.getOpponent(vicp).getPlayer();
-                    winner.setHealth(20.0);
-                    winner.setFoodLevel(20);
-                    plugin.getGameManager().endGame(game, game.getOpponent(vicp));
-                }
+                }.runTaskTimer(plugin, 0L, 20L);
+            } else {
+                killer.setHealth(20.0);
+                killer.setFoodLevel(20);
+                game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas defeated by &d" + game.getPrefixedTeamPlayerName(killerPp) + "&f!");
+                plugin.getGameManager().endGame(game, killerPp);
             }
         }
     }
@@ -111,33 +111,38 @@ public class GameListener implements Listener, IListener {
     public void move(PlayerMoveEvent e) {
         Player vic = e.getPlayer();
         PracticePlayer vicp = plugin.getPlayerManager().getPlayer(vic);
-
         if (!vicp.isInDuel()) return;
-        Game game = vicp.getCurrentGame();
 
-        Player killer = game.getOpponent(vicp).getPlayer();
+        Game game = vicp.getCurrentGame();
+        PracticePlayer killerPp = game.getOpponent(vicp);
+        Player killer = killerPp.getPlayer();
+
         if (e.getPlayer().getLocation().getY() <= game.getArena().getOrgArena().getVoidY()) {
             if (respawning.getOrDefault(vic.getUniqueId(), false)) {
                 vic.teleport(game.getPlayerSpawnPoint(vicp));
                 return;
             }
-        }
-        if (e.getPlayer().getLocation().getY() <= game.getArena().getOrgArena().getVoidY()) {
+
             if (game.getKit().isRespawnable() && game.getPlayerRespawnable(vicp)) {
                 vic.setHealth(20.0);
                 vic.setFoodLevel(20);
                 killer.hidePlayer(vic);
-                vic.teleport(killer.getPlayer().getLocation());
+                vic.teleport(killer.getLocation());
                 vic.setAllowFlight(true);
                 vic.setFlying(true);
                 vic.getInventory().clear();
+                vic.getInventory().setArmorContents(null);
 
-                int[] deathCountdown = {game.getKit().getRespawnTime()};
+                game.broadcast("&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &ffell into the void!");
+
+                int[] countdown = {game.getKit().getRespawnTime()};
                 respawning.put(vic.getUniqueId(), true);
+
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (deathCountdown[0] <= 0) {
+                        if (countdown[0] <= 0) {
                             killer.showPlayer(vic);
                             vic.teleport(game.getPlayerSpawnPoint(vicp));
                             vic.setAllowFlight(false);
@@ -145,22 +150,22 @@ public class GameListener implements Listener, IListener {
                             vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
                             vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
                             respawning.put(vic.getUniqueId(), false);
-                            MessageUtil.sendMessage(vic, "&d&l✓ &fYou have respawned!");
+                            MessageUtil.sendMessage(vic, "§dYou have respawned!");
                             cancel();
                             return;
                         }
-                        if (vicp.isInSpawn()) cancel();
-                        MessageUtil.sendMessage(vic, "&f⏱ &fRespawning in &d" + deathCountdown[0] + "s&f...");
-                        deathCountdown[0]--;
+                        MessageUtil.sendMessage(vic, "&fRespawning in &d" + countdown[0] + "s&f...");
+                        countdown[0]--;
                     }
                 }.runTaskTimer(plugin, 0L, 20L);
-
             } else {
                 vic.setHealth(20.0);
                 vic.setFoodLevel(20);
                 killer.setHealth(20.0);
                 killer.setFoodLevel(20);
-                plugin.getGameManager().endGame(game, game.getOpponent(vicp));
+                game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &ffell into the void! ");
+                plugin.getGameManager().endGame(game, killerPp);
             }
         }
     }
@@ -169,7 +174,6 @@ public class GameListener implements Listener, IListener {
     public void died(PlayerDeathEvent e) {
         Player vic = e.getEntity();
         PracticePlayer vicp = plugin.getPlayerManager().getPlayer(vic);
-
         if (!vicp.isInDuel()) return;
         Game game = vicp.getCurrentGame();
 
@@ -177,48 +181,55 @@ public class GameListener implements Listener, IListener {
         e.getDrops().clear();
         e.setDroppedExp(0);
 
-        Player killer = game.getOpponent(vicp).getPlayer();
+        PracticePlayer killerPp = game.getOpponent(vicp);
+        Player killer = killerPp.getPlayer();
 
         if (game.getKit().isRespawnable() && game.getPlayerRespawnable(vicp)) {
             vic.spigot().respawn();
             vic.setHealth(20.0);
             vic.setFoodLevel(20);
             killer.hidePlayer(vic);
-            vic.teleport(killer.getPlayer().getLocation());
+            vic.teleport(killer.getLocation());
             vic.setAllowFlight(true);
             vic.setFlying(true);
             vic.getInventory().clear();
-            int[] deathCountdown = {game.getKit().getRespawnTime()};
+            vic.getInventory().setArmorContents(null);
 
+            game.broadcast("&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                    + " &fwas killed by &d" + game.getPrefixedTeamPlayerName(killerPp));
+
+            int[] countdown = {game.getKit().getRespawnTime()};
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (deathCountdown[0] <= 0) {
+                    if (countdown[0] <= 0) {
                         killer.showPlayer(vic);
                         vic.teleport(game.getPlayerSpawnPoint(vicp));
                         vic.setAllowFlight(false);
                         vic.setFlying(false);
                         vic.getInventory().setArmorContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[1]);
                         vic.getInventory().setContents(vicp.getPlayerData().getKitContents(game.getKit().getName())[0]);
-                        MessageUtil.sendMessage(vic, "§aYou have respawned!");
+                        MessageUtil.sendMessage(vic, "§dYou have respawned!");
                         cancel();
                         return;
                     }
-                    if (vicp.isInSpawn()) cancel();
-                    MessageUtil.sendMessage(vic, "§eRespawning in " + deathCountdown[0] + "s...");
-                    deathCountdown[0]--;
+                    MessageUtil.sendMessage(vic, "&fRespawning in &d" + countdown[0] + "s&f...");
+                    countdown[0]--;
                 }
             }.runTaskTimer(plugin, 0L, 20L);
-
         } else {
             vic.spigot().respawn();
             vic.setHealth(20.0);
             vic.setFoodLevel(20);
             killer.setHealth(20.0);
             killer.setFoodLevel(20);
-            plugin.getGameManager().endGame(game, game.getOpponent(vicp));
+            game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
+                    + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
+                    + "&f! " + game.getPrefixedTeamPlayerName(killerPp) + " &fwins!");
+            plugin.getGameManager().endGame(game, killerPp);
         }
     }
+
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
@@ -234,7 +245,7 @@ public class GameListener implements Listener, IListener {
     @EventHandler
     public void bbreak(BlockBreakEvent e) {
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
-
+        Bukkit.getLogger().info("DEBUG " + e.getPlayer().getName() + " broke " + e.getBlock().getType());
         if (pp.isInDuel()) {
             Game game = pp.getCurrentGame();
             if (respawning.getOrDefault(pp.getUuid(), false)) {
@@ -304,6 +315,4 @@ public class GameListener implements Listener, IListener {
             e.setCancelled(true);
         }
     }
-
-
 }

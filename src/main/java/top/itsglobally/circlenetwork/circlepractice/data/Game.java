@@ -1,6 +1,7 @@
 package top.itsglobally.circlenetwork.circlepractice.data;
 
 import org.bukkit.Location;
+import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,6 +144,15 @@ public class Game {
         Location ownBedHead = ownBed.clone();
         Location ownBedFoot = ownBed.clone().add(1, 0, 0);
         return isNear(loc, ownBedHead, 1) || isNear(loc, ownBedFoot, 1);
+    }
+    public void broadcast(String m) {
+        MessageUtil.sendMessage(player1.getPlayer(), player2.getPlayer(), m);
+    }
+    public String getPrefixedTeamPlayerName(PracticePlayer pp) {
+        if (getPlayer1OrPlayer2(pp) == 1) {
+            return "&c" + pp.getPlayer().getName();
+        }
+        return "&9" + pp.getPlayer().getName();
     }
 
 

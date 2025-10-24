@@ -106,6 +106,8 @@ public class serializer {
                         try {
                             blocks.add(Material.valueOf(s));
                         } catch (IllegalArgumentException ignored) {
+                            Bukkit.getLogger().info("Block not found: " + s);
+                            ignored.printStackTrace();
                         }
                     }
                 }
