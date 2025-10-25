@@ -19,6 +19,8 @@ public class Game {
     private int countdown;
     private boolean p1respawnable;
     private boolean p2respawnable;
+    private boolean p1attackable;
+    private boolean p2attackable;
 
     public Game(PracticePlayer player1, PracticePlayer player2, Kit kit, GameArena arena) {
         this.id = UUID.randomUUID();
@@ -32,6 +34,8 @@ public class Game {
         this.countdown = 5;
         this.p1respawnable = kit.isRespawnable();
         this.p2respawnable = kit.isRespawnable();
+        this.p1attackable = true;
+        this.p2attackable = true;
     }
 
     public GameArena getArena() {
@@ -155,5 +159,27 @@ public class Game {
         return "&9" + pp.getPlayer().getName();
     }
 
+    public void setP1attackable(boolean p1attackable) {
+        this.p1attackable = p1attackable;
+    }
 
+    public void setP2attackable(boolean p2attackable) {
+        this.p2attackable = p2attackable;
+    }
+
+    public boolean isP1attackable() {
+        return p1attackable;
+    }
+
+    public boolean isP2attackable() {
+        return p2attackable;
+    }
+    public boolean isPlayerAttackable(PracticePlayer pp) {
+        if (getPlayer1OrPlayer2(pp) == 1) return isP1attackable();
+        return isP2attackable();
+    }
+    public void setPlayerAttackable(PracticePlayer pp, boolean s) {
+        if (getPlayer1OrPlayer2(pp) == 1) setP1attackable(s);
+        setP2attackable(s);
+    }
 }

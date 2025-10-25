@@ -25,13 +25,13 @@ public class ConfigManager extends Managers {
         public String defaultKit = "NoDebuff";
         public boolean allowSpectators = true;
         public int duelRequestExpire = 60;
-        public int maxGameTime = 900;
         public String spawnWorld = "spawn";
         public double spawnX = 0.5;
         public double spawnY = 65;
         public double spawnZ = 0.5;
         public float spawnYaw = 0f;
         public float spawnPitch = 0f;
+        public int spawnprot = 2;
 
         public Location getSpawn() {
             if (Bukkit.getWorld(spawnWorld) == null) return null;
@@ -50,8 +50,8 @@ public class ConfigManager extends Managers {
             return duelRequestExpire;
         }
 
-        public int getMaxGameTime() {
-            return maxGameTime;
+        public int getSpawnprot() {
+            return spawnprot;
         }
     }
 }

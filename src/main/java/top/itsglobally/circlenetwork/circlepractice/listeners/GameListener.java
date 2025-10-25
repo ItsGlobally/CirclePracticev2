@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
+import top.itsglobally.circlenetwork.circlepractice.data.GameState;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
@@ -62,20 +63,23 @@ public class GameListener implements Listener, IListener {
                 TeamColorUtil.colorTeamItems(vicp.getPlayerData()
                         .getKitContents(game.getKit().getName())[0], isRedTeam)
         );
-
+        game.setPlayerAttackable(vicp, false);
+        gotHitted.put(vic.getUniqueId(), false);
         MessageUtil.sendMessage(vic, "§dYou have respawned!");
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                game.setPlayerAttackable(vicp, true);
+            }
+        }.runTaskLater(plugin, plugin.getConfigManager().getMainConfig().getSpawnprot() * 20L);
     }
     private Location findSpawnpoint(Location l) {
-        Location[] ls = {l, l.clone().add(0, 1, 0), l.clone().add(0, 2, 0)};
-        if (ls[0].getBlock().getType() == Material.AIR) {
-            if (ls[1].getBlock().getType() != Material.AIR) ls[1].getBlock().setType(Material.AIR);
-            if (ls[2].getBlock().getType() != Material.AIR) ls[2].getBlock().setType(Material.AIR);
-            return ls[0];
+
+        if (l.getBlock().getType() != Material.AIR) {
+            return l.clone().add(0, 1, 0);
         }
-        if (ls[1].getBlock().getType() != Material.AIR) {
-            if (ls[2].getBlock().getType() != Material.AIR) ls[2].getBlock().setType(Material.AIR);
-            return ls[1];
-        }
+        l.clone().add(0, 2, 0).getBlock().setType(Material.AIR);
+        l.clone().add(0, 3, 0).getBlock().setType(Material.AIR);
         return l;
     }
 
@@ -95,8 +99,13 @@ public class GameListener implements Listener, IListener {
             return;
         }
 
-        gotHitted.put(vic.getUniqueId(), true);
+        if (!game.isPlayerAttackable(vicp)) {
+            e.setCancelled(true);
+            return;
+        }
 
+        gotHitted.put(vic.getUniqueId(), true);
+        if (!game.isPlayerAttackable(killerPp)) game.setPlayerAttackable(killerPp, true);
         if (vic.getHealth() < e.getFinalDamage()) {
             e.setCancelled(true);
             vic.setHealth(20.0);
@@ -151,9 +160,22 @@ public class GameListener implements Listener, IListener {
         if (!vicp.isInDuel()) return;
 
         Game game = vicp.getCurrentGame();
+
+        if (game.getState() == GameState.STARTING && game.getKit().isFreezeOnCooldown()) {
+            Location from = e.getFrom();
+            Location to = e.getTo();
+
+            if (from.getBlockX() != to.getBlockX() || from.getBlockZ() != to.getBlockZ()) {
+                Location fixed = from.clone();
+                fixed.setYaw(to.getYaw());
+                fixed.setPitch(to.getPitch());
+                vic.teleport(fixed);
+                return;
+            }
+        }
+
         PracticePlayer killerPp = game.getOpponent(vicp);
         Player killer = killerPp.getPlayer();
-
         if (e.getPlayer().getLocation().getY() <= game.getArena().getOrgArena().getVoidY()) {
             if (respawning.getOrDefault(vic.getUniqueId(), false)) {
                 vic.teleport(game.getPlayerSpawnPoint(vicp));
@@ -321,6 +343,10 @@ public class GameListener implements Listener, IListener {
                 e.setCancelled(true);
             }
 
+            if (game.getState() == GameState.STARTING && game.getKit().isFreezeOnCooldown()) {
+                e.setCancelled(true);
+            }
+
         } else if (pp.isInSpawn() && e.getPlayer().getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
         }
@@ -343,8 +369,7 @@ public class GameListener implements Listener, IListener {
             e.setCancelled(true);
             return;
         }
-
-        if (!game.getKit().getAllowBreakBlocks().contains(e.getBlock().getType())) {
+        if (game.getState() == GameState.STARTING && game.getKit().isFreezeOnCooldown()) {
             e.setCancelled(true);
         }
     }

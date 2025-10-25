@@ -54,6 +54,14 @@ public class GameManager extends Managers {
             return;
         }
 
+        List<DuelRequest> existingRequests = duelRequests.getOrDefault(p2, new ArrayList<>());
+        for (DuelRequest existing : existingRequests) {
+            if (existing.getSender().equals(p1)) {
+                MessageUtil.sendMessage(p1, "&d&l✗ &fYou already sent a duel request to &d" + p2.getName() + "&f!");
+                return;
+            }
+        }
+
         DuelRequest request = new DuelRequest(p1, p2, kit);
 
         BukkitTask task = new BukkitRunnable() {
@@ -227,23 +235,8 @@ public class GameManager extends Managers {
                     p1.playSound(p1.getLocation(), Sound.FIREWORK_BLAST, 1.0f, 1.0f);
                     p2.playSound(p2.getLocation(), Sound.FIREWORK_BLAST, 1.0f, 1.0f);
                     game.setState(GameState.ONGOING);
-                    startGameCooldown(game);
                     cancel();
                 }
-            }
-        }.runTaskTimer(plugin, 0L, 20L);
-    }
-
-    private void startGameCooldown(Game game) {
-        final int[] maxGameTime = {plugin.getConfigManager().getMainConfig().maxGameTime};
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (maxGameTime[0] <= 0) {
-                    game.broadcast("&dGame timed out! (" + maxGameTime[0] + " seconds)");
-                    endGame(game, game.getPlayer2());
-                }
-                maxGameTime[0]--;
             }
         }.runTaskTimer(plugin, 0L, 20L);
     }

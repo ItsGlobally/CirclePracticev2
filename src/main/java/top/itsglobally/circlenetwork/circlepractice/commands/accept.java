@@ -28,6 +28,7 @@ public class accept implements NontageCommand, ICommand {
             return;
         }
 
+
         plugin.getGameManager().acceptDuelRequest(p, target);
     }
 
