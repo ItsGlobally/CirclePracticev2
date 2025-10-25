@@ -45,7 +45,7 @@ public class serializer {
             if (map.containsKey("bnsb2")) arena.setBnsb2(deserializeLocation((Map<String, Object>) map.get("bnsb2")));
         }
         if (map.containsKey("voidY")) arena.setVoidY((int) map.get("voidY"));
-        if (map.containsKey("remake")) arena.setRemake(Boolean.parseBoolean((String) map.get("remake")));
+        if (map.containsKey("remake")) arena.setRemake(Boolean.parseBoolean(String.valueOf(map.get("remake"))));
         return arena;
     }
 
@@ -58,8 +58,12 @@ public class serializer {
         map.put("enabled", kit.isEnabled());
         map.put("canBuild", kit.isCanBuild());
         map.put("respawnable", kit.isRespawnable());
-        if (kit.isRespawnable()) map.put("brokeToNoSpawn", kit.getBrokeToNoSpawn().name());
+        if (kit.isRespawnable()) {
+            map.put("brokeToNoSpawn", kit.getBrokeToNoSpawn().name());
+            map.put("respawntime", kit.getRespawnTime());
+        }
         if (kit.isCanBuild()) map.put("allowBreakBlocks", kit.getAllowBreakBlocks().stream().toList());
+        map.put("freezeoncooldown", kit.isFreezeOnCooldown());
         return map;
     }
 
@@ -107,15 +111,18 @@ public class serializer {
                     if (o instanceof String s) {
                         try {
                             blocks.add(Material.valueOf(s));
-                        } catch (IllegalArgumentException ignored) {
+                        } catch (IllegalArgumentException e) {
                             Bukkit.getLogger().info("Block not found: " + s);
-                            ignored.printStackTrace();
+                            e.printStackTrace();
                         }
                     }
                 }
                 kit.setAllowBreakBlocks(blocks);
             }
         }
+        if (map.containsKey("respawntime")) kit.setRespawnTime(((Number) map.get("respawntime")).intValue());
+
+        if (map.containsKey("freezeoncooldown")) kit.setFreezeOnCooldown(Boolean.parseBoolean(String.valueOf(map.get("freezeoncooldown"))));
 
 
         return kit;

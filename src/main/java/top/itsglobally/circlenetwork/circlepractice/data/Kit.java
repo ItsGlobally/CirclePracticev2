@@ -18,6 +18,7 @@ public class Kit {
     private int respawnTime;
     private Material brokeToNoSpawn;
     private Set<Material> allowBreakBlocks;
+    private boolean freezeOnCooldown;
 
     public Kit(String name) {
         this.name = name;
@@ -28,8 +29,9 @@ public class Kit {
         this.armor = new ItemStack[4];
         this.canBuild = false;
         this.respawnable = false;
-        this.respawnTime = 5;
+        this.respawnTime = 3;
         this.allowBreakBlocks = new HashSet<>();
+        this.freezeOnCooldown = false;
     }
 
     public String getName() {
@@ -122,5 +124,13 @@ public class Kit {
 
     public void addAllowBreakBlocks(Material m) {
         allowBreakBlocks.add(m);
+    }
+
+    public void setFreezeOnCooldown(boolean freezeOnCooldown) {
+        this.freezeOnCooldown = freezeOnCooldown;
+    }
+
+    public boolean isFreezeOnCooldown() {
+        return freezeOnCooldown;
     }
 }

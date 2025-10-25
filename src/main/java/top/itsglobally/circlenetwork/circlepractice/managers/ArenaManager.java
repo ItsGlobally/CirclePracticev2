@@ -11,6 +11,9 @@ import com.grinderwolf.swm.api.world.properties.SlimeProperties;
 import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.GameArena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
@@ -178,7 +181,7 @@ public class ArenaManager extends Managers {
     }
 
     public void addGameArena(GameArena arena) {
-        gameArenaMap.put(arena.getName(), arena);
+        gameArenaMap.put(arena.getName().toLowerCase(), arena);
     }
 
     public Collection<GameArena> getGameArenas() {
@@ -186,23 +189,33 @@ public class ArenaManager extends Managers {
     }
 
     public void removeGameArena(GameArena arena) {
-        if (arena != null) {
-            if (Bukkit.getWorld(arena.getWorldName()) != null) {
-                try {
-                    sl.unlockWorld(arena.getWorldName());
-                    Bukkit.unloadWorld(arena.getWorldName(), false);
-                } catch (Exception e) {
-                    Bukkit.broadcastMessage(MessageUtil.formatMessage("&d&l✗ &fFailed to unload world: &d" + arena.getWorldName()));
-                    e.printStackTrace();
-                }
-            }
-            gameArenaMap.remove(arena.getName());
+        if (arena == null) return;
+
+        String key = arena.getWorldName().toLowerCase();
+
+        try {
+            sl.unlockWorld(arena.getWorldName());
+        } catch (UnknownWorldException | IOException ignored) {
+        }
+
+        World world = Bukkit.getWorld(arena.getWorldName());
+
+        if (!Bukkit.unloadWorld(world, false)) {
+            Bukkit.broadcastMessage("§d§l✗ §fFailed to unload world: §d" + arena.getWorldName());
+        }
+
+        if (gameArenaMap.remove(arena.getName().toLowerCase()) == null) {
+            Bukkit.broadcastMessage("§c[DEBUG] Map did not contain key: " + key);
+        }
+    }
+
+    public void clearGameArenas() {
+        for (GameArena ga : new ArrayList<>(gameArenaMap.values())) {
+            removeGameArena(ga);
         }
     }
 
     public class ArenaConfig extends BaseConfig {
         public Map<String, Map<String, Object>> arenas = new LinkedHashMap<>();
     }
-
-
 }

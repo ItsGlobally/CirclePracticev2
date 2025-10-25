@@ -39,6 +39,7 @@ public class GameArena {
             setBnsb1(a.getBnsb1());
             setBnsb2(a.getBnsb2());
         }
+        this.remake = a.isRemake();
         this.orgArena = a;
     }
 

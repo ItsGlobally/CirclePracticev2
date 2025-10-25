@@ -1,9 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.EventHandler;
@@ -48,6 +45,39 @@ public class GameListener implements Listener, IListener {
 
         }
     }
+    private void respawnPlayer(Player vic, PracticePlayer vicp, Game game, Player killer) {
+        Location spawn = findSpawnpoint(game.getPlayerSpawnPoint(vicp));
+
+        killer.showPlayer(vic);
+        vic.teleport(spawn);
+        vic.setAllowFlight(false);
+        vic.setFlying(false);
+
+        boolean isRedTeam = game.getPlayer1OrPlayer2(vicp) == 1;
+        vic.getInventory().setArmorContents(
+                TeamColorUtil.colorTeamItems(vicp.getPlayerData()
+                        .getKitContents(game.getKit().getName())[1], isRedTeam)
+        );
+        vic.getInventory().setContents(
+                TeamColorUtil.colorTeamItems(vicp.getPlayerData()
+                        .getKitContents(game.getKit().getName())[0], isRedTeam)
+        );
+
+        MessageUtil.sendMessage(vic, "§dYou have respawned!");
+    }
+    private Location findSpawnpoint(Location l) {
+        Location[] ls = {l, l.clone().add(0, 1, 0), l.clone().add(0, 2, 0)};
+        if (ls[0].getBlock().getType() == Material.AIR) {
+            if (ls[1].getBlock().getType() != Material.AIR) ls[1].getBlock().setType(Material.AIR);
+            if (ls[2].getBlock().getType() != Material.AIR) ls[2].getBlock().setType(Material.AIR);
+            return ls[0];
+        }
+        if (ls[1].getBlock().getType() != Material.AIR) {
+            if (ls[2].getBlock().getType() != Material.AIR) ls[2].getBlock().setType(Material.AIR);
+            return ls[1];
+        }
+        return l;
+    }
 
     @EventHandler
     public void damage(EntityDamageEvent e) {
@@ -86,18 +116,14 @@ public class GameListener implements Listener, IListener {
                         + "&f! " + game.getPrefixedTeamPlayerName(killerPp));
 
                 int[] countdown = {game.getKit().getRespawnTime()};
+                respawning.put(vic.getUniqueId(), true);
+
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         if (countdown[0] <= 0) {
-                            killer.showPlayer(vic);
-                            vic.teleport(game.getPlayerSpawnPoint(vicp));
-                            vic.setAllowFlight(false);
-                            vic.setFlying(false);
-                            boolean isRedTeam = game.getPlayer1OrPlayer2(vicp) == 1;
-                            vic.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(vicp.getPlayerData().getKitContents(game.getKit().getName())[1], isRedTeam));
-                            vic.getInventory().setContents(TeamColorUtil.colorTeamItems(vicp.getPlayerData().getKitContents(game.getKit().getName())[0], isRedTeam));
-                            MessageUtil.sendMessage(vic, "§dYou have respawned!");
+                            respawnPlayer(vic, vicp, game, killer);
+                            respawning.put(vic.getUniqueId(), false);
                             cancel();
                             return;
                         }
@@ -105,6 +131,8 @@ public class GameListener implements Listener, IListener {
                         countdown[0]--;
                     }
                 }.runTaskTimer(plugin, 0L, 20L);
+
+
             } else {
                 killer.setHealth(20.0);
                 killer.setFoodLevel(20);
@@ -116,7 +144,6 @@ public class GameListener implements Listener, IListener {
             }
         }
     }
-
     @EventHandler
     public void move(PlayerMoveEvent e) {
         Player vic = e.getPlayer();
@@ -154,15 +181,8 @@ public class GameListener implements Listener, IListener {
                     @Override
                     public void run() {
                         if (countdown[0] <= 0) {
-                            killer.showPlayer(vic);
-                            vic.teleport(game.getPlayerSpawnPoint(vicp));
-                            vic.setAllowFlight(false);
-                            vic.setFlying(false);
-                            boolean isRedTeam = game.getPlayer1OrPlayer2(vicp) == 1;
-                            vic.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(vicp.getPlayerData().getKitContents(game.getKit().getName())[1], isRedTeam));
-                            vic.getInventory().setContents(TeamColorUtil.colorTeamItems(vicp.getPlayerData().getKitContents(game.getKit().getName())[0], isRedTeam));
+                            respawnPlayer(vic, vicp, game, killer);
                             respawning.put(vic.getUniqueId(), false);
-                            MessageUtil.sendMessage(vic, "§dYou have respawned!");
                             cancel();
                             return;
                         }
@@ -170,6 +190,7 @@ public class GameListener implements Listener, IListener {
                         countdown[0]--;
                     }
                 }.runTaskTimer(plugin, 0L, 20L);
+
             } else {
                 vic.setHealth(20.0);
                 vic.setFoodLevel(20);
@@ -213,18 +234,14 @@ public class GameListener implements Listener, IListener {
                     + "&f!");
 
             int[] countdown = {game.getKit().getRespawnTime()};
+            respawning.put(vic.getUniqueId(), true);
+
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     if (countdown[0] <= 0) {
-                        killer.showPlayer(vic);
-                        vic.teleport(game.getPlayerSpawnPoint(vicp));
-                        vic.setAllowFlight(false);
-                        vic.setFlying(false);
-                        boolean isRedTeam = game.getPlayer1OrPlayer2(vicp) == 1;
-                        vic.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(vicp.getPlayerData().getKitContents(game.getKit().getName())[1], isRedTeam));
-                        vic.getInventory().setContents(TeamColorUtil.colorTeamItems(vicp.getPlayerData().getKitContents(game.getKit().getName())[0], isRedTeam));
-                        MessageUtil.sendMessage(vic, "§dYou have respawned!");
+                        respawnPlayer(vic, vicp, game, killer);
+                        respawning.put(vic.getUniqueId(), false);
                         cancel();
                         return;
                     }
@@ -232,6 +249,7 @@ public class GameListener implements Listener, IListener {
                     countdown[0]--;
                 }
             }.runTaskTimer(plugin, 0L, 20L);
+
         } else {
             vic.spigot().respawn();
             vic.setHealth(20.0);

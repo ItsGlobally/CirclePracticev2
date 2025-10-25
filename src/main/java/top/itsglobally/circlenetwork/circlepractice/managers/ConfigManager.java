@@ -13,7 +13,7 @@ public class ConfigManager extends Managers {
         mainConfig = ConfigRegister.register(new MainConfig(), "config");
     }
 
-    public static MainConfig getMainConfig() {
+    public MainConfig getMainConfig() {
         return mainConfig;
     }
 

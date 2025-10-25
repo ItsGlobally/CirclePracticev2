@@ -55,15 +55,21 @@ public class KitManager extends Managers {
         if (name == null || name.isEmpty()) return;
 
         Kit existingKit = getKit(name);
-        if (existingKit != null) {
-            kits.removeIf(k -> k.getName().equalsIgnoreCase(name));
+        if (existingKit == null) {
+            Kit newKit = new Kit(name);
+            newKit.setContents(contents);
+            newKit.setArmor(armor);
+            kits.add(newKit);
+            return;
         }
 
-        Kit newKit = new Kit(name);
-        newKit.setContents(contents);
-        newKit.setArmor(armor);
-        kits.add(newKit);
+        existingKit.setContents(contents);
+        existingKit.setArmor(armor);
+
+        kits.removeIf(k -> k.getName().equalsIgnoreCase(name));
+        kits.add(existingKit);
     }
+
 
     public void updateKit(Kit kit) {
         if (kit == null) return;
@@ -208,15 +214,18 @@ public class KitManager extends Managers {
             contents[0] = new ItemBuilder(Material.WOOD_SWORD)
                     .unBreak()
                     .build();
-            contents[1] = new ItemBuilder(Material.WOOD_AXE)
+            contents[1] = new ItemBuilder(Material.SHEARS)
+                    .unBreak()
+                    .build();
+            contents[2] = new ItemBuilder(Material.WOOD_AXE)
                     .enchant(Enchantment.DIG_SPEED, 1)
                     .unBreak()
                     .build();
-            contents[2] = new ItemBuilder(Material.WOOD_PICKAXE)
+            contents[3] = new ItemBuilder(Material.WOOD_PICKAXE)
                     .enchant(Enchantment.DIG_SPEED, 1)
                     .unBreak()
                     .build();
-            contents[3] = new ItemBuilder(Material.WOOL)
+            contents[4] = new ItemBuilder(Material.WOOL)
                     .setAmount(64)
                     .build();
 
@@ -228,6 +237,8 @@ public class KitManager extends Managers {
             bedFight.setHunger(false);
             bedFight.setEnabled(true);
             bedFight.addAllowBreakBlocks(Material.WOOL);
+            bedFight.addAllowBreakBlocks(Material.ENDER_STONE);
+            bedFight.addAllowBreakBlocks(Material.WOOD);
             addKit(bedFight);
         }
         saveAllKits();
