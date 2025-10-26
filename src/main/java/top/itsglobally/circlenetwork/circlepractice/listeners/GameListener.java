@@ -120,9 +120,9 @@ public class GameListener implements Listener, IListener {
                 vic.setAllowFlight(true);
                 vic.setFlying(true);
 
-                game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
-                        + "&f! " + game.getPrefixedTeamPlayerName(killerPp));
+                game.broadcast(game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas slain by " + game.getPrefixedTeamPlayerName(killerPp)
+                        + "&f! ");
 
                 int[] countdown = {game.getKit().getRespawnTime()};
                 respawning.put(vic.getUniqueId(), true);
@@ -145,8 +145,8 @@ public class GameListener implements Listener, IListener {
             } else {
                 killer.setHealth(20.0);
                 killer.setFoodLevel(20);
-                game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
+                game.broadcast(game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas slain by " + game.getPrefixedTeamPlayerName(killerPp)
                         + "&f!");
                 gotHitted.put(vic.getUniqueId(), false);
                 plugin.getGameManager().endGame(game, killerPp);
@@ -192,7 +192,7 @@ public class GameListener implements Listener, IListener {
                 vic.getInventory().clear();
                 vic.getInventory().setArmorContents(null);
 
-                game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? game.getPrefixedTeamPlayerName(vicp)
                         + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
                         + " &ffell into the void!");
 
@@ -218,7 +218,7 @@ public class GameListener implements Listener, IListener {
                 vic.setFoodLevel(20);
                 killer.setHealth(20.0);
                 killer.setFoodLevel(20);
-                game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? game.getPrefixedTeamPlayerName(vicp)
                         + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
                         + " &ffell into the void!");
                 plugin.getGameManager().endGame(game, killerPp);
@@ -251,8 +251,8 @@ public class GameListener implements Listener, IListener {
             vic.getInventory().clear();
             vic.getInventory().setArmorContents(null);
 
-            game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
-                    + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
+            game.broadcast(game.getPrefixedTeamPlayerName(vicp)
+                    + " &fwas slain by " + game.getPrefixedTeamPlayerName(killerPp)
                     + "&f!");
 
             int[] countdown = {game.getKit().getRespawnTime()};
@@ -278,7 +278,7 @@ public class GameListener implements Listener, IListener {
             vic.setFoodLevel(20);
             killer.setHealth(20.0);
             killer.setFoodLevel(20);
-            game.broadcast("&d" + game.getPrefixedTeamPlayerName(vicp)
+            game.broadcast(game.getPrefixedTeamPlayerName(vicp)
                     + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
                     + "&f!");
             plugin.getGameManager().endGame(game, killerPp);
@@ -291,7 +291,10 @@ public class GameListener implements Listener, IListener {
         Player p = e.getPlayer();
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
         if (pp.isInDuel()) {
+            pp.getCurrentGame().broadcast(pp.getCurrentGame().getPrefixedTeamPlayerName(pp)
+                    + " &fdisconnected");
             plugin.getGameManager().endGame(pp.getCurrentGame(), pp.getCurrentGame().getOpponent(pp));
+
         }
 
         plugin.getPlayerManager().removePlayer(e.getPlayer().getUniqueId());

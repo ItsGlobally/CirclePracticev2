@@ -15,11 +15,12 @@ public class practice implements NontageCommand, ICommand {
         if (!(commandSender instanceof Player p)) return;
         if (strings.length < 1) {
             MessageUtil.sendMessage(p,
-                    "&f&m                    &r\n" +
-                    "&d&lCircle Practice\n" +
-                    "&f&lDeveloper: &dItsGlobally\n" +
-                    "&fThe project is almost done by AI, thanks to them!\n" +
-                    "&f&m                    &r");
+                    """
+                            &f&m                    &r
+                            &d&lCircle Practice
+                            &f&lDeveloper: &dItsGlobally
+                            &fThe project is almost done by AI, thanks to them!
+                            &f&m                    &r""");
             return;
         }
         switch (strings[0].toLowerCase()) {

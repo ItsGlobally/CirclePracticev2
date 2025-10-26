@@ -188,9 +188,9 @@ public class GameManager extends Managers {
         p1.getInventory().setContents(TeamColorUtil.colorTeamItems(p1Kit[0], true));
         p2.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p2Kit[1], false));
         p2.getInventory().setContents(TeamColorUtil.colorTeamItems(p2Kit[0], false));
-        p1.setFoodLevel(20);
+        p1.setFoodLevel(40);
         p1.setHealth(20);
-        p2.setFoodLevel(20);
+        p2.setFoodLevel(40);
         p2.setHealth(20);
         pp1.setState(PlayerState.DUEL);
         pp2.setState(PlayerState.DUEL);
@@ -260,8 +260,7 @@ public class GameManager extends Managers {
             for (PotionEffect pe : p1.getActivePotionEffects()) {
                 p1.removePotionEffect(pe.getType());
             }
-
-
+            p1.setFireTicks(0);
         }
         if (p2 != null) {
             plugin.getConfigManager().teleportToSpawn(p2);
@@ -270,6 +269,7 @@ public class GameManager extends Managers {
             for (PotionEffect pe : p2.getActivePotionEffects()) {
                 p2.removePotionEffect(pe.getType());
             }
+            p2.setFireTicks(0);
         }
 
         if (winner != null) {
@@ -277,7 +277,7 @@ public class GameManager extends Managers {
             PracticePlayer winnerPp = plugin.getPlayerManager().getPlayer(winnerPlayer);
             PracticePlayer loser = game.getOpponent(winnerPp);
             if (loser.getPlayer() != null)
-                MessageUtil.sendTitle(loser.getPlayer(), "&f&lDEFEAT!", "&fYou have been defeated by &d" + winner.getName());
+                MessageUtil.sendTitle(loser.getPlayer(), "&c&lDEFEAT!", "&fYou have been defeated by &d" + winner.getName());
             if (winnerPp.getPlayer() != null)
                 MessageUtil.sendTitle(winner.getPlayer(), "&d&lVICTORY!", "&fYou have defeated &d" + loser.getName());
 

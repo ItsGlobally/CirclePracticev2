@@ -104,6 +104,7 @@ public class PlayerDataManager extends Managers {
                 long remainingXp = totalXp % 100;
                 addStars(gainedStars);
                 this.xps = remainingXp;
+
             } else {
                 this.xps = totalXp;
             }

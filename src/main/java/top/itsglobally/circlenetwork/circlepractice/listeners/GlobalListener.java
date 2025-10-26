@@ -13,10 +13,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerVelocityEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
@@ -32,8 +29,8 @@ public class GlobalListener implements Listener, IListener {
     public void onPlayerVelocity(PlayerVelocityEvent e) {
         Player p = e.getPlayer();
         EntityDamageEvent event = p.getLastDamageCause();
-        if (event != null && !event.isCancelled() && event instanceof EntityDamageByEntityEvent) {
-            Entity damager = ((EntityDamageByEntityEvent) event).getDamager();
+        if (event != null && !event.isCancelled() && event instanceof EntityDamageByEntityEvent entityDamageByEntityEvent) {
+            Entity damager = entityDamageByEntityEvent.getDamager();
             if (damager instanceof Arrow) {
                 if (((Arrow) damager).getShooter().equals(p)) {
                     Vector velocity = e.getVelocity();
@@ -111,6 +108,16 @@ public class GlobalListener implements Listener, IListener {
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
         if (pp.isInSpawn()) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void move(PlayerMoveEvent e) {
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
+        if (pp.isInSpawn()) {
+            if (e.getTo().getY() <= 0) {
+                plugin.getConfigManager().teleportToSpawn(e.getPlayer());
+            }
+        }
     }
 
 }
