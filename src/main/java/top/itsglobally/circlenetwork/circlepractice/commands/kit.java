@@ -100,6 +100,26 @@ public class kit implements NontageCommand, ICommand {
                 }
             }
 
+            case "apply" -> {
+                if (args.length < 2) {
+                    MessageUtil.sendMessage(p, "&d&lUsage: &f/kit apply <kitname>");
+                    return;
+                }
+                String name = args[1];
+                if (!plugin.getKitManager().kitAlreadyExist(name)) {
+                    MessageUtil.sendMessage(p, "&d&l✗ &fKit not found!");
+                    return;
+                }
+                if (pp.isInSpawnNotEditing()) {
+                    pp.setInventory(p.getInventory().getContents());
+                    pp.setArmor(p.getInventory().getArmorContents());
+                    p.getInventory().clear();
+                    p.getInventory().setArmorContents(plugin.getPlayerDataManager().getData(p).getKitContents(name)[1]);
+                    p.getInventory().setContents(plugin.getPlayerDataManager().getData(p).getKitContents(name)[0]);
+                    MessageUtil.sendMessage(p, "&d&l✓ &fYou applied kit &d" + name + "&f.");
+                }
+            }
+
             case "save" -> {
                 if (args.length < 2) {
                     MessageUtil.sendMessage(p, "&d&lUsage: &f/kit save <kitname>");

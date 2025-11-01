@@ -18,6 +18,7 @@ public class Arena {
     private Location bnsb2;
     private boolean remake;
     private int voidY = 0;
+    public int highLimitY = 20;
 
 
     public Arena(String name) {
@@ -111,5 +112,13 @@ public class Arena {
 
     public void setVoidY(int voidY) {
         this.voidY = voidY;
+    }
+
+    public int getHighLimitY() {
+        return highLimitY;
+    }
+
+    public void setHighLimitY(int highLimitY) {
+        this.highLimitY = highLimitY;
     }
 }

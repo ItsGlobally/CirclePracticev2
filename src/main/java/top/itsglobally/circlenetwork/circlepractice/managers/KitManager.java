@@ -232,7 +232,7 @@ public class KitManager extends Managers {
             bedFight.setArmor(armor);
             bedFight.setContents(contents);
             bedFight.setRespawnable(true);
-            bedFight.setBrokeToNoSpawn(Material.BED);
+            bedFight.setBrokeToNoSpawn(Material.BED_BLOCK);
             bedFight.setCanBuild(true);
             bedFight.setHunger(false);
             bedFight.setEnabled(true);

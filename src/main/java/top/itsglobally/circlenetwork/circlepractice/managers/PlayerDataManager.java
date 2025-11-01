@@ -72,6 +72,10 @@ public class PlayerDataManager extends Managers {
             this.uuid = uuid;
         }
 
+        public UUID getUuid() {
+            return uuid;
+        }
+
         public long getStars() {
             return stars;
         }
@@ -111,7 +115,7 @@ public class PlayerDataManager extends Managers {
         }
 
         public void setKitContents(String name, ItemStack[][] contents) {
-            kitContents.put(name, contents);
+            kitContents.put(name.toLowerCase(), contents);
         }
 
         public ItemStack[][] getKitContents(String name) { //0: contents 1: armors
@@ -127,11 +131,17 @@ public class PlayerDataManager extends Managers {
         }
 
         public void unlockAchievement(Achievement a) {
+            unlockAchievement(a, true);
+        }
+
+        public void unlockAchievement(Achievement a, boolean send) {
             if (hasAchievement(a)) return;
             aa.add(a);
-            Component c = Component.text(MessageUtil.formatMessage("&e&ke&a>> " + "Achievement Unlocked: " + "&6" + Achievement.JOIN.getTitle() + "&a<<&e&ke"))
-                    .hoverEvent(HoverEvent.showText(Component.text(MessageUtil.formatMessage("&a" + Achievement.JOIN.getDescription()))));
-            MessageUtil.sendMessage(Bukkit.getPlayer(uuid), c);
+            if (send) {
+                Component c = Component.text(MessageUtil.formatMessage("&e&ke&a>> " + "Achievement Unlocked: " + "&6" + Achievement.JOIN.getTitle() + "&a<<&e&ke"))
+                        .hoverEvent(HoverEvent.showText(Component.text(MessageUtil.formatMessage("&a" + Achievement.JOIN.getDescription()))));
+                MessageUtil.sendMessage(Bukkit.getPlayer(uuid), c);
+            }
         }
 
         public List<Achievement> getUnlockedAchievement() {

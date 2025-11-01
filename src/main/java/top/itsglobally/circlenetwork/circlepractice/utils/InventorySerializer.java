@@ -70,6 +70,7 @@ public class InventorySerializer {
         map.put("type", item.getType().name());
         map.put("amount", item.getAmount());
         map.put("durability", item.getDurability());
+        map.put("unbreakable", item.getItemMeta().spigot().isUnbreakable());
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -97,12 +98,11 @@ public class InventorySerializer {
         ItemStack item = new ItemStack(type);
         item.setAmount((int) map.getOrDefault("amount", 1));
         item.setDurability(((Number) map.getOrDefault("durability", 0)).shortValue());
-
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             if (map.containsKey("name")) meta.setDisplayName((String) map.get("name"));
             if (map.containsKey("lore")) meta.setLore((List<String>) map.get("lore"));
-
+            if (map.containsKey("unbreakable")) meta.spigot().setUnbreakable(Boolean.parseBoolean(String.valueOf(map.get("unbreakable"))));
             if (map.containsKey("enchants")) {
                 Map<String, Integer> enchants = (Map<String, Integer>) map.get("enchants");
                 for (Map.Entry<String, Integer> e : enchants.entrySet()) {

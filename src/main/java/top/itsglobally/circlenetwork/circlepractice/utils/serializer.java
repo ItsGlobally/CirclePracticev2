@@ -26,6 +26,7 @@ public class serializer {
             map.put("bnsb2", serializeLocation(arena.getBnsb2()));
         }
         map.put("voidY", arena.getVoidY());
+        map.put("highLimitY", arena.getHighLimitY());
         map.put("remake", arena.isRemake());
         return map;
     }
@@ -45,6 +46,7 @@ public class serializer {
             if (map.containsKey("bnsb2")) arena.setBnsb2(deserializeLocation((Map<String, Object>) map.get("bnsb2")));
         }
         if (map.containsKey("voidY")) arena.setVoidY((int) map.get("voidY"));
+        if (map.containsKey("highLimitY")) arena.setHighLimitY((int) map.get("highLimitY"));
         if (map.containsKey("remake")) arena.setRemake(Boolean.parseBoolean(String.valueOf(map.get("remake"))));
         return arena;
     }
@@ -160,22 +162,24 @@ public class serializer {
         Map<String, Object> kits = new LinkedHashMap<>();
 
         for (Map.Entry<String, ItemStack[][]> e : pd.getAllKits().entrySet()) {
-            String kitName = e.getKey();
+            String kitName = e.getKey().toLowerCase();
             ItemStack[][] contents = e.getValue();
             kits.put(kitName, InventorySerializer.serializeInventory(contents[0], contents[1]));
         }
 
-        map.put("kits", kits);
-        map.put("stars", pd.getStars());
-        map.put("xp", pd.getXps());
-
         List<String> achievements = pd.getUnlockedAchievement().stream()
                 .map(Achievement::name)
                 .toList();
+
+        map.put("uuid", pd.getUuid().toString());
+        map.put("kits", kits);
+        map.put("stars", pd.getStars());
+        map.put("xp", pd.getXps());
         map.put("achievements", achievements);
 
         return map;
     }
+
 
     @SuppressWarnings("unchecked")
     public static PlayerDataManager.PlayerData deserializePlayerData(Map<String, Object> map) {
@@ -188,7 +192,7 @@ public class serializer {
             Object kitsObj = map.get("kits");
             if (kitsObj instanceof Map<?, ?> kitsMap) {
                 for (Map.Entry<?, ?> entry : kitsMap.entrySet()) {
-                    String kitName = String.valueOf(entry.getKey());
+                    String kitName = String.valueOf(entry.getKey()).toLowerCase();
                     Object kitData = entry.getValue();
 
                     if (kitData instanceof Map<?, ?> kitMap) {
@@ -204,6 +208,7 @@ public class serializer {
             }
         }
 
+
         if (map.containsKey("achievements")) {
             Object achievementsObj = map.get("achievements");
             if (achievementsObj instanceof List<?> list) {
@@ -211,7 +216,7 @@ public class serializer {
                     if (o instanceof String s) {
                         try {
                             Achievement a = Achievement.valueOf(s);
-                            pd.unlockAchievement(a);
+                            pd.unlockAchievement(a, false);
                         } catch (IllegalArgumentException ignored) {
                             System.err.println("[CirclePractice] 無效的 achievement: " + s);
                         }

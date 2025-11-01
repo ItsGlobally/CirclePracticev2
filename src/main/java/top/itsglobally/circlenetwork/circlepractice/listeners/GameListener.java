@@ -2,6 +2,7 @@ package top.itsglobally.circlenetwork.circlepractice.listeners;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -85,27 +86,37 @@ public class GameListener implements Listener, IListener {
 
     @EventHandler
     public void damage(EntityDamageEvent e) {
+        if (!(e instanceof EntityDamageByEntityEvent event)) return;
         if (!(e.getEntity() instanceof Player vic)) return;
+        if (!(event.getDamager() instanceof Player damager)) return;
+
         PracticePlayer vicp = plugin.getPlayerManager().getPlayer(vic);
+        PracticePlayer damagerPp = plugin.getPlayerManager().getPlayer(damager);
 
-        if (!vicp.isInDuel()) return;
+        if (!vicp.isInDuel() || !damagerPp.isInDuel()) return;
+
         Game game = vicp.getCurrentGame();
+        if (damagerPp.getCurrentGame() != game) return;
 
-        PracticePlayer killerPp = game.getOpponent(vicp);
-        Player killer = killerPp.getPlayer();
-
-        if (respawning.getOrDefault(killerPp.getUuid(), false)) {
+        if (respawning.getOrDefault(damagerPp.getUuid(), false)) {
             e.setCancelled(true);
             return;
         }
 
+        if (!game.isPlayerAttackable(damagerPp)) {
+            game.setPlayerAttackable(damagerPp, true);
+            MessageUtil.sendMessage(damager, "&aSpawn protection removed because you attacked.");
+        }
+
         if (!game.isPlayerAttackable(vicp)) {
+            MessageUtil.sendMessage(damager, "&d&l✗ You can't attack this player yet!");
             e.setCancelled(true);
             return;
         }
 
         gotHitted.put(vic.getUniqueId(), true);
-        if (!game.isPlayerAttackable(killerPp)) game.setPlayerAttackable(killerPp, true);
+        if (!game.isPlayerAttackable(damagerPp)) game.setPlayerAttackable(damagerPp, true);
+
         if (vic.getHealth() < e.getFinalDamage()) {
             e.setCancelled(true);
             vic.setHealth(20.0);
@@ -113,16 +124,17 @@ public class GameListener implements Listener, IListener {
 
             if (game.getKit().isRespawnable() && game.getPlayerRespawnable(vicp)) {
                 gotHitted.put(vic.getUniqueId(), false);
-                killer.hidePlayer(vic);
+                damager.hidePlayer(vic);
                 vic.getInventory().clear();
                 vic.getInventory().setArmorContents(null);
-                vic.teleport(killer.getLocation());
+                vic.teleport(damager.getLocation());
                 vic.setAllowFlight(true);
                 vic.setFlying(true);
 
                 game.broadcast(game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas slain by " + game.getPrefixedTeamPlayerName(killerPp)
+                        + " &fwas slain by " + game.getPrefixedTeamPlayerName(damagerPp)
                         + "&f! ");
+                damager.playSound(damager.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
 
                 int[] countdown = {game.getKit().getRespawnTime()};
                 respawning.put(vic.getUniqueId(), true);
@@ -131,28 +143,30 @@ public class GameListener implements Listener, IListener {
                     @Override
                     public void run() {
                         if (countdown[0] <= 0) {
-                            respawnPlayer(vic, vicp, game, killer);
+                            respawnPlayer(vic, vicp, game, damager);
                             respawning.put(vic.getUniqueId(), false);
                             cancel();
                             return;
                         }
                         MessageUtil.sendMessage(vic, "&fRespawning in &d" + countdown[0] + "s&f...");
+                        MessageUtil.sendTitle(vic, "&c&lYOU DIED", "&fRespawning in &d" + countdown[0] + "s&f...");
                         countdown[0]--;
                     }
                 }.runTaskTimer(plugin, 0L, 20L);
 
-
             } else {
-                killer.setHealth(20.0);
-                killer.setFoodLevel(20);
+                damager.setHealth(20.0);
+                damager.setFoodLevel(20);
                 game.broadcast(game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas slain by " + game.getPrefixedTeamPlayerName(killerPp)
+                        + " &fwas slain by " + game.getPrefixedTeamPlayerName(damagerPp)
                         + "&f!");
+                damager.playSound(damager.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
                 gotHitted.put(vic.getUniqueId(), false);
-                plugin.getGameManager().endGame(game, killerPp);
+                plugin.getGameManager().endGame(game, damagerPp);
             }
         }
     }
+
     @EventHandler
     public void move(PlayerMoveEvent e) {
         Player vic = e.getPlayer();
@@ -193,8 +207,9 @@ public class GameListener implements Listener, IListener {
                 vic.getInventory().setArmorContents(null);
 
                 game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&d" + game.getPrefixedTeamPlayerName(vicp)
                         + " &ffell into the void!");
+                if (gotHitted.getOrDefault(vic.getUniqueId(), false)) game.getOpponent(vicp).getPlayer().playSound(game.getOpponent(vicp).getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
 
                 int[] countdown = {game.getKit().getRespawnTime()};
                 respawning.put(vic.getUniqueId(), true);
@@ -209,6 +224,7 @@ public class GameListener implements Listener, IListener {
                             return;
                         }
                         MessageUtil.sendMessage(vic, "&fRespawning in &d" + countdown[0] + "s&f...");
+                        MessageUtil.sendTitle(vic, "&c&lYOU DIED", "&fRespawning in &d" + countdown[0] + "s&f...");
                         countdown[0]--;
                     }
                 }.runTaskTimer(plugin, 0L, 20L);
@@ -219,8 +235,10 @@ public class GameListener implements Listener, IListener {
                 killer.setHealth(20.0);
                 killer.setFoodLevel(20);
                 game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&7⚔ &d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&d" + game.getPrefixedTeamPlayerName(vicp)
                         + " &ffell into the void!");
+
+                if (gotHitted.getOrDefault(vic.getUniqueId(), false)) game.getOpponent(vicp).getPlayer().playSound(game.getOpponent(vicp).getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
                 plugin.getGameManager().endGame(game, killerPp);
             }
         }
@@ -254,6 +272,7 @@ public class GameListener implements Listener, IListener {
             game.broadcast(game.getPrefixedTeamPlayerName(vicp)
                     + " &fwas slain by " + game.getPrefixedTeamPlayerName(killerPp)
                     + "&f!");
+            killer.playSound(killer.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
 
             int[] countdown = {game.getKit().getRespawnTime()};
             respawning.put(vic.getUniqueId(), true);
@@ -268,6 +287,7 @@ public class GameListener implements Listener, IListener {
                         return;
                     }
                     MessageUtil.sendMessage(vic, "&fRespawning in &d" + countdown[0] + "s&f...");
+                    MessageUtil.sendTitle(vic, "&c&lYOU DIED", "&fRespawning in &d" + countdown[0] + "s&f...");
                     countdown[0]--;
                 }
             }.runTaskTimer(plugin, 0L, 20L);
@@ -281,6 +301,8 @@ public class GameListener implements Listener, IListener {
             game.broadcast(game.getPrefixedTeamPlayerName(vicp)
                     + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
                     + "&f!");
+            killer.playSound(killer.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
+
             plugin.getGameManager().endGame(game, killerPp);
         }
     }
@@ -325,11 +347,10 @@ public class GameListener implements Listener, IListener {
                     if (isEnemyBed) {
                         game.setRespawnable(game.getOpponent(pp), false);
                         MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&c&lBED DESTROYED", "&fYou won't be able to respawn again!");
-                        MessageUtil.sendMessage(e.getPlayer(), game.getOpponent(pp).getPlayer(),
-                                "&d&lBED DESTROYED &f» &d" + game.getOpponent(pp).getPlayer().getName() +
+                        game.broadcast("&d&lBED DESTROYED &f» &d" + game.getOpponent(pp).getPlayer().getName() +
                                         "&f's bed has been destroyed by &d" + e.getPlayer().getName() + "&f!");
-                        game.getPlayer1().getPlayer().playSound(game.getPlayer1().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
-                        game.getPlayer2().getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
+                        game.getOpponent(pp).getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.WITHER_DEATH, 1.0f, 1.0f);
+                        e.getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
                         e.setCancelled(false);
                     } else if (isOwnBed) {
                         e.setCancelled(true);
@@ -373,6 +394,11 @@ public class GameListener implements Listener, IListener {
             return;
         }
         if (game.getState() == GameState.STARTING && game.getKit().isFreezeOnCooldown()) {
+            e.setCancelled(true);
+            return;
+        }
+        if (e.getBlockPlaced().getY() >= game.getArena().getOrgArena().getHighLimitY()) {
+            MessageUtil.sendMessage(e.getPlayer(), "&d&l✗ &fYou can't place block at build limit!");
             e.setCancelled(true);
         }
     }
