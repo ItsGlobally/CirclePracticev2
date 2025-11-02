@@ -164,13 +164,9 @@ public class ArenaManager implements GlobalInterface {
     }
 
     public Collection<Arena> getAvailableArenas() {
-        Collection<Arena> list = new ArrayList<>();
-        for (Arena a : getArenas()) {
-            if (a.isComplete()) {
-                list.add(a);
-            }
-        }
-        return list;
+        return getArenas().stream()
+                .filter(Arena::isComplete)
+                .toList();
     }
 
     public void removeArena(String name) {
@@ -190,22 +186,17 @@ public class ArenaManager implements GlobalInterface {
     public void removeGameArena(GameArena arena) {
         if (arena == null) return;
 
-        String key = arena.getWorldName().toLowerCase();
-
         try {
             sl.unlockWorld(arena.getWorldName());
         } catch (UnknownWorldException | IOException ignored) {
         }
 
         World world = Bukkit.getWorld(arena.getWorldName());
-
-        if (!Bukkit.unloadWorld(world, false)) {
-            Bukkit.broadcastMessage("§d§l✗ §fFailed to unload world: §d" + arena.getWorldName());
+        if (world != null && !Bukkit.unloadWorld(world, false)) {
+            Bukkit.getLogger().warning("Failed to unload world: " + arena.getWorldName());
         }
 
-        if (gameArenaMap.remove(arena.getName().toLowerCase()) == null) {
-            Bukkit.broadcastMessage("§c[DEBUG] Map did not contain key: " + key);
-        }
+        gameArenaMap.remove(arena.getName().toLowerCase());
     }
 
     public void clearGameArenas() {

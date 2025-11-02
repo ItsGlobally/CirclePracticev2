@@ -253,50 +253,50 @@ public class GameManager implements GlobalInterface {
         game.getPlayer2().setCurrentGame(null);
         game.getArena().setInUse(false);
 
-        String message = "&f&m                    &r\n&d&lWinner: &f" + winner.getName() + " &7| &d&lLoser: &f" + game.getOpponent(winner).getName() + "\n&f&m                    &r";
-        if (p1 != null) {
-            plugin.getConfigManager().teleportToSpawn(p1);
-            p1.getInventory().setArmorContents(null);
-            p1.getInventory().clear();
-            for (PotionEffect pe : p1.getActivePotionEffects()) {
-                p1.removePotionEffect(pe.getType());
-            }
-            p1.setFireTicks(0);
-        }
-        if (p2 != null) {
-            plugin.getConfigManager().teleportToSpawn(p2);
-            p2.getInventory().setArmorContents(null);
-            p2.getInventory().clear();
-            for (PotionEffect pe : p2.getActivePotionEffects()) {
-                p2.removePotionEffect(pe.getType());
-            }
-            p2.setFireTicks(0);
-        }
+        resetPlayer(p1);
+        resetPlayer(p2);
 
         if (winner != null) {
-            Player winnerPlayer = Bukkit.getPlayer(winner.getUuid());
-            PracticePlayer winnerPp = plugin.getPlayerManager().getPlayer(winnerPlayer);
-            PracticePlayer loser = game.getOpponent(winnerPp);
-            if (loser.getPlayer() != null)
-                MessageUtil.sendTitle(loser.getPlayer(), "&c&lDEFEAT!", "&fYou have been defeated by &d" + winner.getName());
-            if (winnerPp.getPlayer() != null)
-                MessageUtil.sendTitle(winner.getPlayer(), "&d&lVICTORY!", "&fYou have defeated &d" + loser.getName());
-
-            if (p1 != null) MessageUtil.sendMessage(p1, message);
-            if (p2 != null) MessageUtil.sendMessage(p2, message);
-            plugin.getPlayerDataManager().getData(winnerPlayer).addXps(20);
-            MessageUtil.sendMessage(winnerPlayer, "&d&l⭐ &fYou won and earned &d20 XP&f!");
-            if (game.getOpponent(winner).getPlayer() != null) {
-                plugin.getPlayerDataManager().getData(game.getOpponent(winner).getPlayer()).addXps(10);
-                MessageUtil.sendMessage(game.getOpponent(winner).getPlayer(), "&d&l⭐ &fYou lost but earned &d10 XP&f!");
-            }
+            handleGameEnd(game, winner, p1, p2);
         }
-
 
         if (game.getArena().isRemake()) {
             plugin.getArenaManager().removeGameArena(game.getArena());
         }
 
         games.remove(game.getId());
+    }
+
+    private void resetPlayer(Player player) {
+        if (player == null) return;
+        plugin.getConfigManager().teleportToSpawn(player);
+        player.getInventory().setArmorContents(null);
+        player.getInventory().clear();
+        player.getActivePotionEffects().forEach(pe -> player.removePotionEffect(pe.getType()));
+        player.setFireTicks(0);
+    }
+
+    private void handleGameEnd(Game game, PracticePlayer winner, Player p1, Player p2) {
+        PracticePlayer loser = game.getOpponent(winner);
+        String message = "&f&m                    &r\n&d&lWinner: &f" + winner.getName() + " &7| &d&lLoser: &f" + loser.getName() + "\n&f&m                    &r";
+
+        if (loser.getPlayer() != null) {
+            MessageUtil.sendTitle(loser.getPlayer(), "&c&lDEFEAT!", "&fYou have been defeated by &d" + winner.getName());
+        }
+        if (winner.getPlayer() != null) {
+            MessageUtil.sendTitle(winner.getPlayer(), "&d&lVICTORY!", "&fYou have defeated &d" + loser.getName());
+        }
+
+        if (p1 != null) MessageUtil.sendMessage(p1, message);
+        if (p2 != null) MessageUtil.sendMessage(p2, message);
+
+        if (winner.getPlayer() != null) {
+            plugin.getPlayerDataManager().getData(winner.getPlayer()).addXps(20);
+            MessageUtil.sendMessage(winner.getPlayer(), "&d&l⭐ &fYou won and earned &d20 XP&f!");
+        }
+        if (loser.getPlayer() != null) {
+            plugin.getPlayerDataManager().getData(loser.getPlayer()).addXps(10);
+            MessageUtil.sendMessage(loser.getPlayer(), "&d&l⭐ &fYou lost but earned &d10 XP&f!");
+        }
     }
 }
