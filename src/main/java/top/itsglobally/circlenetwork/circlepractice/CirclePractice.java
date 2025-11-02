@@ -5,10 +5,13 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import top.itsglobally.circlenetwork.circlepractice.discord.SlashCommands;
 import top.itsglobally.circlenetwork.circlepractice.managers.*;
+import top.itsglobally.circlenetwork.circlepractice.utils.ScoreboardUtils;
 import top.nontage.nontagelib.command.NontageCommandLoader;
 import top.nontage.nontagelib.listener.ListenerRegister;
 
@@ -40,6 +43,15 @@ public final class CirclePractice extends JavaPlugin {
         ListenerRegister.registerAll(this);
         initManagers();
         DiscordSRV.api.addSlashCommandProvider(new SlashCommands());
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    ScoreboardUtils.updateScoreboard(p);
+                }
+            }
+        }.runTaskTimer(this, 0L, 20L);
     }
 
     private void initManagers() {

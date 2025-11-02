@@ -9,13 +9,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
 
 import java.util.*;
 
-public class GameManager extends Managers {
+public class GameManager implements GlobalInterface {
     private final Map<Player, List<DuelRequest>> duelRequests;
     private final Map<UUID, Game> games;
 

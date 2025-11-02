@@ -11,12 +11,11 @@ import com.grinderwolf.swm.api.world.properties.SlimeProperties;
 import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.GameArena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
@@ -26,7 +25,7 @@ import top.nontage.nontagelib.config.BaseConfig;
 import java.io.IOException;
 import java.util.*;
 
-public class ArenaManager extends Managers {
+public class ArenaManager implements GlobalInterface {
 
     private static final Map<String, Arena> arenaMap = new LinkedHashMap<>();
     private static final Map<String, GameArena> gameArenaMap = new LinkedHashMap<>();

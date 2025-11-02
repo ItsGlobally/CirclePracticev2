@@ -3,12 +3,13 @@ package top.itsglobally.circlenetwork.circlepractice.managers;
 import net.luckperms.api.model.user.User;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerManager extends Managers {
+public class PlayerManager implements GlobalInterface {
     private final Map<UUID, PracticePlayer> playerList = new HashMap<>();
 
     public PlayerManager() {

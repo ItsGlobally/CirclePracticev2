@@ -6,6 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.CirclePractice;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MessageUtil {
 
     public static void sendMessage(Player player, Component message) {
@@ -38,5 +41,11 @@ public class MessageUtil {
 
     public static String formatMessage(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    public static List<String> formatList(List<String> ls) {
+        List<String> nls = new ArrayList<>();
+        ls.forEach(s -> nls.add(formatMessage(s)));
+        return nls;
     }
 }

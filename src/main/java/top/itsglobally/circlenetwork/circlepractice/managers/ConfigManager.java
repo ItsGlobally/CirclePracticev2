@@ -3,10 +3,11 @@ package top.itsglobally.circlenetwork.circlepractice.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
 import top.nontage.nontagelib.config.BaseConfig;
 
-public class ConfigManager extends Managers {
+public class ConfigManager implements GlobalInterface {
     private static MainConfig mainConfig;
 
     public ConfigManager() {

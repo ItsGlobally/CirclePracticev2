@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.serializer;
@@ -13,7 +14,7 @@ import top.nontage.nontagelib.config.BaseConfig;
 
 import java.util.*;
 
-public class PlayerDataManager extends Managers {
+public class PlayerDataManager implements GlobalInterface {
 
     private final PlayerDatas playerDatas;
     public Map<UUID, PlayerData> apds = new LinkedHashMap<>();

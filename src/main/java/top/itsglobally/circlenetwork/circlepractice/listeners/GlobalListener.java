@@ -17,13 +17,14 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.starUtils;
 import top.nontage.nontagelib.annotations.AutoListener;
 
 @AutoListener
-public class GlobalListener implements Listener, IListener {
+public class GlobalListener implements Listener, GlobalInterface {
 
     @EventHandler
     public void onPlayerVelocity(PlayerVelocityEvent e) {

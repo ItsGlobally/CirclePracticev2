@@ -3,21 +3,22 @@ package top.itsglobally.circlenetwork.circlepractice.listeners;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
 import top.itsglobally.circlenetwork.circlepractice.data.GameState;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @AutoListener
-public class GameListener implements Listener, IListener {
+public class GameListener implements Listener, GlobalInterface {
 
     private final HashMap<UUID, Boolean> respawning = new HashMap<>();
     private final HashMap<UUID, Boolean> gotHitted = new HashMap<>();
@@ -400,6 +401,20 @@ public class GameListener implements Listener, IListener {
         if (e.getBlockPlaced().getY() >= game.getArena().getOrgArena().getHighLimitY()) {
             MessageUtil.sendMessage(e.getPlayer(), "&d&l✗ &fYou can't place block at build limit!");
             e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (!(e.getWhoClicked() instanceof Player p)) return;
+
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
+        if (pp.isInSpawn()) {
+            Inventory clickedInv = e.getClickedInventory();
+
+            if (clickedInv == null) return;
+            if (clickedInv.getType() == InventoryType.CHEST) {
+                e.setCancelled(true);
+            }
         }
     }
 }
