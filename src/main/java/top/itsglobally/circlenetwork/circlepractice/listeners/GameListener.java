@@ -99,6 +99,7 @@ public class GameListener implements Listener, GlobalInterface {
         Game game = vicp.getCurrentGame();
         if (damagerPp.getCurrentGame() != game) return;
 
+
         if (respawning.getOrDefault(damagerPp.getUuid(), false)) {
             e.setCancelled(true);
             return;
@@ -115,9 +116,13 @@ public class GameListener implements Listener, GlobalInterface {
             return;
         }
 
+
+
         gotHitted.put(vic.getUniqueId(), true);
         if (!game.isPlayerAttackable(damagerPp)) game.setPlayerAttackable(damagerPp, true);
-
+        if (game.getKit().isNodamage()) {
+            e.setDamage(0.0);
+        }
         if (vic.getHealth() < e.getFinalDamage()) {
             e.setCancelled(true);
             vic.setHealth(20.0);

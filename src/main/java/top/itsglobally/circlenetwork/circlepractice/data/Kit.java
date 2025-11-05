@@ -19,6 +19,7 @@ public class Kit {
     private Material brokeToNoSpawn;
     private Set<Material> allowBreakBlocks;
     private boolean freezeOnCooldown;
+    private boolean nodamage;
 
     public Kit(String name) {
         this.name = name;
@@ -32,6 +33,7 @@ public class Kit {
         this.respawnTime = 3;
         this.allowBreakBlocks = new HashSet<>();
         this.freezeOnCooldown = false;
+        this.nodamage = false;
     }
 
     public String getName() {
@@ -132,5 +134,13 @@ public class Kit {
 
     public boolean isFreezeOnCooldown() {
         return freezeOnCooldown;
+    }
+
+    public void setNodamage(boolean nodamage) {
+        this.nodamage = nodamage;
+    }
+
+    public boolean isNodamage() {
+        return nodamage;
     }
 }

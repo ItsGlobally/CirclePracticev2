@@ -176,6 +176,7 @@ public class kit implements NontageCommand, ICommand {
                         case "respawntime" -> kit.setRespawnTime(Integer.parseInt(value));
                         case "broketonospawn" -> kit.setBrokeToNoSpawn(Material.valueOf(value.toUpperCase()));
                         case "freezeoncooldown" -> kit.setFreezeOnCooldown(Boolean.parseBoolean(value));
+                        case "nodamage" -> kit.setNodamage(Boolean.parseBoolean(value));
                         case "allowbreakblocks" -> {
                             if (args.length < 5) {
                                 MessageUtil.sendMessage(p, "&d&lUsage: &f/kit set <kitname> allowbreakblocks <add|remove> <material>");
@@ -224,6 +225,7 @@ public class kit implements NontageCommand, ICommand {
                 MessageUtil.sendMessage(p, "&fRespawnable: &d" + kit.isRespawnable());
                 MessageUtil.sendMessage(p, "&fRespawn Time: &d" + kit.getRespawnTime());
                 MessageUtil.sendMessage(p, "&fFreeze On Cooldown: &d" + kit.isFreezeOnCooldown());
+                MessageUtil.sendMessage(p, "&fNo Damage: &d" + kit.isNodamage());
                 MessageUtil.sendMessage(p, "&fBroke To NoSpawn: &d" + (kit.getBrokeToNoSpawn() == null ? "none" : kit.getBrokeToNoSpawn()));
                 MessageUtil.sendMessage(p, "&fAllow Break Blocks: &d" + (kit.getAllowBreakBlocks().isEmpty() ? "none" : kit.getAllowBreakBlocks()));
             }
@@ -259,7 +261,7 @@ public class kit implements NontageCommand, ICommand {
             return plugin.getKitManager().getKits().stream().map(Kit::getName).toList();
         }
         if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
-            return List.of("hunger", "enabled", "forduels", "canbuild", "respawnable", "respawntime", "broketonospawn", "freezeoncooldown", "allowbreakblocks");
+            return List.of("hunger", "enabled", "forduels", "canbuild", "respawnable", "respawntime", "broketonospawn", "freezeoncooldown", "nodamage", "allowbreakblocks");
         }
         return List.of();
     }
