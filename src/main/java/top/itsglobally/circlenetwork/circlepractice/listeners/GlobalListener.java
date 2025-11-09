@@ -20,6 +20,7 @@ import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
+import top.itsglobally.circlenetwork.circlepractice.utils.ScoreboardUtils;
 import top.itsglobally.circlenetwork.circlepractice.utils.starUtils;
 import top.nontage.nontagelib.annotations.AutoListener;
 
@@ -46,6 +47,7 @@ public class GlobalListener implements Listener, GlobalInterface {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        ScoreboardUtils.lastScoreboardLines.remove(e.getPlayer().getUniqueId());
         plugin.getPlayerManager().addPlayer(e.getPlayer());
         plugin.getPlayerDataManager().getData(e.getPlayer()).unlockAchievement(Achievement.JOIN);
         plugin.getConfigManager().teleportToSpawn(e.getPlayer());
