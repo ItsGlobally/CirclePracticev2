@@ -24,6 +24,11 @@ public class ScoreboardUtils implements GlobalInterface {
                 Game game = pp.getCurrentGame();
                 lines.add("&fYour opponent: &d: " + game.getOpponent(pp).getName());
                 lines.add("&d");
+                if (game.getKit().isCountHit()) {
+                    lines.add("&fYour hits&d: " + game.getPlayerhit(pp) + "&f/&d" + game.getKit().getCountHitToDie());
+                    lines.add("&fTheir hits&d: " + game.getPlayerhit(game.getOpponent(pp)) + "&f/&d" + game.getKit().getCountHitToDie());
+                    lines.add("&d&f");
+                }
                 lines.add("&fYour ping&d: " + NMSUtils.getPing(p));
                 lines.add("&fTheir ping&d: " + NMSUtils.getPing(game.getOpponent(pp).getPlayer()));
                 lines.add("&f");

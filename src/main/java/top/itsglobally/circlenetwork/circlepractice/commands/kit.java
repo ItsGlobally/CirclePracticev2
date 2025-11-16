@@ -229,6 +229,8 @@ public class kit implements NontageCommand, GlobalInterface {
                 MessageUtil.sendMessage(p, "&fRespawn Time: &d" + kit.getRespawnTime());
                 MessageUtil.sendMessage(p, "&fFreeze On Cooldown: &d" + kit.isFreezeOnCooldown());
                 MessageUtil.sendMessage(p, "&fNo Damage: &d" + kit.isNodamage());
+                MessageUtil.sendMessage(p, "&fCount Hit: &d" + kit.isCountHit());
+                MessageUtil.sendMessage(p, "&fCount Hit To Die: &d" + kit.getCountHitToDie());
                 MessageUtil.sendMessage(p, "&fBroke To NoSpawn: &d" + (kit.getBrokeToNoSpawn() == null ? "none" : kit.getBrokeToNoSpawn()));
                 MessageUtil.sendMessage(p, "&fAllow Break Blocks: &d" + (kit.getAllowBreakBlocks().isEmpty() ? "none" : kit.getAllowBreakBlocks()));
             }
@@ -267,7 +269,7 @@ public class kit implements NontageCommand, GlobalInterface {
             return plugin.getKitManager().getKits().stream().map(Kit::getName).toList();
         }
         if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
-            return List.of("hunger", "enabled", "forduels", "canbuild", "respawnable", "respawntime", "broketonospawn", "freezeoncooldown", "nodamage", "allowbreakblocks");
+            return List.of("hunger", "enabled", "forduels", "canbuild", "respawnable", "respawntime", "broketonospawn", "freezeoncooldown", "nodamage", "allowbreakblocks", "counthit", "counthittodie");
         }
         return List.of();
     }
