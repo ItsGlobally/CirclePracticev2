@@ -178,6 +178,8 @@ public class kit implements NontageCommand, GlobalInterface {
                         case "broketonospawn" -> kit.setBrokeToNoSpawn(Material.valueOf(value.toUpperCase()));
                         case "freezeoncooldown" -> kit.setFreezeOnCooldown(Boolean.parseBoolean(value));
                         case "nodamage" -> kit.setNodamage(Boolean.parseBoolean(value));
+                        case "counthit" -> kit.setCountHit(Boolean.parseBoolean(value));
+                        case "counthittodie" -> kit.setCountHitToDie(Integer.parseInt(value));
                         case "allowbreakblocks" -> {
                             if (args.length < 5) {
                                 usage(p, "/kit set <kitname> allowbreakblocks <add|remove> <material>");

@@ -20,6 +20,8 @@ public class Kit {
     private Set<Material> allowBreakBlocks;
     private boolean freezeOnCooldown;
     private boolean nodamage;
+    private boolean countHit;
+    private int countHitToDie;
 
     public Kit(String name) {
         this.name = name;
@@ -34,6 +36,8 @@ public class Kit {
         this.allowBreakBlocks = new HashSet<>();
         this.freezeOnCooldown = false;
         this.nodamage = false;
+        this.countHit = false;
+        this.countHitToDie = 100;
     }
 
     public String getName() {
@@ -142,5 +146,21 @@ public class Kit {
 
     public boolean isNodamage() {
         return nodamage;
+    }
+
+    public boolean isCountHit() {
+        return countHit;
+    }
+
+    public void setCountHit(boolean countHit) {
+        this.countHit = countHit;
+    }
+
+    public void setCountHitToDie(int countHitToDie) {
+        this.countHitToDie = countHitToDie;
+    }
+
+    public int getCountHitToDie() {
+        return countHitToDie;
     }
 }

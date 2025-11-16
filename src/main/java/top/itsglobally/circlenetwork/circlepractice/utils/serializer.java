@@ -67,6 +67,8 @@ public class serializer {
         if (kit.isCanBuild()) map.put("allowBreakBlocks", kit.getAllowBreakBlocks().stream().toList());
         map.put("freezeoncooldown", kit.isFreezeOnCooldown());
         map.put("nodamage", kit.isNodamage());
+        map.put("counthit", kit.isCountHit());
+        map.put("counthittodie", kit.getCountHitToDie());
         return map;
     }
 
@@ -128,7 +130,8 @@ public class serializer {
         if (map.containsKey("freezeoncooldown")) kit.setFreezeOnCooldown(Boolean.parseBoolean(String.valueOf(map.get("freezeoncooldown"))));
 
         if (map.containsKey("nodamage")) kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("nodamage"))));
-
+        if (map.containsKey("counthit")) kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("counthit"))));
+        if (map.containsKey("counthittodie")) kit.setRespawnTime(((Number) map.get("counthittodie")).intValue());
         return kit;
     }
 
