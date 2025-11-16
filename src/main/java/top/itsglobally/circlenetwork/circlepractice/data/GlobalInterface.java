@@ -10,7 +10,7 @@ public interface GlobalInterface {
         MessageUtil.sendMessage(p, "&d&lUsage: " + msg);
     }
     default void success(Player p, String msg) {
-        MessageUtil.sendMessage(p, "&d&lUsage: " + msg);
+        MessageUtil.sendMessage(p, "&d&l✓ &f" + msg);
     }
     default void fail(Player p, String msg) {
         MessageUtil.sendMessage(p, "&d&l✗ &f" + msg);

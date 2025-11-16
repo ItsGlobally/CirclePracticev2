@@ -9,9 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static top.itsglobally.circlenetwork.circlepractice.commands.ICommand.plugin;
 
-public class PracticePlayer {
+public class PracticePlayer implements GlobalInterface{
     private final UUID uuid;
     private final String name;
     private final Player player;

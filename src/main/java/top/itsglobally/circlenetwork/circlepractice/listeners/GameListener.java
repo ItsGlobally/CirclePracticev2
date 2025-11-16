@@ -123,6 +123,20 @@ public class GameListener implements Listener, GlobalInterface {
         if (game.getKit().isNodamage()) {
             e.setDamage(0.0);
         }
+
+        if (game.getKit().isCountHit()) {
+            game.addPlayerhit(vicp, 1);
+            if (game.getPlayerhit(vicp) >= game.getKit().getCountHitToDie()) {
+                gotHitted.put(vic.getUniqueId(), false);
+                gotHitted.put(damager.getUniqueId(), false);
+                game.broadcast(game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas slain by " + game.getPrefixedTeamPlayerName(damagerPp)
+                        + "&f!");
+                plugin.getGameManager().endGame(game, damagerPp);
+            }
+            return;
+        }
+
         if (vic.getHealth() < e.getFinalDamage()) {
             e.setCancelled(true);
             vic.setHealth(20.0);
@@ -168,6 +182,7 @@ public class GameListener implements Listener, GlobalInterface {
                         + "&f!");
                 damager.playSound(damager.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
                 gotHitted.put(vic.getUniqueId(), false);
+                gotHitted.put(damager.getUniqueId(), false);
                 plugin.getGameManager().endGame(game, damagerPp);
             }
         }

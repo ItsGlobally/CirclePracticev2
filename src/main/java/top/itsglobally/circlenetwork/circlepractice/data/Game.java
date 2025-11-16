@@ -194,6 +194,22 @@ public class Game {
     public void setP2hit(int p2hit) {
         this.p2hit = p2hit;
     }
+    public void addP1hit(int p1hit) {
+        this.p1hit = this.p1hit + p1hit;
+    }
+
+    public void addP2hit(int p2hit) {
+        this.p2hit = this.p2hit + p2hit;
+    }
+
+    public void setPlayerhit(PracticePlayer pp, int hit) {
+        if (getPlayer1OrPlayer2(pp) == 1) setP1hit(hit);
+        setP2hit(hit);
+    }
+    public void addPlayerhit(PracticePlayer pp, int hit) {
+        if (getPlayer1OrPlayer2(pp) == 1) addP1hit(hit);
+        addP2hit(hit);
+    }
 
     public int getP1hit() {
         return p1hit;
@@ -201,5 +217,9 @@ public class Game {
 
     public int getP2hit() {
         return p2hit;
+    }
+    public int getPlayerhit(PracticePlayer pp) {
+        if (getPlayer1OrPlayer2(pp) == 1) return getP1hit();
+        return getP2hit();
     }
 }
