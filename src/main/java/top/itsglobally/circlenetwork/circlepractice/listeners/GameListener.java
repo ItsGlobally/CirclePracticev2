@@ -125,7 +125,7 @@ public class GameListener implements Listener, GlobalInterface {
         }
 
         if (game.getKit().isCountHit()) {
-            game.addPlayerhit(vicp, 1);
+            game.addPlayerhit(damagerPp, 1);
             if (game.getPlayerhit(vicp) >= game.getKit().getCountHitToDie()) {
                 gotHitted.put(vic.getUniqueId(), false);
                 gotHitted.put(damager.getUniqueId(), false);

@@ -130,8 +130,14 @@ public class serializer {
         if (map.containsKey("freezeoncooldown")) kit.setFreezeOnCooldown(Boolean.parseBoolean(String.valueOf(map.get("freezeoncooldown"))));
 
         if (map.containsKey("nodamage")) kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("nodamage"))));
-        if (map.containsKey("counthit")) kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("counthit"))));
-        if (map.containsKey("counthittodie")) kit.setRespawnTime(((Number) map.get("counthittodie")).intValue());
+        if (map.containsKey("counthit")) {
+            Bukkit.getLogger().info("a");
+            kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("counthit"))));
+        } else Bukkit.getLogger().info("e");
+        if (map.containsKey("counthittodie")) {
+            Bukkit.getLogger().info("a");
+            kit.setRespawnTime(((Number) map.get("counthittodie")).intValue());
+        } else Bukkit.getLogger().info("e");
         return kit;
     }
 
