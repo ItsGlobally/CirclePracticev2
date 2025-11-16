@@ -2,6 +2,7 @@ package top.itsglobally.circlenetwork.circlepractice.commands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
@@ -9,7 +10,7 @@ import top.nontage.nontagelib.command.NontageCommand;
 import java.util.List;
 
 @CommandInfo(name = "practice")
-public class practice implements NontageCommand, ICommand {
+public class practice implements NontageCommand, GlobalInterface {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
@@ -26,28 +27,28 @@ public class practice implements NontageCommand, ICommand {
         switch (strings[0].toLowerCase()) {
             case "reload": {
                 if (!p.hasPermission("circlepractice.admin")) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
+                    fail(p, "No permission!");
                     return;
                 }
                 plugin.getArenaManager().reload();
                 plugin.getKitManager().reload();
                 plugin.getPlayerDataManager().reload();
-                MessageUtil.sendMessage(p, "&d&l✓ &fReloaded all configurations!");
+                success(p, "Reloaded all configurations!");
                 break;
             }
             case "saveall": {
                 if (!p.hasPermission("circlepractice.admin")) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
+                    fail(p, "No permission!");
                     return;
                 }
                 plugin.getArenaManager().saveAllArenas();
                 plugin.getKitManager().saveAllKits();
                 plugin.getPlayerDataManager().saveAll();
-                MessageUtil.sendMessage(p, "&d&l✓ &fSaved all data!");
+                success(p, "Saved all data!");
                 break;
             }
             default: {
-                MessageUtil.sendMessage(p, "&d&lUsage: &f/practice [reload|saveall]");
+                usage(p, "/practice [reload|saveall]");
             }
         }
     }

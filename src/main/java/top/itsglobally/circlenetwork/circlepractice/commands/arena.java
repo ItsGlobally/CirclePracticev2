@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.GameArena;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
@@ -12,14 +13,14 @@ import top.nontage.nontagelib.command.NontageCommand;
 import java.util.List;
 
 @CommandInfo(name = "arena")
-public class arena implements NontageCommand, ICommand {
+public class arena implements NontageCommand, GlobalInterface {
 
     @Override
     public void execute(CommandSender commandSender, String s, String[] args) {
         if (!(commandSender instanceof Player p)) return;
 
         if (!p.hasPermission("circlepractice.admin")) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
+            fail(p, "No permission!");
             return;
         }
 
@@ -48,30 +49,30 @@ public class arena implements NontageCommand, ICommand {
 
     private void handleCreate(Player p, String[] args) {
         if (args.length < 2) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/arena create <arenaname>");
+            usage(p, "&f/arena create <arenaname>");
             return;
         }
         String arenaName = args[1];
         if (plugin.getArenaManager().getArena(arenaName) != null) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fArena already exists!");
+            fail(p, "Arena already exists!");
             return;
         }
         Arena newArena = new Arena(arenaName);
         newArena.setWorldName(arenaName);
         plugin.getArenaManager().addArena(newArena);
-        MessageUtil.sendMessage(p, "&d&l✓ &fCreated arena &d" + arenaName + "&f!");
+        success(p, "Created arena &d" + arenaName + "&f!");
     }
 
     private void handleSet(Player p, String[] args) {
         if (args.length < 4) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/arena set <arenaname> <field> <value>");
+            usage(p, "&f/arena set <arenaname> <field> <value>");
             return;
         }
 
         String arenaName = args[1];
         Arena arena = plugin.getArenaManager().getArena(arenaName);
         if (arena == null) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
+            fail(p, "Arena does not exist!");
             return;
         }
 
@@ -86,26 +87,26 @@ public class arena implements NontageCommand, ICommand {
                 case "highlimity" -> arena.setHighLimitY(Integer.parseInt(value));
                 case "worldname" -> arena.setWorldName(value);
                 default -> {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fUnknown field: &d" + field);
+                    fail(p, "Unknown field: &d" + field);
                     MessageUtil.sendMessage(p, "&fAvailable fields: &drespawnable, remake, voidy, highlimity, worldname");
                     return;
                 }
             }
             plugin.getArenaManager().updateArena(arena);
-            MessageUtil.sendMessage(p, "&d&l✓ &fUpdated field &d" + field + "&f of arena &d" + arena.getName() + "&f to &d" + value + "&f!");
+            success(p, "Updated field &d" + field + "&f of arena &d" + arena.getName() + "&f to &d" + value + "&f!");
         } catch (NumberFormatException e) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fInvalid value for field &d" + field + "&f!");
+            fail(p, "Invalid value for field &d" + field + "&f!");
         }
     }
 
     private void handlePosition(Player p, String[] args, boolean isPos1) {
         if (args.length < 2) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/arena " + (isPos1 ? "pos1" : "pos2") + " <arenaname>");
+            usage(p, "&f/arena " + (isPos1 ? "pos1" : "pos2") + " <arenaname>");
             return;
         }
         Arena arena = plugin.getArenaManager().getArena(args[1]);
         if (arena == null) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
+            fail(p, "Arena does not exist!");
             return;
         }
         if (isPos1) {
@@ -114,36 +115,36 @@ public class arena implements NontageCommand, ICommand {
             arena.setPos2(p.getLocation());
         }
         plugin.getArenaManager().updateArena(arena);
-        MessageUtil.sendMessage(p, "&d&l✓ &fSet player " + (isPos1 ? "1" : "2") + " spawn point!");
+        success(p, "Set player " + (isPos1 ? "1" : "2") + " spawn point!");
     }
 
     private void handleSpectatorSpawn(Player p, String[] args) {
         if (args.length < 2) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/arena spec <arenaname>");
+            usage(p, "&f/arena spec <arenaname>");
             return;
         }
         Arena arena = plugin.getArenaManager().getArena(args[1]);
         if (arena == null) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
+            fail(p, "Arena does not exist!");
             return;
         }
         arena.setSpectatorSpawn(p.getLocation());
         plugin.getArenaManager().updateArena(arena);
-        MessageUtil.sendMessage(p, "&d&l✓ &fSet spectator spawn point!");
+        success(p, "Set spectator spawn point!");
     }
 
     private void handleBedSpawn(Player p, String[] args, boolean isBed1) {
         if (args.length < 2) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/arena " + (isBed1 ? "bnsb1" : "bnsb2") + " <arenaname>");
+            usage(p, "&f/arena " + (isBed1 ? "bnsb1" : "bnsb2") + " <arenaname>");
             return;
         }
         Arena arena = plugin.getArenaManager().getArena(args[1]);
         if (arena == null) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
+            fail(p, "Arena does not exist!");
             return;
         }
         if (!arena.isRespawnableKit()) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fArena does not have respawnable enabled!");
+            fail(p, "Arena does not have respawnable enabled!");
             return;
         }
         Location loc = p.getLocation();
@@ -154,41 +155,41 @@ public class arena implements NontageCommand, ICommand {
             arena.setBnsb2(bedLoc);
         }
         plugin.getArenaManager().updateArena(arena);
-        MessageUtil.sendMessage(p, "&d&l✓ &fSet bed block for player " + (isBed1 ? "1" : "2") + "!");
+        success(p, "Set bed block for player " + (isBed1 ? "1" : "2") + "!");
     }
 
     private void handleAddKit(Player p, String[] args) {
         if (args.length < 3) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/arena addkit <arenaname> <kitname>");
+            usage(p, "&f/arena addkit <arenaname> <kitname>");
             return;
         }
         Arena arena = plugin.getArenaManager().getArena(args[1]);
         if (arena == null) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
+            fail(p, "Arena does not exist!");
             return;
         }
         String kitName = args[2];
         if (!plugin.getKitManager().kitAlreadyExist(kitName)) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fKit does not exist!");
+            fail(p, "Kit does not exist!");
             return;
         }
         if (arena.getKits().contains(kitName)) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fKit already added!");
+            fail(p, "Kit already added!");
             return;
         }
         arena.addKit(kitName);
         plugin.getArenaManager().updateArena(arena);
-        MessageUtil.sendMessage(p, "&d&l✓ &fAdded kit &d" + kitName + "&f!");
+        success(p, "Added kit &d" + kitName + "&f!");
     }
 
     private void handleInfo(Player p, String[] args) {
         if (args.length < 2) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/arena info <arenaname>");
+            usage(p, "/arena info <arenaname>");
             return;
         }
         Arena arena = plugin.getArenaManager().getArena(args[1]);
         if (arena == null) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fArena does not exist!");
+            fail(p, "Arena does not exist!");
             return;
         }
         MessageUtil.sendMessage(p, "&d&lArena Info: &f" + arena.getName());
@@ -216,18 +217,18 @@ public class arena implements NontageCommand, ICommand {
 
     private void handleSaveAll(Player p) {
         plugin.getArenaManager().saveAllArenas();
-        MessageUtil.sendMessage(p, "&d&l✓ &fSaved all arenas!");
+        success(p, "Saved all arenas!");
     }
 
     private void handleReload(Player p) {
         plugin.getArenaManager().reload();
-        MessageUtil.sendMessage(p, "&d&l✓ &fReloaded all arenas!");
+        success(p, "Reloaded all arenas!");
     }
 
     private void handleRemoveAllGameArenas(Player p) {
         int count = plugin.getArenaManager().getGameArenas().size();
         plugin.getArenaManager().clearGameArenas();
-        MessageUtil.sendMessage(p, "&d&l✓ &fRemoved &d" + count + "&f game arenas!");
+        success(p, "Removed &d" + count + "&f game arenas!");
     }
 
     private void sendUsage(Player p) {

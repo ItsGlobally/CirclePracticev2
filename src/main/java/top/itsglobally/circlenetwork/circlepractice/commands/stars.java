@@ -3,6 +3,7 @@ package top.itsglobally.circlenetwork.circlepractice.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
@@ -10,7 +11,7 @@ import top.nontage.nontagelib.command.NontageCommand;
 import java.util.List;
 
 @CommandInfo(name = "stars")
-public class stars implements NontageCommand, ICommand {
+public class stars implements NontageCommand, GlobalInterface {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
@@ -21,7 +22,7 @@ public class stars implements NontageCommand, ICommand {
         }
 
         if (strings.length < 3) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/stars <addxp|addstar> <player> <amount>");
+            usage(p, "/stars <addxp|addstar> <player> <amount>");
             return;
         }
 
@@ -41,21 +42,21 @@ public class stars implements NontageCommand, ICommand {
                 case "addxp": {
                     plugin.getPlayerDataManager().getData(target).addXps(amount);
                     MessageUtil.sendMessage(target, "&d&l⭐ &fYou earned &d" + amount + " XP&f!");
-                    MessageUtil.sendMessage(p, "&d&l✓ &fAdded &d" + amount + " XP &fto &d" + target.getName() + "&f!");
+                    success(p, "Added &d" + amount + " XP &fto &d" + target.getName() + "&f!");
                     break;
                 }
                 case "addstar": {
                     plugin.getPlayerDataManager().getData(target).addStars(amount);
                     MessageUtil.sendMessage(target, "&d&l⭐ &fYou gained &d" + amount + " stars&f!");
-                    MessageUtil.sendMessage(p, "&d&l✓ &fAdded &d" + amount + " stars &fto &d" + target.getName() + "&f!");
+                    success(p, "Added &d" + amount + " stars &fto &d" + target.getName() + "&f!");
                     break;
                 }
                 default: {
-                    MessageUtil.sendMessage(p, "&d&lUsage: &f/stars <addxp|addstar> <player> <amount>");
+                    usage(p, "/stars <addxp|addstar> <player> <amount>");
                 }
             }
         } catch (NumberFormatException e) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fInvalid amount! Please use a number.");
+            fail(p, "Invalid amount! Please use a number.");
         }
     }
 

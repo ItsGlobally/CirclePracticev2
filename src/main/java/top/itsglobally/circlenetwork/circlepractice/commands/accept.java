@@ -3,6 +3,7 @@ package top.itsglobally.circlenetwork.circlepractice.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
@@ -10,13 +11,13 @@ import top.nontage.nontagelib.command.NontageCommand;
 import java.util.List;
 
 @CommandInfo(name = "accept")
-public class accept implements NontageCommand, ICommand {
+public class accept implements NontageCommand, GlobalInterface {
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
 
         if (strings.length < 1) {
-            MessageUtil.sendMessage(p, "&d&lUsage: &f/accept <player>");
+            usage(p, "/accept <player>");
             return;
         }
 
@@ -24,7 +25,7 @@ public class accept implements NontageCommand, ICommand {
         Player target = Bukkit.getPlayerExact(targetName);
 
         if (target == null) {
-            MessageUtil.sendMessage(p, "&d&l✗ &fThat player is not online!");
+            fail(p, "That player is not online!");
             return;
         }
 

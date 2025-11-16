@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.data.PlayerState;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 @CommandInfo(name = "kit")
-public class kit implements NontageCommand, ICommand {
+public class kit implements NontageCommand, GlobalInterface {
     @Override
     public void execute(CommandSender commandSender, String s, String[] args) {
         if (!(commandSender instanceof Player p)) return;
@@ -32,33 +33,33 @@ public class kit implements NontageCommand, ICommand {
 
             case "create" -> {
                 if (args.length < 2) {
-                    MessageUtil.sendMessage(p, "&d&lUsage: &f/kit create <kitname>");
+                    usage(p, "/kit create <kitname>");
                     return;
                 }
                 if (!p.hasPermission("circlepractice.admin")) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
+                    fail(p, "No permission!");
                     return;
                 }
                 String name = args[1];
                 if (plugin.getKitManager().kitAlreadyExist(name)) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fKit already exists!");
+                    fail(p, "Kit already exists!");
                     return;
                 }
                 plugin.getKitManager().addKit(new Kit(name));
-                MessageUtil.sendMessage(p, "&d&l✓ &fCreated kit &d" + name + "&f!");
+                success(p, "Created kit &d" + name + "&f!");
             }
             case "editglobally" -> {
                 if (args.length < 2) {
-                    MessageUtil.sendMessage(p, "&d&lUsage: &f/kit editglobally <kitname>");
+                    usage(p, "/kit editglobally <kitname>");
                     return;
                 }
                 if (!p.hasPermission("circlepractice.admin")) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
+                    fail(p, "No permission!");
                     return;
                 }
                 String name = args[1];
                 if (!plugin.getKitManager().kitAlreadyExist(name)) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fKit not found!");
+                    MessageUtil.sendMessage(p, "Kit not found!");
                     return;
                 }
 
@@ -79,12 +80,12 @@ public class kit implements NontageCommand, ICommand {
 
             case "edit" -> {
                 if (args.length < 2) {
-                    MessageUtil.sendMessage(p, "&d&lUsage: &f/kit edit <kitname>");
+                    usage(p, "/kit edit <kitname>");
                     return;
                 }
                 String name = args[1];
                 if (!plugin.getKitManager().kitAlreadyExist(name)) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fKit not found!");
+                    MessageUtil.sendMessage(p, "Kit not found!");
                     return;
                 }
                 Kit kit = plugin.getKitManager().getKit(name);
@@ -102,12 +103,12 @@ public class kit implements NontageCommand, ICommand {
 
             case "apply" -> {
                 if (args.length < 2) {
-                    MessageUtil.sendMessage(p, "&d&lUsage: &f/kit apply <kitname>");
+                    usage(p, "/kit apply <kitname>");
                     return;
                 }
                 String name = args[1];
                 if (!plugin.getKitManager().kitAlreadyExist(name)) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fKit not found!");
+                    MessageUtil.sendMessage(p, "Kit not found!");
                     return;
                 }
                 if (pp.isInSpawnNotEditing()) {
@@ -116,13 +117,13 @@ public class kit implements NontageCommand, ICommand {
                     p.getInventory().clear();
                     p.getInventory().setArmorContents(plugin.getPlayerDataManager().getData(p).getKitContents(name)[1]);
                     p.getInventory().setContents(plugin.getPlayerDataManager().getData(p).getKitContents(name)[0]);
-                    MessageUtil.sendMessage(p, "&d&l✓ &fYou applied kit &d" + name + "&f.");
+                    success(p, "You applied kit &d" + name + "&f.");
                 }
             }
 
             case "save" -> {
                 if (args.length < 2) {
-                    MessageUtil.sendMessage(p, "&d&lUsage: &f/kit save <kitname>");
+                    usage(p, "/kit save <kitname>");
                     return;
                 }
                 if (pp.isEditing()) {
@@ -136,30 +137,30 @@ public class kit implements NontageCommand, ICommand {
                         };
                         plugin.getPlayerDataManager().getData(p).setKitContents(name, cs);
                     }
-                    MessageUtil.sendMessage(p, "&d&l✓ &fSaved kit &d" + name + "&f!");
+                    success(p, "Saved kit &d" + name + "&f!");
                     p.getInventory().clear();
                     p.getInventory().setContents(pp.getInventory());
                     p.getInventory().setArmorContents(pp.getArmor());
                     pp.setState(PlayerState.SPAWN);
                 } else {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fYou're not editing a kit!");
+                    MessageUtil.sendMessage(p, "You're not editing a kit!");
                 }
             }
 
             case "set" -> {
                 if (args.length < 4) {
-                    MessageUtil.sendMessage(p, "&d&lUsage: &f/kit set <kitname> <field> <value>");
+                    usage(p, "/kit set <kitname> <field> <value>");
                     return;
                 }
                 if (!p.hasPermission("circlepractice.admin")) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fNo permission!");
+                    fail(p, "No permission!");
                     return;
                 }
 
                 String kitName = args[1];
                 Kit kit = plugin.getKitManager().getKit(kitName);
                 if (kit == null) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fKit not found!");
+                    fail(p, "Kit not found!");
                     return;
                 }
 
@@ -179,7 +180,7 @@ public class kit implements NontageCommand, ICommand {
                         case "nodamage" -> kit.setNodamage(Boolean.parseBoolean(value));
                         case "allowbreakblocks" -> {
                             if (args.length < 5) {
-                                MessageUtil.sendMessage(p, "&d&lUsage: &f/kit set <kitname> allowbreakblocks <add|remove> <material>");
+                                usage(p, "/kit set <kitname> allowbreakblocks <add|remove> <material>");
                                 return;
                             }
                             String action = args[3];
@@ -188,32 +189,32 @@ public class kit implements NontageCommand, ICommand {
                             if (action.equalsIgnoreCase("add")) kit.addAllowBreakBlocks(mat);
                             else if (action.equalsIgnoreCase("remove")) kit.getAllowBreakBlocks().remove(mat);
                             else {
-                                MessageUtil.sendMessage(p, "&d&l✗ &fUse add/remove!");
+                                fail(p, "Use add/remove!");
                                 return;
                             }
                         }
                         default -> {
-                            MessageUtil.sendMessage(p, "&d&l✗ &fUnknown field: &d" + field);
+                            fail(p, "Unknown field: &d" + field);
                             return;
                         }
                     }
                 } catch (Exception e) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fInvalid value for field &d" + field + "&f!");
+                    fail(p, "Invalid value for field &d" + field + "&f!");
                     return;
                 }
 
                 plugin.getKitManager().updateKit(kit);
-                MessageUtil.sendMessage(p, "&d&l✓ &fUpdated field &d" + field + "&f of kit &d" + kit.getName() + "&f!");
+                success(p, "Updated field &d" + field + "&f of kit &d" + kit.getName() + "&f!");
             }
 
             case "info" -> {
                 if (args.length < 2) {
-                    MessageUtil.sendMessage(p, "&d&lUsage: &f/kit info <kitname>");
+                    usage(p, "/kit info <kitname>");
                     return;
                 }
                 Kit kit = plugin.getKitManager().getKit(args[1]);
                 if (kit == null) {
-                    MessageUtil.sendMessage(p, "&d&l✗ &fKit not found!");
+                    fail(p, "Kit not found!");
                     return;
                 }
 
@@ -231,9 +232,12 @@ public class kit implements NontageCommand, ICommand {
             }
 
             case "saveall" -> {
-                MessageUtil.sendMessage(p, "&d&lUsage: &f/kit saveall");
+                if (!p.hasPermission("circlepractice.admin")) {
+                    fail(p, "No permission!");
+                    return;
+                }
                 plugin.getKitManager().saveAllKits();
-                MessageUtil.sendMessage(p, "&d&l✓ &fSaved all kits!");
+                success(p, "Saved all kits!");
             }
 
             default -> sendUsage(p);
