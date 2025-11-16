@@ -131,13 +131,11 @@ public class serializer {
 
         if (map.containsKey("nodamage")) kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("nodamage"))));
         if (map.containsKey("counthit")) {
-            Bukkit.getLogger().info("a");
-            kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("counthit"))));
-        } else Bukkit.getLogger().info("e");
+            kit.setCountHit(Boolean.parseBoolean(String.valueOf(map.get("counthit"))));
+        }
         if (map.containsKey("counthittodie")) {
-            Bukkit.getLogger().info("a");
-            kit.setRespawnTime(((Number) map.get("counthittodie")).intValue());
-        } else Bukkit.getLogger().info("e");
+            kit.setCountHitToDie(((Number) map.get("counthittodie")).intValue());
+        }
         return kit;
     }
 
