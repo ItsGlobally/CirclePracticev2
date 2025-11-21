@@ -183,8 +183,7 @@ public class Game {
         return isP2attackable();
     }
     public void setPlayerAttackable(PracticePlayer pp, boolean s) {
-        if (getPlayer1OrPlayer2(pp) == 1) setP1attackable(s);
-        setP2attackable(s);
+        if (getPlayer1OrPlayer2(pp) == 1) setP1attackable(s); else setP2attackable(s);
     }
 
     public void setP1hit(int p1hit) {
@@ -203,12 +202,10 @@ public class Game {
     }
 
     public void setPlayerhit(PracticePlayer pp, int hit) {
-        if (getPlayer1OrPlayer2(pp) == 1) setP1hit(hit);
-        setP2hit(hit);
+        if (getPlayer1OrPlayer2(pp) == 1) setP1hit(hit); else setP2hit(hit);
     }
     public void addPlayerhit(PracticePlayer pp, int hit) {
-        if (getPlayer1OrPlayer2(pp) == 1) addP1hit(hit);
-        addP2hit(hit);
+        if (getPlayer1OrPlayer2(pp) == 1) addP1hit(hit); else addP2hit(hit);
     }
 
     public int getP1hit() {

@@ -13,6 +13,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -126,7 +127,7 @@ public class GameListener implements Listener, GlobalInterface {
 
         if (game.getKit().isCountHit()) {
             game.addPlayerhit(damagerPp, 1);
-            if (game.getPlayerhit(vicp) >= game.getKit().getCountHitToDie()) {
+            if (game.getPlayerhit(damagerPp) >= game.getKit().getCountHitToDie()) {
                 gotHitted.put(vic.getUniqueId(), false);
                 gotHitted.put(damager.getUniqueId(), false);
                 game.broadcast(game.getPrefixedTeamPlayerName(vicp)
@@ -162,6 +163,7 @@ public class GameListener implements Listener, GlobalInterface {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
+                        if (vicp.isInSpawn()) cancel();
                         if (countdown[0] <= 0) {
                             respawnPlayer(vic, vicp, game, damager);
                             respawning.put(vic.getUniqueId(), false);
@@ -187,7 +189,12 @@ public class GameListener implements Listener, GlobalInterface {
             }
         }
     }
-
+    @EventHandler
+    public void pickup(PlayerPickupItemEvent e) {
+        if (respawning.getOrDefault(e.getPlayer().getUniqueId(), false)) {
+            e.setCancelled(true);
+        }
+    }
     @EventHandler
     public void move(PlayerMoveEvent e) {
         Player vic = e.getPlayer();
@@ -199,14 +206,11 @@ public class GameListener implements Listener, GlobalInterface {
         if (game.getState() == GameState.STARTING && game.getKit().isFreezeOnCooldown()) {
             Location from = e.getFrom();
             Location to = e.getTo();
-
-            if (from.getBlockX() != to.getBlockX() || from.getBlockZ() != to.getBlockZ()) {
-                Location fixed = from.clone();
-                fixed.setYaw(to.getYaw());
-                fixed.setPitch(to.getPitch());
-                vic.teleport(fixed);
-                return;
-            }
+            Location fixed = from.clone();
+            fixed.setYaw(to.getYaw());
+            fixed.setPitch(to.getPitch());
+            vic.teleport(fixed);
+            return;
         }
 
         PracticePlayer killerPp = game.getOpponent(vicp);
@@ -238,6 +242,7 @@ public class GameListener implements Listener, GlobalInterface {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
+                        if (vicp.isInSpawn()) cancel();
                         if (countdown[0] <= 0) {
                             respawnPlayer(vic, vicp, game, killer);
                             respawning.put(vic.getUniqueId(), false);
@@ -301,6 +306,7 @@ public class GameListener implements Listener, GlobalInterface {
             new BukkitRunnable() {
                 @Override
                 public void run() {
+                    if (vicp.isInSpawn()) cancel();
                     if (countdown[0] <= 0) {
                         respawnPlayer(vic, vicp, game, killer);
                         respawning.put(vic.getUniqueId(), false);

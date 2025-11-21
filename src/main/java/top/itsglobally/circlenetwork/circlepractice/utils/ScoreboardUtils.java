@@ -22,15 +22,21 @@ public class ScoreboardUtils implements GlobalInterface {
         switch (pp.getState()) {
             case PlayerState.DUEL -> {
                 Game game = pp.getCurrentGame();
-                lines.add("&fYour opponent: &d: " + game.getOpponent(pp).getName());
+                PracticePlayer opponent = game.getOpponent(pp);
+                lines.add("&fYour opponent: &d: " + opponent.getName());
                 lines.add("&d");
+                if (game.getKit().isRespawnable()) {
+                    lines.add("&fYour bed: " + (game.getPlayerRespawnable(pp) ? "&d✓" : "&c✗"));
+                    lines.add("&fTheir bed: " + (game.getPlayerRespawnable(opponent) ? "&d✓" : "&c✗"));
+                    lines.add("&d&f");
+                }
                 if (game.getKit().isCountHit()) {
                     lines.add("&fYour hits&d: " + game.getPlayerhit(pp) + "&f/&d" + game.getKit().getCountHitToDie());
-                    lines.add("&fTheir hits&d: " + game.getPlayerhit(game.getOpponent(pp)) + "&f/&d" + game.getKit().getCountHitToDie());
+                    lines.add("&fTheir hits&d: " + game.getPlayerhit(opponent) + "&f/&d" + game.getKit().getCountHitToDie());
                     lines.add("&d&f");
                 }
                 lines.add("&fYour ping&d: " + NMSUtils.getPing(p));
-                lines.add("&fTheir ping&d: " + NMSUtils.getPing(game.getOpponent(pp).getPlayer()));
+                lines.add("&fTheir ping&d: " + NMSUtils.getPing(opponent.getPlayer()));
                 lines.add("&f");
             }
             case PlayerState.SPAWN -> {

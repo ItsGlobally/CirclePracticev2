@@ -164,12 +164,21 @@ public class GameManager implements GlobalInterface {
                 kit, ga);
     }
 
-    public void startNewGame(PracticePlayer pp1, PracticePlayer pp2, Kit kit, GameArena arena) {
-        if (pp1 == null || pp2 == null || kit == null || arena == null) {
+    public void startNewGame(PracticePlayer pp11, PracticePlayer pp12, Kit kit, GameArena arena) {
+        if (pp11 == null || pp12 == null || kit == null || arena == null) {
             Bukkit.getLogger().warning("Cannot start game: invalid parameters");
             return;
         }
-
+        boolean p1isred = RandomUtil.getRandomBoolean();
+        PracticePlayer pp1;
+        PracticePlayer pp2;
+        if (p1isred) {
+            pp1 = pp11;
+            pp2 = pp12;
+        } else {
+            pp1 = pp12;
+            pp2 = pp11;
+        }
         Game game = new Game(pp1, pp2, kit, arena);
         Player p1 = game.getPlayer1().getPlayer();
         Player p2 = game.getPlayer2().getPlayer();
@@ -185,10 +194,10 @@ public class GameManager implements GlobalInterface {
         ItemStack[][] p1Kit = pp1.getPlayerData().getKitContents(game.getKit().getName());
         ItemStack[][] p2Kit = pp2.getPlayerData().getKitContents(game.getKit().getName());
 
-        p1.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p1Kit[1], true));
-        p1.getInventory().setContents(TeamColorUtil.colorTeamItems(p1Kit[0], true));
-        p2.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p2Kit[1], false));
-        p2.getInventory().setContents(TeamColorUtil.colorTeamItems(p2Kit[0], false));
+        p1.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p1Kit[1], p1isred));
+        p1.getInventory().setContents(TeamColorUtil.colorTeamItems(p1Kit[0], p1isred));
+        p2.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p2Kit[1], !p1isred));
+        p2.getInventory().setContents(TeamColorUtil.colorTeamItems(p2Kit[0], !p1isred));
         p1.setFoodLevel(40);
         p1.setHealth(20);
         p2.setFoodLevel(40);
@@ -197,6 +206,10 @@ public class GameManager implements GlobalInterface {
         pp2.setState(PlayerState.DUEL);
         pp1.setCurrentGame(game);
         pp2.setCurrentGame(game);
+        p1.getPlayer().setFlying(false);
+        p2.getPlayer().setFlying(false);
+        p1.getPlayer().setAllowFlight(false);
+        p2.getPlayer().setAllowFlight(false);
         game.setState(GameState.STARTING);
         game.getArena().setInUse(true);
         startCooldown(game);

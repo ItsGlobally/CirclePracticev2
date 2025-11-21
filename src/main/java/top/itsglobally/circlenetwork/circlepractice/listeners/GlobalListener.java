@@ -51,6 +51,10 @@ public class GlobalListener implements Listener, GlobalInterface {
         plugin.getPlayerManager().addPlayer(e.getPlayer());
         plugin.getPlayerDataManager().getData(e.getPlayer()).unlockAchievement(Achievement.JOIN);
         plugin.getConfigManager().teleportToSpawn(e.getPlayer());
+        if (e.getPlayer().hasPermission("circlepractice.fly")) {
+            e.getPlayer().setFlying(true);
+            e.getPlayer().setAllowFlight(true);
+        }
     }
 
     @EventHandler

@@ -8,3 +8,5 @@ authors: [ItsGlobally]
 permissions:
   circlepractice.admin:
     default: op
+  circlepractice.fly:
+    default: false
