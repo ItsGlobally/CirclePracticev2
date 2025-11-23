@@ -69,6 +69,7 @@ public class serializer {
         map.put("nodamage", kit.isNodamage());
         map.put("counthit", kit.isCountHit());
         map.put("counthittodie", kit.getCountHitToDie());
+        map.put("voidaddcount", kit.getVoidaddcount());
         return map;
     }
 
@@ -136,6 +137,8 @@ public class serializer {
         if (map.containsKey("counthittodie")) {
             kit.setCountHitToDie(((Number) map.get("counthittodie")).intValue());
         }
+        if (map.containsKey("voidaddcount")) kit.setRespawnTime(((Number) map.get("voidaddcount")).intValue());
+
         return kit;
     }
 

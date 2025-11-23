@@ -22,6 +22,7 @@ public class Kit {
     private boolean nodamage;
     private boolean countHit;
     private int countHitToDie;
+    private int voidaddcount;
 
     public Kit(String name) {
         this.name = name;
@@ -38,6 +39,7 @@ public class Kit {
         this.nodamage = false;
         this.countHit = false;
         this.countHitToDie = 100;
+        this.voidaddcount = 0;
     }
 
     public String getName() {
@@ -162,5 +164,13 @@ public class Kit {
 
     public int getCountHitToDie() {
         return countHitToDie;
+    }
+
+    public void setVoidaddcount(int voidaddcount) {
+        this.voidaddcount = voidaddcount;
+    }
+
+    public int getVoidaddcount() {
+        return voidaddcount;
     }
 }

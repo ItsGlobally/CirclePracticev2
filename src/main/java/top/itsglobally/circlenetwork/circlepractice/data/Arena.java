@@ -18,8 +18,7 @@ public class Arena {
     private Location bnsb2;
     private boolean remake;
     private int voidY = 0;
-    public int highLimitY = 20;
-
+    private int highLimitY = 20;
 
     public Arena(String name) {
         this.name = name;

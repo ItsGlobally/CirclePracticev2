@@ -49,7 +49,7 @@ public class GameListener implements Listener, GlobalInterface {
 
         }
     }
-    private void respawnPlayer(Player vic, PracticePlayer vicp, Game game, Player killer) {
+    private void respawnPlayer(Player vic, PracticePlayer vicp, Game game, Player killer, int voidadddcount) {
         Location spawn = findSpawnpoint(game.getPlayerSpawnPoint(vicp));
 
         killer.showPlayer(vic);
@@ -75,6 +75,9 @@ public class GameListener implements Listener, GlobalInterface {
                 game.setPlayerAttackable(vicp, true);
             }
         }.runTaskLater(plugin, plugin.getConfigManager().getMainConfig().getSpawnprot() * 20L);
+        if (game.getKit().isCountHit()) {
+            game.addPlayerhit(game.getOpponent(vicp), voidadddcount);
+        }
     }
     private Location findSpawnpoint(Location l) {
 
@@ -165,7 +168,7 @@ public class GameListener implements Listener, GlobalInterface {
                     public void run() {
                         if (vicp.isInSpawn()) cancel();
                         if (countdown[0] <= 0) {
-                            respawnPlayer(vic, vicp, game, damager);
+                            respawnPlayer(vic, vicp, game, damager, 0);
                             respawning.put(vic.getUniqueId(), false);
                             cancel();
                             return;
@@ -244,7 +247,7 @@ public class GameListener implements Listener, GlobalInterface {
                     public void run() {
                         if (vicp.isInSpawn()) cancel();
                         if (countdown[0] <= 0) {
-                            respawnPlayer(vic, vicp, game, killer);
+                            respawnPlayer(vic, vicp, game, killer, game.getKit().getVoidaddcount());
                             respawning.put(vic.getUniqueId(), false);
                             cancel();
                             return;
@@ -308,7 +311,7 @@ public class GameListener implements Listener, GlobalInterface {
                 public void run() {
                     if (vicp.isInSpawn()) cancel();
                     if (countdown[0] <= 0) {
-                        respawnPlayer(vic, vicp, game, killer);
+                        respawnPlayer(vic, vicp, game, killer, 0);
                         respawning.put(vic.getUniqueId(), false);
                         cancel();
                         return;
