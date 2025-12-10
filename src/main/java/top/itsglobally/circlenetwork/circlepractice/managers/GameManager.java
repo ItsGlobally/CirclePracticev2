@@ -287,6 +287,10 @@ public class GameManager implements GlobalInterface {
         player.getInventory().clear();
         player.getActivePotionEffects().forEach(pe -> player.removePotionEffect(pe.getType()));
         player.setFireTicks(0);
+        if (player.hasPermission("circlepractice.fly")) {
+            player.setAllowFlight(true);
+            player.setFlying(true);
+        }
     }
 
     private void handleGameEnd(Game game, PracticePlayer winner, Player p1, Player p2) {
