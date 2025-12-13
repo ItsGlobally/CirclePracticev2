@@ -14,6 +14,7 @@ import top.itsglobally.circlenetwork.circlepractice.managers.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.ScoreboardUtils;
 import top.nontage.nontagelib.command.NontageCommandLoader;
 import top.nontage.nontagelib.listener.ListenerRegister;
+import top.nontage.nontagelib.utils.item.ItemBuilder;
 
 public final class CirclePractice extends JavaPlugin {
 
@@ -43,6 +44,7 @@ public final class CirclePractice extends JavaPlugin {
         ListenerRegister.registerAll(this);
         initManagers();
         DiscordSRV.api.addSlashCommandProvider(new SlashCommands());
+        ItemBuilder.init(this);
         new BukkitRunnable() {
 
             @Override

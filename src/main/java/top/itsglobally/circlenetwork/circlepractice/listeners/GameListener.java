@@ -12,6 +12,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -191,6 +192,15 @@ public class GameListener implements Listener, GlobalInterface {
                 plugin.getGameManager().endGame(game, damagerPp);
             }
         }
+    }
+    @EventHandler
+    public void drop(PlayerDropItemEvent e) {
+        if (respawning.getOrDefault(e.getPlayer().getUniqueId(), false)) {
+            e.setCancelled(true);
+            return;
+        }
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        if (plugin.getPlayerManager().getPlayer(e.getPlayer()).isInSpawn()) e.setCancelled(true);
     }
     @EventHandler
     public void pickup(PlayerPickupItemEvent e) {

@@ -21,7 +21,6 @@ public class kit implements NontageCommand, GlobalInterface {
     public void execute(CommandSender commandSender, String s, String[] args) {
         if (!(commandSender instanceof Player p)) return;
 
-        // 無參數：顯示所有用法
         if (args.length < 1) {
             sendUsage(p);
             return;

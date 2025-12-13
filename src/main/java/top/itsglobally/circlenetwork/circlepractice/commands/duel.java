@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
+import top.itsglobally.circlenetwork.circlepractice.utils.Menus;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
@@ -18,8 +19,8 @@ public class duel implements NontageCommand, GlobalInterface {
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
 
-        if (strings.length < 2) {
-           usage(p, "/duel <player> <kit>");
+        if (strings.length < 1) {
+            usage(p, "/duel <player> <kit>");
             return;
         }
 
@@ -30,7 +31,10 @@ public class duel implements NontageCommand, GlobalInterface {
             fail(p, "That player is not online!");
             return;
         }
-
+        if (strings.length < 2) {
+            p.openInventory(Menus.duel(p, target));
+            return;
+        }
         String kitName = strings[1];
         if (!plugin.getKitManager().kitAlreadyExist(kitName)) {
             fail(p, "That kit does not exist!");

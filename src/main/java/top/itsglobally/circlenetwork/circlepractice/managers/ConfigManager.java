@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
+import top.itsglobally.circlenetwork.circlepractice.utils.Items;
 import top.nontage.nontagelib.config.BaseConfig;
 
 public class ConfigManager implements GlobalInterface {
@@ -20,6 +21,8 @@ public class ConfigManager implements GlobalInterface {
 
     public void teleportToSpawn(Player p) {
         p.teleport(mainConfig.getSpawn());
+        p.getInventory().clear();
+        p.getInventory().setContents(Items.spawnInv());
     }
 
     public class MainConfig extends BaseConfig {
