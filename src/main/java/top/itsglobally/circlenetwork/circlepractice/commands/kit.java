@@ -63,7 +63,7 @@ public class kit implements NontageCommand, GlobalInterface {
                 }
 
                 Kit kit = plugin.getKitManager().getKit(name);
-                if (pp.isInSpawnNotEditing()) {
+                if (pp.isInSpawnNotEditingOrQueuing()) {
                     pp.setState(PlayerState.EDITINGGLOBALLY);
                     pp.setQueuedKit(name);
                     pp.setInventory(p.getInventory().getContents());
@@ -88,7 +88,7 @@ public class kit implements NontageCommand, GlobalInterface {
                     return;
                 }
                 Kit kit = plugin.getKitManager().getKit(name);
-                if (pp.isInSpawnNotEditing()) {
+                if (pp.isInSpawnNotEditingOrQueuing()) {
                     pp.setState(PlayerState.EDITING);
                     pp.setQueuedKit(name);
                     pp.setInventory(p.getInventory().getContents());
@@ -110,7 +110,7 @@ public class kit implements NontageCommand, GlobalInterface {
                     MessageUtil.sendMessage(p, "Kit not found!");
                     return;
                 }
-                if (pp.isInSpawnNotEditing()) {
+                if (pp.isInSpawnNotEditingOrQueuing()) {
                     pp.setInventory(p.getInventory().getContents());
                     pp.setArmor(p.getInventory().getArmorContents());
                     p.getInventory().clear();

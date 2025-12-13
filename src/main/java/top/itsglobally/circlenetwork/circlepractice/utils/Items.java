@@ -18,7 +18,7 @@ public class Items {
                 .unBreak()
                 .build();
         spawnInv[1] = new ItemBuilder(Material.DIAMOND_SWORD)
-                .setName("&e&luel Online Players")
+                .setName("&e&lDuel Online Players")
                 .onLeftClick(player -> {
                     player.openInventory(Menus.allPlayers("duel %player%"));
                 })

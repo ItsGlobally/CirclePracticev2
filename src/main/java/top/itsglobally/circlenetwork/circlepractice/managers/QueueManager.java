@@ -16,16 +16,16 @@ public class QueueManager implements GlobalInterface {
     public void joinQueue(Player player, String kitName) {
         queues.putIfAbsent(kitName, new ArrayDeque<>());
         Deque<UUID> queue = queues.get(kitName);
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(player);
 
-        if (queue.contains(player.getUniqueId())) {
-            MessageUtil.sendMessage(player, "§cYou are already in queue.");
+        if (!pp.isInSpawn() || pp.isQueuing()) {
+            MessageUtil.sendMessage(player, "&cYou are not in the spawn.");
             return;
         }
 
         queue.addLast(player.getUniqueId());
-        PracticePlayer pp = plugin.getPlayerManager().getPlayer(player);
         pp.setState(PlayerState.QUEUE);
-        MessageUtil.sendMessage(player, "§aJoined " + kitName + " queue.");
+        MessageUtil.sendMessage(player, "&cJoined " + kitName + " queue.");
 
         tryMatch(kitName);
     }
