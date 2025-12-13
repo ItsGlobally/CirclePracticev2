@@ -69,6 +69,29 @@ public class Menus implements GlobalInterface {
         int rows = (int) Math.ceil(onlinePlayers / 9.0);
         return Math.min(rows * 9, 54);
     }
+    public static Inventory kitEdit(Player p) {
+        InventoryBuilder ib = new InventoryBuilder(9*6, "Queue");
+        for (int i = 0; i <= 36; i++) {
+            ib.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE)
+                    .setName("&c")
+                    .durability(7)
+                    .build());
+        }
+        int currentSlot = 0;
+        for (Kit k : plugin.getKitManager().getKits()) {
+            ib.setItem(new ItemBuilder(Material.IRON_SWORD)
+                    .setName(k.getName())
+                    .build(), currentSlot);
+            ib.setClickEvent(clickInventoryEvent -> {
+                p.performCommand("kit edit " + k.getName());
+            }, currentSlot);
+            currentSlot++;
+        }
+        ib.setAllowableDrag(false);
+        ib.setAllClickable(false);
+        p.closeInventory();
+        return ib.getInventory();
+    }
     public static Inventory allPlayers(String command) {
         InventoryBuilder ib = new InventoryBuilder(getInventorySize(), "All Players");
         for (int i = 0; i <= 36; i++) {

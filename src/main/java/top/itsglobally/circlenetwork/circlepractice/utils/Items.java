@@ -8,6 +8,7 @@ public class Items {
     public static ItemStack[] spawnInv() {
         ItemStack[] spawnInv = new ItemStack[36];
         spawnInv[0] = new ItemBuilder(Material.GOLD_SWORD)
+                .setName("&e&lQueue")
                 .onLeftClick(player -> {
                     player.openInventory(Menus.queue(player));
                 })
@@ -16,12 +17,23 @@ public class Items {
                 })
                 .unBreak()
                 .build();
-        spawnInv[1] = new ItemBuilder(Material.DIAMOND)
+        spawnInv[1] = new ItemBuilder(Material.DIAMOND_SWORD)
+                .setName("&e&luel Online Players")
                 .onLeftClick(player -> {
                     player.openInventory(Menus.allPlayers("duel %player%"));
                 })
                 .onRightClick(player -> {
                     player.openInventory(Menus.allPlayers("duel %player%"));
+                })
+                .unBreak()
+                .build();
+        spawnInv[4] = new ItemBuilder(Material.BOOK)
+                .setName("&e&lKit Editor")
+                .onLeftClick(player -> {
+                    player.openInventory(Menus.kitEdit(player));
+                })
+                .onRightClick(player -> {
+                    player.openInventory(Menus.kitEdit(player));
                 })
                 .unBreak()
                 .build();
