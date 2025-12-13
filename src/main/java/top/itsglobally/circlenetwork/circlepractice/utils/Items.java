@@ -9,6 +9,15 @@ public class Items {
         ItemStack[] spawnInv = new ItemStack[36];
         spawnInv[0] = new ItemBuilder(Material.GOLD_SWORD)
                 .onLeftClick(player -> {
+                    player.openInventory(Menus.queue(player));
+                })
+                .onRightClick(player -> {
+                    player.openInventory(Menus.queue(player));
+                })
+                .unBreak()
+                .build();
+        spawnInv[1] = new ItemBuilder(Material.DIAMOND)
+                .onLeftClick(player -> {
                     player.openInventory(Menus.allPlayers("duel %player%"));
                 })
                 .onRightClick(player -> {

@@ -42,6 +42,28 @@ public class Menus implements GlobalInterface {
         ib.setAllClickable(false);
         return ib.getInventory();
     }
+    public static Inventory queue(Player p) {
+        InventoryBuilder ib = new InventoryBuilder(9*6, "Queue");
+        for (int i = 0; i <= 36; i++) {
+            ib.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE)
+                    .setName("&c")
+                    .durability(7)
+                    .build());
+        }
+        int currentSlot = 0;
+        for (Kit k : plugin.getKitManager().getKits()) {
+            ib.setItem(new ItemBuilder(Material.IRON_SWORD)
+                    .setName(k.getName())
+                    .build(), currentSlot);
+            ib.setClickEvent(clickInventoryEvent -> {
+                p.performCommand("queue " + k.getName());
+            }, currentSlot);
+            currentSlot++;
+        }
+        ib.setAllowableDrag(false);
+        ib.setAllClickable(false);
+        return ib.getInventory();
+    }
     public static int getInventorySize() {
         int onlinePlayers = Bukkit.getOnlinePlayers().size();
         int rows = (int) Math.ceil(onlinePlayers / 9.0);
@@ -57,7 +79,7 @@ public class Menus implements GlobalInterface {
         }
         int currentSlot = 0;
         for (Player p : Bukkit.getOnlinePlayers()) {
-            ib.setItem(new ItemBuilder(Material.SKULL_ITEM).owner(p.getName()).build(), currentSlot);
+            ib.setItem(new ItemBuilder(Material.SKULL_ITEM).owner(p.getName()).durability(3).build(), currentSlot);
             ib.setClickEvent(clickInventoryEvent -> {
                 clickInventoryEvent.getPlayer().performCommand(command.replace("%player%", p.getName()));
             }, currentSlot);
