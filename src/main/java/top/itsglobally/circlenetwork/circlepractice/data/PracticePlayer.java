@@ -75,11 +75,17 @@ public class PracticePlayer implements GlobalInterface{
     }
 
     public boolean isInSpawn() {
-        return state == PlayerState.SPAWN || state == PlayerState.EDITING;
+        return state == PlayerState.SPAWN || state == PlayerState.EDITING || state == PlayerState.QUEUE;
     }
 
     public boolean isInSpawnNotEditing() {
         return state == PlayerState.SPAWN;
+    }
+    public boolean isQueuing() {
+        return state == PlayerState.QUEUE;
+    }
+    public boolean isInSpawnNotQueuing() {
+        return state == PlayerState.SPAWN || state == PlayerState.EDITING;
     }
 
     public boolean isEditing() {

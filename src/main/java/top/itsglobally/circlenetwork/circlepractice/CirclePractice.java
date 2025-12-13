@@ -28,6 +28,7 @@ public final class CirclePractice extends JavaPlugin {
     private ArenaManager am;
     private ConfigManager cm;
     private PlayerDataManager pdm;
+    private QueueManager qm;
 
     public static CirclePractice getPlugin() {
         return plugin;
@@ -66,6 +67,7 @@ public final class CirclePractice extends JavaPlugin {
         am = new ArenaManager();
         cm = new ConfigManager();
         pdm = new PlayerDataManager();
+        qm = new QueueManager();
     }
 
     @Override
@@ -105,5 +107,9 @@ public final class CirclePractice extends JavaPlugin {
 
     public PlayerDataManager getPlayerDataManager() {
         return pdm;
+    }
+
+    public QueueManager getQueueManager() {
+        return qm;
     }
 }

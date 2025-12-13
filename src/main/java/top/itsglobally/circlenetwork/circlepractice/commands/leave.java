@@ -18,8 +18,10 @@ public class leave implements NontageCommand, GlobalInterface {
         if (!(commandSender instanceof Player p)) return;
 
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
-
-        if (pp.isInSpawn()) {
+        if (pp.isQueuing()) {
+            plugin.getQueueManager().leaveQueue(p);
+        }
+        if (pp.isInSpawnNotQueuing()) {
             plugin.getConfigManager().teleportToSpawn(p);
             success(p, "Teleported to spawn!");
         }
