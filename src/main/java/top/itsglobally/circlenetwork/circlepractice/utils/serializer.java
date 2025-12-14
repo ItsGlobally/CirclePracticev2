@@ -72,6 +72,7 @@ public class serializer {
         map.put("counthittodie", kit.getCountHitToDie());
         map.put("voidaddcount", kit.getVoidaddcount());
         map.put("icon", kit.getIcon().getData());
+        map.put("voidtpback", kit.isVoidTpBack());
         return map;
     }
 
@@ -140,6 +141,7 @@ public class serializer {
             kit.setCountHitToDie(((Number) map.get("counthittodie")).intValue());
         }
         if (map.containsKey("voidaddcount")) kit.setRespawnTime(((Number) map.get("voidaddcount")).intValue());
+        if (map.containsKey("voidtpback")) kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("voidtpback"))));
 
         if (map.containsKey("icon")) {
             String mname = String.valueOf(map.get("icon"));

@@ -72,7 +72,7 @@ public class GameListener implements Listener, GlobalInterface {
         );
         game.setPlayerAttackable(vicp, false);
         gotHitted.put(vic.getUniqueId(), false);
-        MessageUtil.sendMessage(vic, "§dYou have respawned!");
+        if (!game.getKit().isVoidTpBack()) MessageUtil.sendMessage(vic, "§dYou have respawned!");
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -80,6 +80,7 @@ public class GameListener implements Listener, GlobalInterface {
             }
         }.runTaskLater(plugin, plugin.getConfigManager().getMainConfig().getSpawnprot() * 20L);
         if (game.getKit().isCountHit()) {
+            MessageUtil.sendMessage(vic, "&7-" + voidadddcount + " hits (fell into the void).");
             game.addPlayerhit(game.getOpponent(vicp), voidadddcount);
         }
     }
@@ -249,6 +250,13 @@ public class GameListener implements Listener, GlobalInterface {
             }
 
             if (game.getKit().isRespawnable() && game.getPlayerRespawnable(vicp)) {
+                game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? game.getPrefixedTeamPlayerName(vicp)
+                        + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&d" + game.getPrefixedTeamPlayerName(vicp)
+                        + " &ffell into the void!");
+                if (game.getKit().isVoidTpBack()) {
+                    respawnPlayer(vic, vicp, game, killer, game.getKit().getVoidaddcount());
+                    return;
+                }
                 vic.setHealth(20.0);
                 vic.setFoodLevel(20);
                 killer.hidePlayer(vic);
@@ -258,10 +266,10 @@ public class GameListener implements Listener, GlobalInterface {
                 vic.getInventory().clear();
                 vic.getInventory().setArmorContents(null);
 
-                game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? game.getPrefixedTeamPlayerName(vicp)
-                        + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&d" + game.getPrefixedTeamPlayerName(vicp)
-                        + " &ffell into the void!");
+
                 if (gotHitted.getOrDefault(vic.getUniqueId(), false)) game.getOpponent(vicp).getPlayer().playSound(game.getOpponent(vicp).getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
+
+
 
                 int[] countdown = {game.getKit().getRespawnTime()};
                 respawning.put(vic.getUniqueId(), true);

@@ -24,6 +24,8 @@ public class Kit {
     private int countHitToDie;
     private int voidaddcount;
     private Material icon;
+    private boolean voidTpBack;
+    private int voidAddHits;
 
     public Kit(String name) {
         this.name = name;
@@ -181,5 +183,21 @@ public class Kit {
 
     public Material getIcon() {
         return icon;
+    }
+
+    public void setVoidAddHits(int voidAddHits) {
+        this.voidAddHits = voidAddHits;
+    }
+
+    public void setVoidTpBack(boolean voidTpBack) {
+        this.voidTpBack = voidTpBack;
+    }
+
+    public int getVoidAddHits() {
+        return voidAddHits;
+    }
+
+    public boolean isVoidTpBack() {
+        return voidTpBack;
     }
 }
