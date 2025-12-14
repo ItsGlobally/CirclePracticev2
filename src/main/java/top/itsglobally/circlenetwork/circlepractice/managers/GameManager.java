@@ -268,6 +268,12 @@ public class GameManager implements GlobalInterface {
 
         resetPlayer(p1);
         resetPlayer(p2);
+        for (UUID u : game.getSpectators()) {
+            Player p = Bukkit.getPlayer(u);
+            resetPlayer(p);
+            p1.showPlayer(p);
+            p2.showPlayer(p);
+        }
 
         if (winner != null) {
             handleGameEnd(game, winner, p1, p2);
@@ -284,7 +290,6 @@ public class GameManager implements GlobalInterface {
         if (player == null) return;
         plugin.getConfigManager().teleportToSpawn(player);
         player.getInventory().setArmorContents(null);
-        player.getInventory().clear();
         player.getActivePotionEffects().forEach(pe -> player.removePotionEffect(pe.getType()));
         player.setFireTicks(0);
         if (player.hasPermission("circlepractice.fly")) {
@@ -315,5 +320,27 @@ public class GameManager implements GlobalInterface {
             plugin.getPlayerDataManager().getData(loser.getPlayer()).addXps(10);
             MessageUtil.sendMessage(loser.getPlayer(), "&d&l⭐ &fYou lost but earned &d10 XP&f!");
         }
+    }
+    public void joinSpec(Game game, Player p) {
+        if (game == null || p == null) return;
+        p.teleport(game.getPlayer1().getPlayer());
+        game.getPlayer1().getPlayer().hidePlayer(p);
+        game.getPlayer2().getPlayer().hidePlayer(p);
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
+        pp.setState(PlayerState.SPECTATING);
+        pp.setCurrentGame(game);
+        game.addSpectator(p.getUniqueId());
+        game.broadcast(p.getName() + " &dstarted spectating.");
+    }
+    public void stopSpec(Game game, Player p) {
+        if (game == null || p == null) return;
+        resetPlayer(p);
+        game.getPlayer1().getPlayer().showPlayer(p);
+        game.getPlayer2().getPlayer().showPlayer(p);
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
+        pp.setState(PlayerState.SPAWN);
+        pp.setCurrentGame(null);
+        game.removeSpectator(p.getUniqueId());
+        game.broadcast(p.getName() + " &dstopped spectating.");
     }
 }

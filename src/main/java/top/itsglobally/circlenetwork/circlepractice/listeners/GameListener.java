@@ -39,6 +39,10 @@ public class GameListener implements Listener, GlobalInterface {
     public void hunger(FoodLevelChangeEvent e) {
         if (!(e.getEntity() instanceof Player p)) return;
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
+        if (pp.isSpectating()) {
+            e.setCancelled(true);
+            return;
+        }
         if (pp.isInDuel()) {
             if (!pp.getCurrentGame().getKit().isHunger()) {
                 e.setCancelled(true);
@@ -47,7 +51,6 @@ public class GameListener implements Listener, GlobalInterface {
         }
         if (pp.isInSpawn() || pp.isInFFA()) {
             e.setCancelled(true);
-
         }
     }
     private void respawnPlayer(Player vic, PracticePlayer vicp, Game game, Player killer, int voidadddcount) {
@@ -92,12 +95,22 @@ public class GameListener implements Listener, GlobalInterface {
 
     @EventHandler
     public void damage(EntityDamageEvent e) {
-        if (!(e instanceof EntityDamageByEntityEvent event)) return;
+        if (!(e.getEntity() instanceof Player p)) return;
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
+        if (pp.isSpectating()) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void damagebye(EntityDamageByEntityEvent e) {
         if (!(e.getEntity() instanceof Player vic)) return;
-        if (!(event.getDamager() instanceof Player damager)) return;
+        if (!(e.getDamager() instanceof Player damager)) return;
 
         PracticePlayer vicp = plugin.getPlayerManager().getPlayer(vic);
         PracticePlayer damagerPp = plugin.getPlayerManager().getPlayer(damager);
+        if (damagerPp.isSpectating()) {
+            e.setCancelled(true);
+            return;
+        }
 
         if (!vicp.isInDuel() || !damagerPp.isInDuel()) return;
 
@@ -112,7 +125,7 @@ public class GameListener implements Listener, GlobalInterface {
 
         if (!game.isPlayerAttackable(damagerPp)) {
             game.setPlayerAttackable(damagerPp, true);
-            MessageUtil.sendMessage(damager, "&aSpawn protection removed because you attacked.");
+            MessageUtil.sendMessage(damager, "&dSpawn protection removed because you attacked.");
         }
 
         if (!game.isPlayerAttackable(vicp)) {

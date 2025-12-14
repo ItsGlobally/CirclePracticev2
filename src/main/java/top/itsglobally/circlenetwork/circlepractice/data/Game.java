@@ -54,6 +54,13 @@ public class Game {
         return spectators;
     }
 
+    public void addSpectator(UUID u) {
+        spectators.add(u);
+    }
+    public void removeSpectator(UUID u) {
+        spectators.remove(u);
+    }
+
     public PracticePlayer getPlayer1() {
         return player1;
     }
