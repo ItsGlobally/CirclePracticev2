@@ -74,7 +74,8 @@ public class Menus implements GlobalInterface {
         int currentSlot = 0;
         for (Player p : players) {
             ib.setItem(new ItemBuilder(Material.SKULL_ITEM)
-                            .owner("&e&l" + p.getName())
+                            .owner(p.getName())
+                            .setName("&e&l" + p.getName())
                             .durability(3)
                             .build(),
                     currentSlot
@@ -95,13 +96,17 @@ public class Menus implements GlobalInterface {
     public static Inventory particleMenu(Player p) {
         InventoryBuilder ib = filledBackground(new InventoryBuilder(9*5, "Particles"));
         int currentSlot = 0;
+        Bukkit.getLogger().info(String.valueOf(FinalKillParticle.values().length));
+        Bukkit.getLogger().info(FinalKillParticle.values().toString());
         for (FinalKillParticle fkp : FinalKillParticle.values()) {
-            ib.setItem(new ItemBuilder(fkp.getIcon()).setName("&e&l" + fkp.name()).build());
+            ib.setItem(new ItemBuilder(fkp.getIcon()).setName("&e&l" + fkp.name()).build(), currentSlot);
             ib.setClickEvent(clickInventoryEvent -> {
                 p.performCommand("particle " + fkp.name());
             }, currentSlot);
             currentSlot++;
         }
+        ib.setAllowableDrag(false);
+        ib.setAllClickable(false);
         return ib.getInventory();
     }
     public static Inventory settings(Player p) {
@@ -110,7 +115,8 @@ public class Menus implements GlobalInterface {
         ib.setClickEvent(clickInventoryEvent -> {
             p.openInventory(particleMenu(p));
         }, 22);
-
+        ib.setAllowableDrag(false);
+        ib.setAllClickable(false);
         return ib.getInventory();
     }
 

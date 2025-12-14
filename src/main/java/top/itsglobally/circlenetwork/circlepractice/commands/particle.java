@@ -17,7 +17,7 @@ public class particle implements NontageCommand, GlobalInterface {
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
 
-        if (strings.length < 2) {
+        if (strings.length < 1) {
             p.openInventory(Menus.particleMenu(p));
             return;
         }
@@ -31,7 +31,7 @@ public class particle implements NontageCommand, GlobalInterface {
             return;
         }
         try {
-            FinalKillParticle target = FinalKillParticle.valueOf(strings[1]);
+            FinalKillParticle target = FinalKillParticle.valueOf(strings[0]);
             plugin.getPlayerDataManager().getData(p).setFinalKillParticle(target);
             success(p, "Changed your final kill particle effect to " + target.name());
         } catch (IllegalArgumentException e) {

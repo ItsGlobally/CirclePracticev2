@@ -71,7 +71,7 @@ public class serializer {
         map.put("counthit", kit.isCountHit());
         map.put("counthittodie", kit.getCountHitToDie());
         map.put("voidaddcount", kit.getVoidaddcount());
-        map.put("icon", kit.getIcon().getData());
+        map.put("icon", kit.getIcon().name());
         map.put("voidtpback", kit.isVoidTpBack());
         return map;
     }
