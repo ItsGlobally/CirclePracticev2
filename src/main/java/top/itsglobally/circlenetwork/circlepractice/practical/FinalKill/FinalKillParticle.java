@@ -7,12 +7,12 @@ import org.bukkit.entity.Player;
 
 public enum FinalKillParticle {
 
-    NONE("none") {
+    NONE("none", Material.BARRIER) {
         @Override
         public void play(Location l) {}
     },
 
-    REDSTONE("redstone") {
+    REDSTONE("redstone", Material.REDSTONE_BLOCK) {
         @Override
         public void play(Location l) {
             Location loc = l.add(0, 1, 0);
@@ -22,13 +22,18 @@ public enum FinalKillParticle {
 
 
     private final String id;
-
-    FinalKillParticle(String id) {
+    private final Material icon;
+    FinalKillParticle(String id, Material icon) {
         this.id = id;
+        this.icon = icon;
     }
 
     public String getId() {
         return id;
+    }
+
+    public Material getIcon() {
+        return icon;
     }
 
     public abstract void play(Location l);

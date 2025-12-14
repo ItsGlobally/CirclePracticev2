@@ -194,6 +194,7 @@ public class kit implements NontageCommand, GlobalInterface {
                                 return;
                             }
                         }
+                        case "icon" -> kit.setIcon(Material.valueOf(value.toUpperCase()));
                         default -> {
                             fail(p, "Unknown field: &d" + field);
                             return;

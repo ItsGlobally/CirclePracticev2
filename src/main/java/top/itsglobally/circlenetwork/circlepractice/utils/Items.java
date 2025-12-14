@@ -37,6 +37,16 @@ public class Items {
                 })
                 .unBreak()
                 .build();
+        spawnInv[8] = new ItemBuilder(Material.ITEM_FRAME)
+                .setName("&e&lSettings")
+                .onLeftClick(player -> {
+                    player.openInventory(Menus.settings(player));
+                })
+                .onRightClick(player -> {
+                    player.openInventory(Menus.settings(player));
+                })
+                .unBreak()
+                .build();
         return spawnInv;
     }
 

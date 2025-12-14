@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
+import top.itsglobally.circlenetwork.circlepractice.practical.FinalKill.FinalKillParticle;
 import top.nontage.nontagelib.utils.inventory.InventoryBuilder;
 import top.nontage.nontagelib.utils.item.ItemBuilder;
 
@@ -26,14 +27,13 @@ public class Menus implements GlobalInterface {
 
     private static Inventory buildKitMenu(Player p, String title, KitClickAction clickAction) {
         List<Kit> kits = plugin.getKitManager().getKits();
-        InventoryBuilder ib = new InventoryBuilder(getInventorySize(kits.size()), title);
+        InventoryBuilder ib = filledBackground(new InventoryBuilder(getInventorySize(kits.size()), title));
 
-        fillBackground(ib);
 
         int currentSlot = 0;
         for (Kit k : kits) {
-            ib.setItem(new ItemBuilder(Material.IRON_SWORD)
-                    .setName(k.getName())
+            ib.setItem(new ItemBuilder(k.getIcon())
+                    .setName("&e&l" + k.getName())
                     .build(), currentSlot);
 
             final int slot = currentSlot;
@@ -69,14 +69,12 @@ public class Menus implements GlobalInterface {
 
     private static Inventory buildPlayerMenu(String title, PlayerClickAction clickAction) {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        InventoryBuilder ib = new InventoryBuilder(getInventorySize(players.size()), title);
-
-        fillBackground(ib);
+        InventoryBuilder ib = filledBackground(new InventoryBuilder(getInventorySize(players.size()), title));
 
         int currentSlot = 0;
         for (Player p : players) {
             ib.setItem(new ItemBuilder(Material.SKULL_ITEM)
-                            .owner(p.getName())
+                            .owner("&e&l" + p.getName())
                             .durability(3)
                             .build(),
                     currentSlot
@@ -94,18 +92,42 @@ public class Menus implements GlobalInterface {
         return ib.getInventory();
     }
 
+    public static Inventory particleMenu(Player p) {
+        InventoryBuilder ib = filledBackground(new InventoryBuilder(9*5, "Particles"));
+        int currentSlot = 0;
+        for (FinalKillParticle fkp : FinalKillParticle.values()) {
+            ib.setItem(new ItemBuilder(fkp.getIcon()).setName("&e&l" + fkp.name()).build());
+            ib.setClickEvent(clickInventoryEvent -> {
+                p.performCommand("particle " + fkp.name());
+            }, currentSlot);
+            currentSlot++;
+        }
+        return ib.getInventory();
+    }
+    public static Inventory settings(Player p) {
+        InventoryBuilder ib = filledBackground(new InventoryBuilder(9*5, "Setings"));
+        ib.setItem(new ItemBuilder(Material.DIAMOND_SWORD).setName("&e&lParticles").build(), 22);
+        ib.setClickEvent(clickInventoryEvent -> {
+            p.openInventory(particleMenu(p));
+        }, 22);
+
+        return ib.getInventory();
+    }
+
     public static Inventory allPlayers(String command) {
         return buildPlayerMenu("All Players", (clicker, target) ->
                 clicker.performCommand(command.replace("%player%", target.getName()))
         );
     }
-    private static void fillBackground(InventoryBuilder ib) {
+    private static InventoryBuilder filledBackground(InventoryBuilder ib) {
+
         for (int i = 0; i <= 36; i++) {
             ib.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE)
                     .setName("&c")
                     .durability(7)
                     .build());
         }
+        return ib;
     }
 
     public static int getInventorySize(int size) {

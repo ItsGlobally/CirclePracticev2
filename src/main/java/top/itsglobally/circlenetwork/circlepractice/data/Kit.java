@@ -23,6 +23,7 @@ public class Kit {
     private boolean countHit;
     private int countHitToDie;
     private int voidaddcount;
+    private Material icon;
 
     public Kit(String name) {
         this.name = name;
@@ -172,5 +173,13 @@ public class Kit {
 
     public int getVoidaddcount() {
         return voidaddcount;
+    }
+
+    public void setIcon(Material icon) {
+        this.icon = icon;
+    }
+
+    public Material getIcon() {
+        return icon;
     }
 }

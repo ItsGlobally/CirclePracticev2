@@ -71,6 +71,7 @@ public class serializer {
         map.put("counthit", kit.isCountHit());
         map.put("counthittodie", kit.getCountHitToDie());
         map.put("voidaddcount", kit.getVoidaddcount());
+        map.put("icon", kit.getIcon().getData());
         return map;
     }
 
@@ -139,6 +140,17 @@ public class serializer {
             kit.setCountHitToDie(((Number) map.get("counthittodie")).intValue());
         }
         if (map.containsKey("voidaddcount")) kit.setRespawnTime(((Number) map.get("voidaddcount")).intValue());
+
+        if (map.containsKey("icon")) {
+            String mname = String.valueOf(map.get("icon"));
+            try {
+                kit.setIcon(Material.valueOf(mname));
+            } catch (IllegalArgumentException e) {
+                Bukkit.getLogger().info("Block not found: " + mname);
+                e.printStackTrace();
+                kit.setIcon(Material.IRON_SWORD);
+            }
+        }
 
         return kit;
     }
