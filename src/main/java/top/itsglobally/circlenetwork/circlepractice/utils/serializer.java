@@ -8,6 +8,7 @@ import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.managers.PlayerDataManager;
+import top.itsglobally.circlenetwork.circlepractice.practical.FinalKill.FinalKillParticle;
 
 import java.util.*;
 
@@ -188,6 +189,7 @@ public class serializer {
         map.put("stars", pd.getStars());
         map.put("xp", pd.getXps());
         map.put("achievements", achievements);
+        map.put("finalKillParticle", pd.getFinalKillParticle().getId());
 
         return map;
     }
@@ -253,6 +255,10 @@ public class serializer {
             } else {
                 System.err.println("[CirclePractice] xp 欄位不是數字類型: " + xpObj);
             }
+        }
+
+        if (map.containsKey("finalKillParticle")) {
+            pd.setFinalKillParticle(FinalKillParticle.fromId(String.valueOf(map.get("finalKillParticle"))));
         }
 
         return pd;

@@ -202,6 +202,7 @@ public class GameListener implements Listener, GlobalInterface {
                 damager.playSound(damager.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
                 gotHitted.put(vic.getUniqueId(), false);
                 gotHitted.put(damager.getUniqueId(), false);
+                vicp.getPlayerData().getFinalKillParticle().play(vic.getLocation());
                 plugin.getGameManager().endGame(game, damagerPp);
             }
         }
@@ -291,6 +292,7 @@ public class GameListener implements Listener, GlobalInterface {
                         + " &ffell into the void!");
 
                 if (gotHitted.getOrDefault(vic.getUniqueId(), false)) game.getOpponent(vicp).getPlayer().playSound(game.getOpponent(vicp).getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
+                vicp.getPlayerData().getFinalKillParticle().play(vic.getLocation());
                 plugin.getGameManager().endGame(game, killerPp);
             }
         }
@@ -355,7 +357,7 @@ public class GameListener implements Listener, GlobalInterface {
                     + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerPp)
                     + "&f!");
             killer.playSound(killer.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
-
+            vicp.getPlayerData().getFinalKillParticle().play(vic.getLocation());
             plugin.getGameManager().endGame(game, killerPp);
         }
     }

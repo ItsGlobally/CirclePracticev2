@@ -4,12 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
-import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
@@ -17,18 +15,14 @@ import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
 import java.util.*;
 
 public class GameManager implements GlobalInterface {
-    private final Map<Player, List<DuelRequest>> duelRequests;
-    private final Map<UUID, Game> games;
 
+    private static final long END_DELAY_TICKS = 60L; // 3 seconds
 
-    public GameManager() {
-        games = new HashMap<>();
-        duelRequests = new HashMap<>();
-    }
+    private final Map<Player, List<DuelRequest>> duelRequests = new HashMap<>();
+    private final Map<UUID, Game> games = new HashMap<>();
 
     public void sendDuelRequest(Player p1, Player p2, String kit) {
         if (p1 == null || p2 == null || kit == null) return;
-
         if (p1.equals(p2)) {
             MessageUtil.sendMessage(p1, "&d&l✗ &fYou cannot duel yourself!");
             return;
@@ -42,25 +36,15 @@ public class GameManager implements GlobalInterface {
         PracticePlayer pp1 = plugin.getPlayerManager().getPlayer(p1);
         PracticePlayer pp2 = plugin.getPlayerManager().getPlayer(p2);
 
-        if (pp1 == null || pp2 == null) {
-            MessageUtil.sendMessage(p1, "&d&l✗ &fPlayer data not found!");
-            return;
-        }
-        if (!pp1.isInSpawn()) {
-            MessageUtil.sendMessage(p1, "&d&l✗ &fYou're not in the spawn!");
-            return;
-        }
-        if (!pp2.isInSpawn()) {
+        if (pp1 == null || pp2 == null || !pp1.isInSpawn() || !pp2.isInSpawn()) {
             MessageUtil.sendMessage(p1, "&d&l✗ &fThat player is not available!");
             return;
         }
 
-        List<DuelRequest> existingRequests = duelRequests.getOrDefault(p2, new ArrayList<>());
-        for (DuelRequest existing : existingRequests) {
-            if (existing.getSender().equals(p1)) {
-                MessageUtil.sendMessage(p1, "&d&l✗ &fYou already sent a duel request to &d" + p2.getName() + "&f!");
-                return;
-            }
+        List<DuelRequest> list = duelRequests.computeIfAbsent(p2, k -> new ArrayList<>());
+        if (list.stream().anyMatch(r -> r.getSender().equals(p1))) {
+            MessageUtil.sendMessage(p1, "&d&l✗ &fYou already sent a duel request!");
+            return;
         }
 
         DuelRequest request = new DuelRequest(p1, p2, kit);
@@ -70,62 +54,42 @@ public class GameManager implements GlobalInterface {
 
             @Override
             public void run() {
-                if (time-- <= 0) {
-                    List<DuelRequest> list = duelRequests.getOrDefault(p2, new ArrayList<>());
+                if (--time <= 0) {
                     list.remove(request);
-                    if (list.isEmpty()) {
-                        duelRequests.remove(p2);
-                    }
-
-                    MessageUtil.sendActionBar(p1, "&d&l✗ &fYour duel request to &d" + p2.getName() + " &fhas expired!");
-                    MessageUtil.sendMessage(p2, "&d&l✗ &fThe duel request from &d" + p1.getName() + " &fhas expired!");
+                    if (list.isEmpty()) duelRequests.remove(p2);
+                    MessageUtil.sendMessage(p1, "&d&l✗ &fDuel request expired!");
+                    MessageUtil.sendMessage(p2, "&d&l✗ &fDuel request expired!");
                     cancel();
                 }
             }
-        }.runTaskTimer(plugin, 0L, 20L);
+        }.runTaskTimer(plugin, 20L, 20L);
 
         request.setTask(task);
+        list.add(request);
 
-        duelRequests.computeIfAbsent(p2, k -> new ArrayList<>()).add(request);
-
-        MessageUtil.sendMessage(p2, "&d&l⚔ &d" + p1.getName() + " &fhas sent a duel request with kit &d" + kit + "&f. You have 60 seconds to accept!");
-        MessageUtil.sendMessage(p1, "&d&l✓ &fDuel request sent to &d" + p2.getName() + "&f!");
+        MessageUtil.sendMessage(p2, "&d&l⚔ &d" + p1.getName() + " &fwants to duel!");
+        MessageUtil.sendMessage(p1, "&d&l✓ &fDuel request sent!");
         p1.playSound(p1.getLocation(), Sound.NOTE_BASS, 1f, 1f);
-        p2.playSound(p1.getLocation(), Sound.NOTE_BASS, 1f, 1f);
+        p2.playSound(p2.getLocation(), Sound.NOTE_BASS, 1f, 1f);
     }
 
-
     public void acceptDuelRequest(Player p2, Player p1) {
-        if (p1 == null || p2 == null) return;
-
         List<DuelRequest> list = duelRequests.get(p2);
-
-        if (list == null || list.isEmpty()) {
-            MessageUtil.sendMessage(p2, "&d&l✗ &fYou don't have any pending duel requests!");
-            return;
-        }
+        if (list == null) return;
 
         DuelRequest request = list.stream()
                 .filter(r -> r.getSender().equals(p1))
-                .findFirst()
-                .orElse(null);
+                .findFirst().orElse(null);
 
-        if (request == null) {
-            MessageUtil.sendMessage(p2, "&d&l✗ &fNo duel request found from &d" + p1.getName() + "&f!");
-            return;
-        }
+        if (request == null) return;
 
         request.cancelTask();
         list.remove(request);
         if (list.isEmpty()) duelRequests.remove(p2);
 
-        String kit = request.getKit();
-
-        MessageUtil.sendMessage(p1, "&d&l✓ &d" + p2.getName() + " &faccepted your duel request!");
-        MessageUtil.sendMessage(p2, "&d&l✓ &fYou accepted the duel request from &d" + p1.getName() + "&f!");
-
-        processNewGame(p1, p2, plugin.getKitManager().getKit(kit));
+        processNewGame(p1, p2, plugin.getKitManager().getKit(request.getKit()));
     }
+
 
     private List<GameArena> findAvailableArenas(Kit kit) {
         return plugin.getArenaManager().getGameArenas().stream()
@@ -141,8 +105,6 @@ public class GameManager implements GlobalInterface {
                 })
                 .toList();
     }
-
-
     public void processNewGame(Player p1, Player p2, Kit kit) {
         GameArena ga = null;
 
@@ -158,66 +120,50 @@ public class GameManager implements GlobalInterface {
             MessageUtil.sendMessage(p1, p2, "&d&l✗ &fError creating arena!");
             return;
         }
-
-        startNewGame(plugin.getPlayerManager().getPlayer(p1),
+        startNewGame(
+                plugin.getPlayerManager().getPlayer(p1),
                 plugin.getPlayerManager().getPlayer(p2),
-                kit, ga);
+                kit, ga
+        );
     }
 
-    public void startNewGame(PracticePlayer pp11, PracticePlayer pp12, Kit kit, GameArena arena) {
-        if (pp11 == null || pp12 == null || kit == null || arena == null) {
-            Bukkit.getLogger().warning("Cannot start game: invalid parameters");
-            return;
-        }
-        boolean p1isred = RandomUtil.getRandomBoolean();
-        PracticePlayer pp1;
-        PracticePlayer pp2;
-        if (p1isred) {
-            pp1 = pp11;
-            pp2 = pp12;
-        } else {
-            pp1 = pp12;
-            pp2 = pp11;
-        }
-        Game game = new Game(pp1, pp2, kit, arena);
-        Player p1 = game.getPlayer1().getPlayer();
-        Player p2 = game.getPlayer2().getPlayer();
+    public void startNewGame(PracticePlayer a, PracticePlayer b, Kit kit, GameArena arena) {
+        boolean swap = RandomUtil.getRandomBoolean();
+        PracticePlayer p1 = swap ? a : b;
+        PracticePlayer p2 = swap ? b : a;
 
-        if (p1 == null || p2 == null) {
-            Bukkit.getLogger().warning("Cannot start game: player is null");
-            return;
-        }
-
-        p1.teleport(game.getArena().getPos1());
-        p2.teleport(game.getArena().getPos2());
-
-        ItemStack[][] p1Kit = pp1.getPlayerData().getKitContents(game.getKit().getName());
-        ItemStack[][] p2Kit = pp2.getPlayerData().getKitContents(game.getKit().getName());
-
-        p1.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p1Kit[1], p1isred));
-        p1.getInventory().setContents(TeamColorUtil.colorTeamItems(p1Kit[0], p1isred));
-        p2.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(p2Kit[1], !p1isred));
-        p2.getInventory().setContents(TeamColorUtil.colorTeamItems(p2Kit[0], !p1isred));
-        p1.setFoodLevel(40);
-        p1.setHealth(20);
-        p2.setFoodLevel(40);
-        p2.setHealth(20);
-        pp1.setState(PlayerState.DUEL);
-        pp2.setState(PlayerState.DUEL);
-        pp1.setCurrentGame(game);
-        pp2.setCurrentGame(game);
-        p1.getPlayer().setFlying(false);
-        p2.getPlayer().setFlying(false);
-        p1.getPlayer().setAllowFlight(false);
-        p2.getPlayer().setAllowFlight(false);
-        game.setState(GameState.STARTING);
-        game.getArena().setInUse(true);
-        startCooldown(game);
-        plugin.getPlayerDataManager().getData(p1).unlockAchievement(Achievement.JOIN);
-        plugin.getPlayerDataManager().getData(p2).unlockAchievement(Achievement.JOIN);
+        Game game = new Game(p1, p2, kit, arena);
         games.put(game.getId(), game);
-    }
 
+        Player bp1 = p1.getPlayer();
+        Player bp2 = p2.getPlayer();
+
+        bp1.teleport(arena.getPos1());
+        bp2.teleport(arena.getPos2());
+
+        bp1.getActivePotionEffects().forEach(p -> bp1.removePotionEffect(p.getType()));
+        bp2.getActivePotionEffects().forEach(p -> bp2.removePotionEffect(p.getType()));
+        bp1.setFireTicks(0);
+        bp2.setFireTicks(0);
+
+        ItemStack[][] kit1 = p1.getPlayerData().getKitContents(kit.getName());
+        ItemStack[][] kit2 = p2.getPlayerData().getKitContents(kit.getName());
+
+        bp1.getInventory().setContents(TeamColorUtil.colorTeamItems(kit1[0], true));
+        bp1.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(kit1[1], true));
+        bp2.getInventory().setContents(TeamColorUtil.colorTeamItems(kit2[0], false));
+        bp2.getInventory().setArmorContents(TeamColorUtil.colorTeamItems(kit2[1], false));
+
+
+        p1.setState(PlayerState.DUEL);
+        p2.setState(PlayerState.DUEL);
+        p1.setCurrentGame(game);
+        p2.setCurrentGame(game);
+
+        game.setState(GameState.STARTING);
+        arena.setInUse(true);
+        startCooldown(game);
+    }
     public void startCooldown(Game game) {
         new BukkitRunnable() {
 
@@ -254,31 +200,42 @@ public class GameManager implements GlobalInterface {
             }
         }.runTaskTimer(plugin, 0L, 20L);
     }
-
     public void endGame(Game game, PracticePlayer winner) {
         game.setState(GameState.ENDING);
-        Player p1 = Bukkit.getPlayer(game.getPlayer1().getUuid());
-        Player p2 = Bukkit.getPlayer(game.getPlayer2().getUuid());
 
-        game.getPlayer1().setState(PlayerState.SPAWN);
-        game.getPlayer2().setState(PlayerState.SPAWN);
-        game.getPlayer1().setCurrentGame(null);
-        game.getPlayer2().setCurrentGame(null);
-        game.getArena().setInUse(false);
+        PracticePlayer p1 = game.getPlayer1();
+        PracticePlayer p2 = game.getPlayer2();
+
+        p1.setState(PlayerState.SPAWN);
+        p2.setState(PlayerState.SPAWN);
+        p1.setCurrentGame(null);
+        p2.setCurrentGame(null);
+
+        handleGameEnd(game, winner, p1.getPlayer(), p2.getPlayer());
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                finishGameCleanup(game);
+            }
+        }.runTaskLater(plugin, END_DELAY_TICKS);
+    }
+
+    private void finishGameCleanup(Game game) {
+        Player p1 = game.getPlayer1().getPlayer();
+        Player p2 = game.getPlayer2().getPlayer();
 
         resetPlayer(p1);
         resetPlayer(p2);
+
         for (UUID u : game.getSpectators()) {
-            Player p = Bukkit.getPlayer(u);
-            resetPlayer(p);
-            p1.showPlayer(p);
-            p2.showPlayer(p);
+            Player spec = Bukkit.getPlayer(u);
+            resetPlayer(spec);
+            if (p1 != null) p1.showPlayer(spec);
+            if (p2 != null) p2.showPlayer(spec);
         }
 
-        if (winner != null) {
-            handleGameEnd(game, winner, p1, p2);
-        }
-
+        game.getArena().setInUse(false);
         if (game.getArena().isRemake()) {
             plugin.getArenaManager().removeGameArena(game.getArena());
         }
@@ -288,59 +245,23 @@ public class GameManager implements GlobalInterface {
 
     private void resetPlayer(Player player) {
         if (player == null) return;
-        plugin.getConfigManager().teleportToSpawn(player);
-        player.getInventory().setArmorContents(null);
-        player.getActivePotionEffects().forEach(pe -> player.removePotionEffect(pe.getType()));
-        player.setFireTicks(0);
-        if (player.hasPermission("circlepractice.fly")) {
-            player.setAllowFlight(true);
-            player.setFlying(true);
+        PracticePlayer pp = plugin.getPlayerManager().getPlayer(player);
+        if (pp.isInSpawn() && !player.getLocation().getWorld().equals(plugin.getConfigManager().getMainConfig().getSpawn().getWorld())){
+            plugin.getConfigManager().teleportToSpawn(player);
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(null);
+            player.getActivePotionEffects().forEach(p -> player.removePotionEffect(p.getType()));
+            player.setFireTicks(0);
         }
     }
 
     private void handleGameEnd(Game game, PracticePlayer winner, Player p1, Player p2) {
         PracticePlayer loser = game.getOpponent(winner);
-        String message = "&f&m                    &r\n&d&lWinner: &f" + winner.getName() + " &7| &d&lLoser: &f" + loser.getName() + "\n&f&m                    &r";
 
-        if (loser.getPlayer() != null) {
-            MessageUtil.sendTitle(loser.getPlayer(), "&c&lDEFEAT!", "&fYou have been defeated by &d" + winner.getName());
-        }
-        if (winner.getPlayer() != null) {
-            MessageUtil.sendTitle(winner.getPlayer(), "&d&lVICTORY!", "&fYou have defeated &d" + loser.getName());
-        }
+        MessageUtil.sendTitle(winner.getPlayer(), "&d&lVICTORY!", "&fYou won!");
+        MessageUtil.sendTitle(loser.getPlayer(), "&c&lDEFEAT!", "&fYou lost!");
 
-        if (p1 != null) MessageUtil.sendMessage(p1, message);
-        if (p2 != null) MessageUtil.sendMessage(p2, message);
-
-        if (winner.getPlayer() != null) {
-            plugin.getPlayerDataManager().getData(winner.getPlayer()).addXps(20);
-            MessageUtil.sendMessage(winner.getPlayer(), "&d&l⭐ &fYou won and earned &d20 XP&f!");
-        }
-        if (loser.getPlayer() != null) {
-            plugin.getPlayerDataManager().getData(loser.getPlayer()).addXps(10);
-            MessageUtil.sendMessage(loser.getPlayer(), "&d&l⭐ &fYou lost but earned &d10 XP&f!");
-        }
-    }
-    public void joinSpec(Game game, Player p) {
-        if (game == null || p == null) return;
-        p.teleport(game.getPlayer1().getPlayer());
-        game.getPlayer1().getPlayer().hidePlayer(p);
-        game.getPlayer2().getPlayer().hidePlayer(p);
-        PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
-        pp.setState(PlayerState.SPECTATING);
-        pp.setCurrentGame(game);
-        game.addSpectator(p.getUniqueId());
-        game.broadcast(p.getName() + " &dstarted spectating.");
-    }
-    public void stopSpec(Game game, Player p) {
-        if (game == null || p == null) return;
-        resetPlayer(p);
-        game.getPlayer1().getPlayer().showPlayer(p);
-        game.getPlayer2().getPlayer().showPlayer(p);
-        PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
-        pp.setState(PlayerState.SPAWN);
-        pp.setCurrentGame(null);
-        game.removeSpectator(p.getUniqueId());
-        game.broadcast(p.getName() + " &dstopped spectating.");
+        plugin.getPlayerDataManager().getData(winner.getPlayer()).addXps(20);
+        plugin.getPlayerDataManager().getData(loser.getPlayer()).addXps(10);
     }
 }
