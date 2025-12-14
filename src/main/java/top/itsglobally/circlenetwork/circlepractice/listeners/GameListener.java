@@ -248,15 +248,14 @@ public class GameListener implements Listener, GlobalInterface {
                 vic.teleport(game.getPlayerSpawnPoint(vicp));
                 return;
             }
-
+            if (game.getKit().isVoidTpBack()) {
+                respawnPlayer(vic, vicp, game, killer, game.getKit().getVoidaddcount());
+                return;
+            }
             if (game.getKit().isRespawnable() && game.getPlayerRespawnable(vicp)) {
                 game.broadcast(gotHitted.getOrDefault(vic.getUniqueId(), false) ? game.getPrefixedTeamPlayerName(vicp)
                         + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&d" + game.getPrefixedTeamPlayerName(vicp)
                         + " &ffell into the void!");
-                if (game.getKit().isVoidTpBack()) {
-                    respawnPlayer(vic, vicp, game, killer, game.getKit().getVoidaddcount());
-                    return;
-                }
                 vic.setHealth(20.0);
                 vic.setFoodLevel(20);
                 killer.hidePlayer(vic);

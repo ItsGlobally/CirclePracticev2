@@ -21,6 +21,7 @@ public class ConfigManager implements GlobalInterface {
 
     public void teleportToSpawn(Player p) {
         p.teleport(mainConfig.getSpawn());
+        p.getInventory().setArmorContents(null);
         p.getInventory().setContents(Items.spawnInv());
     }
 

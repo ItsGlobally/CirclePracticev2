@@ -146,6 +146,9 @@ public class GameManager implements GlobalInterface {
         bp1.setFireTicks(0);
         bp2.setFireTicks(0);
 
+        bp1.setAllowFlight(false);
+        bp2.setAllowFlight(false);
+
         ItemStack[][] kit1 = p1.getPlayerData().getKitContents(kit.getName());
         ItemStack[][] kit2 = p2.getPlayerData().getKitContents(kit.getName());
 
@@ -248,8 +251,6 @@ public class GameManager implements GlobalInterface {
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(player);
         if (pp.isInSpawn() && !player.getLocation().getWorld().equals(plugin.getConfigManager().getMainConfig().getSpawn().getWorld())){
             plugin.getConfigManager().teleportToSpawn(player);
-            player.getInventory().clear();
-            player.getInventory().setArmorContents(null);
             player.getActivePotionEffects().forEach(p -> player.removePotionEffect(p.getType()));
             player.setFireTicks(0);
         }
