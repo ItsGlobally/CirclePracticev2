@@ -10,6 +10,7 @@ import top.itsglobally.circlenetwork.circlepractice.practical.FinalKill.FinalKil
 import top.nontage.nontagelib.utils.inventory.InventoryBuilder;
 import top.nontage.nontagelib.utils.item.ItemBuilder;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -97,8 +98,9 @@ public class Menus implements GlobalInterface {
         InventoryBuilder ib = filledBackground(new InventoryBuilder(9*5, "Particles"));
         int currentSlot = 0;
         Bukkit.getLogger().info(String.valueOf(FinalKillParticle.values().length));
-        Bukkit.getLogger().info(FinalKillParticle.values().toString());
+        Bukkit.getLogger().info(Arrays.toString(FinalKillParticle.values()));
         for (FinalKillParticle fkp : FinalKillParticle.values()) {
+            if (!p.hasPermission(fkp.getPermission())) continue;
             ib.setItem(new ItemBuilder(fkp.getIcon()).setName("&e&l" + fkp.name()).build(), currentSlot);
             ib.setClickEvent(clickInventoryEvent -> {
                 p.performCommand("particle " + fkp.name());

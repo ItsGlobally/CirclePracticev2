@@ -179,6 +179,8 @@ public class kit implements NontageCommand, GlobalInterface {
                         case "nodamage" -> kit.setNodamage(Boolean.parseBoolean(value));
                         case "counthit" -> kit.setCountHit(Boolean.parseBoolean(value));
                         case "counthittodie" -> kit.setCountHitToDie(Integer.parseInt(value));
+                        case "voidaddcount" -> kit.setVoidAddHits(Integer.parseInt(value));
+                        case "voidtpback" -> kit.setVoidTpBack(Boolean.parseBoolean(value));
                         case "allowbreakblocks" -> {
                             if (args.length < 5) {
                                 usage(p, "/kit set <kitname> allowbreakblocks <add|remove> <material>");
@@ -269,7 +271,7 @@ public class kit implements NontageCommand, GlobalInterface {
             return plugin.getKitManager().getKits().stream().map(Kit::getName).toList();
         }
         if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
-            return List.of("hunger", "enabled", "forduels", "canbuild", "respawnable", "respawntime", "broketonospawn", "freezeoncooldown", "nodamage", "allowbreakblocks", "counthit", "counthittodie");
+            return List.of("hunger", "enabled", "forduels", "canbuild", "respawnable", "respawntime", "broketonospawn", "freezeoncooldown", "nodamage", "allowbreakblocks", "counthit", "counthittodie", "voidtpback", "voidaddcount", "icon");
         }
         return List.of();
     }

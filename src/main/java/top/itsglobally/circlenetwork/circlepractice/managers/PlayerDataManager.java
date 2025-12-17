@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
+import top.itsglobally.circlenetwork.circlepractice.practical.BedBreak.BedBreakParticle;
 import top.itsglobally.circlenetwork.circlepractice.practical.FinalKill.FinalKillParticle;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
@@ -71,6 +72,8 @@ public class PlayerDataManager implements GlobalInterface {
         private long stars = 1;
         private long xps = 0;
         private String finalKillParticle = "none";
+        private String bedBreakParticle = "none";
+
 
 
         public PlayerData(UUID uuid) {
@@ -124,6 +127,13 @@ public class PlayerDataManager implements GlobalInterface {
         public void setFinalKillParticle(FinalKillParticle p) {
             this.finalKillParticle = p.getId();
         }
+        public BedBreakParticle getBedBreakParticle() {
+            return BedBreakParticle.fromId(bedBreakParticle);
+        }
+        public void setBedBreakParticle(BedBreakParticle p) {
+            this.bedBreakParticle = p.getId();
+        }
+
 
         public void setKitContents(String name, ItemStack[][] contents) {
             kitContents.put(name.toLowerCase(), contents);

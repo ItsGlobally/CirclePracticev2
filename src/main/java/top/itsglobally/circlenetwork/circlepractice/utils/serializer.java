@@ -8,6 +8,7 @@ import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.managers.PlayerDataManager;
+import top.itsglobally.circlenetwork.circlepractice.practical.BedBreak.BedBreakParticle;
 import top.itsglobally.circlenetwork.circlepractice.practical.FinalKill.FinalKillParticle;
 
 import java.util.*;
@@ -140,8 +141,8 @@ public class serializer {
         if (map.containsKey("counthittodie")) {
             kit.setCountHitToDie(((Number) map.get("counthittodie")).intValue());
         }
-        if (map.containsKey("voidaddcount")) kit.setRespawnTime(((Number) map.get("voidaddcount")).intValue());
-        if (map.containsKey("voidtpback")) kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("voidtpback"))));
+        if (map.containsKey("voidaddcount")) kit.setVoidaddcount(((Number) map.get("voidaddcount")).intValue());
+        if (map.containsKey("voidtpback")) kit.setVoidTpBack(Boolean.parseBoolean(String.valueOf(map.get("voidtpback"))));
 
         if (map.containsKey("icon")) {
             String mname = String.valueOf(map.get("icon"));
@@ -204,6 +205,7 @@ public class serializer {
         map.put("xp", pd.getXps());
         map.put("achievements", achievements);
         map.put("finalKillParticle", pd.getFinalKillParticle().getId());
+        map.put("bedBreakParticle", pd.getBedBreakParticle().getId());
 
         return map;
     }
@@ -273,6 +275,9 @@ public class serializer {
 
         if (map.containsKey("finalKillParticle")) {
             pd.setFinalKillParticle(FinalKillParticle.fromId(String.valueOf(map.get("finalKillParticle"))));
+        }
+        if (map.containsKey("bedBreakParticle")) {
+            pd.setBedBreakParticle(BedBreakParticle.fromId(String.valueOf(map.get("bedBreakParticle"))));
         }
 
         return pd;
