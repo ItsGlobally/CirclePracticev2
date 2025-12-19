@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-
 public class PracticePlayer implements GlobalInterface {
     private final UUID uuid;
     private final String name;
@@ -23,6 +22,8 @@ public class PracticePlayer implements GlobalInterface {
     private ItemStack[] inventory;
     private boolean playedFirst;
 
+    private Party party;
+
     public PracticePlayer(Player p) {
         this.uuid = p.getUniqueId();
         this.name = p.getName();
@@ -32,6 +33,7 @@ public class PracticePlayer implements GlobalInterface {
         this.inventory = new ItemStack[36];
         this.playedFirst = false;
         this.playerData = plugin.getPlayerDataManager().getData(p);
+        this.party = null;
     }
 
     public Player getPlayer() {
@@ -128,5 +130,33 @@ public class PracticePlayer implements GlobalInterface {
 
     public PlayerDataManager.PlayerData getPlayerData() {
         return playerData;
+    }
+
+
+    public Party getParty() {
+        return party;
+    }
+
+    public void setParty(Party party) {
+        this.party = party;
+    }
+
+    public boolean isInParty() {
+        return this.party != null;
+    }
+
+    public void leaveParty() {
+        if (party != null) {
+            party.removePlayer(this);
+            this.party = null;
+        }
+    }
+
+    public void joinParty(Party newParty) {
+        if (party != null) {
+            leaveParty();
+        }
+        this.party = newParty;
+        newParty.addPlayer(this);
     }
 }
