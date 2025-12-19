@@ -413,6 +413,7 @@ public class GameListener implements Listener, GlobalInterface {
                                         "&f's bed has been destroyed by &d" + e.getPlayer().getName() + "&f!");
                         game.getOpponent(pp).getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.WITHER_DEATH, 1.0f, 1.0f);
                         e.getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
+                        pp.getPlayerData().getFinalKillParticle().play(e.getPlayer().getLocation());
                         e.setCancelled(false);
                     } else if (isOwnBed) {
                         e.setCancelled(true);

@@ -230,7 +230,7 @@ public class serializer {
                             ItemStack[][] contents = InventorySerializer.deserializeInventory((Map<String, Object>) kitMap);
                             pd.setKitContents(kitName, contents);
                         } catch (Exception ex) {
-                            System.err.println("[CirclePractice] 無法反序列化 kit: " + kitName);
+                            Bukkit.getLogger().warning("[CirclePractice] 無法反序列化 kit: " + kitName);
                             ex.printStackTrace();
                         }
                     }
@@ -248,7 +248,7 @@ public class serializer {
                             Achievement a = Achievement.valueOf(s);
                             pd.unlockAchievement(a, false);
                         } catch (IllegalArgumentException ignored) {
-                            System.err.println("[CirclePractice] 無效的 achievement: " + s);
+                            Bukkit.getLogger().warning("[CirclePractice] 無效的 achievement: " + s);
                         }
                     }
                 }
@@ -260,7 +260,7 @@ public class serializer {
             if (starsObj instanceof Number) {
                 pd.setStars(((Number) starsObj).longValue());
             } else {
-                System.err.println("[CirclePractice] stars 欄位不是數字類型: " + starsObj);
+                Bukkit.getLogger().warning("[CirclePractice] stars 欄位不是數字類型: " + starsObj);
             }
         }
 
@@ -269,7 +269,7 @@ public class serializer {
             if (xpObj instanceof Number) {
                 pd.setXps(((Number) xpObj).longValue());
             } else {
-                System.err.println("[CirclePractice] xp 欄位不是數字類型: " + xpObj);
+                Bukkit.getLogger().warning("[CirclePractice] xp 欄位不是數字類型: " + xpObj);
             }
         }
 

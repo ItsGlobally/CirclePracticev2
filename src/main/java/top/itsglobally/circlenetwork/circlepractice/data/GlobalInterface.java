@@ -12,7 +12,5 @@ public interface GlobalInterface {
     default void success(Player p, String msg) {
         MessageUtil.sendMessage(p, "&d&l✓ &f" + msg);
     }
-    default void fail(Player p, String msg) {
-        MessageUtil.sendMessage(p, "&d&l✗ &f" + msg);
-    }
+    default void fail(Player p, String msg) {MessageUtil.sendMessage(p, "&d&l✗ &f" + msg);}
 }

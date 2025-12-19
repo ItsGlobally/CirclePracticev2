@@ -1,7 +1,9 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -264,7 +266,37 @@ public class GameManager implements GlobalInterface {
 
         plugin.getPlayerDataManager().getData(winner.getPlayer()).addXps(20);
         plugin.getPlayerDataManager().getData(loser.getPlayer()).addXps(10);
+
+        List<Player> viewers = new ArrayList<>();
+        viewers.add(winner.getPlayer());
+
+        for (UUID u : game.getSpectators()) {
+            Player spec = Bukkit.getPlayer(u);
+            if (spec != null) viewers.add(spec);
+        }
+
+        Player player = game.getOpponent(winner).getPlayer();
+        playFakeDeath(player, viewers);
     }
+    private void playFakeDeath(Player target, Collection<Player> viewers) {
+        if (target == null) return;
+
+        PacketPlayOutEntityStatus packet =
+                new PacketPlayOutEntityStatus(
+                        ((CraftPlayer) target).getHandle(),
+                        (byte) 3
+                );
+
+        for (Player viewer : viewers) {
+            if (viewer == null) continue;
+            ((CraftPlayer) viewer).getHandle()
+                    .playerConnection
+                    .sendPacket(packet);
+
+            viewer.hidePlayer(target);
+        }
+    }
+
     public void joinSpec(Game game, Player p) {
         if (game == null || p == null) return;
         p.teleport(game.getPlayer1().getPlayer());
