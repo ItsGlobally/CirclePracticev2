@@ -16,16 +16,6 @@ import java.util.List;
 
 public class Menus implements GlobalInterface {
 
-    @FunctionalInterface
-    private interface KitClickAction {
-        void onClick(Player p, Kit kit);
-    }
-
-    @FunctionalInterface
-    private interface PlayerClickAction {
-        void onClick(Player clicker, Player target);
-    }
-
     private static Inventory buildKitMenu(Player p, String title, KitClickAction clickAction) {
         List<Kit> kits = plugin.getKitManager().getKits();
         InventoryBuilder ib = filledBackground(new InventoryBuilder(getInventorySize(kits.size()), title));
@@ -95,7 +85,7 @@ public class Menus implements GlobalInterface {
     }
 
     public static Inventory particleMenu(Player p) {
-        InventoryBuilder ib = filledBackground(new InventoryBuilder(9*5, "Particles"));
+        InventoryBuilder ib = filledBackground(new InventoryBuilder(9 * 5, "Particles"));
         int currentSlot = 0;
         Bukkit.getLogger().info(String.valueOf(FinalKillParticle.values().length));
         Bukkit.getLogger().info(Arrays.toString(FinalKillParticle.values()));
@@ -111,8 +101,9 @@ public class Menus implements GlobalInterface {
         ib.setAllClickable(false);
         return ib.getInventory();
     }
+
     public static Inventory settings(Player p) {
-        InventoryBuilder ib = filledBackground(new InventoryBuilder(9*5, "Setings"));
+        InventoryBuilder ib = filledBackground(new InventoryBuilder(9 * 5, "Setings"));
         ib.setItem(new ItemBuilder(Material.DIAMOND_SWORD).setName("&e&lParticles").build(), 22);
         ib.setClickEvent(clickInventoryEvent -> {
             p.openInventory(particleMenu(p));
@@ -127,6 +118,7 @@ public class Menus implements GlobalInterface {
                 clicker.performCommand(command.replace("%player%", target.getName()))
         );
     }
+
     private static InventoryBuilder filledBackground(InventoryBuilder ib) {
 
         for (int i = 0; i <= 36; i++) {
@@ -141,5 +133,15 @@ public class Menus implements GlobalInterface {
     public static int getInventorySize(int size) {
         int rows = (int) Math.ceil(size / 9.0);
         return Math.min(rows * 9, 54);
+    }
+
+    @FunctionalInterface
+    private interface KitClickAction {
+        void onClick(Player p, Kit kit);
+    }
+
+    @FunctionalInterface
+    private interface PlayerClickAction {
+        void onClick(Player clicker, Player target);
     }
 }

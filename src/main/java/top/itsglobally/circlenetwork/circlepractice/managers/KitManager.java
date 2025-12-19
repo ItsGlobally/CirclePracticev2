@@ -1,19 +1,18 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
+import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
 import top.itsglobally.circlenetwork.circlepractice.utils.serializer;
 import top.nontage.nontagelib.config.BaseConfig;
 import top.nontage.nontagelib.utils.item.ItemBuilder;
-
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

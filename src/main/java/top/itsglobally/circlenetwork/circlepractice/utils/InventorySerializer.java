@@ -102,7 +102,8 @@ public class InventorySerializer {
         if (meta != null) {
             if (map.containsKey("name")) meta.setDisplayName((String) map.get("name"));
             if (map.containsKey("lore")) meta.setLore((List<String>) map.get("lore"));
-            if (map.containsKey("unbreakable")) meta.spigot().setUnbreakable(Boolean.parseBoolean(String.valueOf(map.get("unbreakable"))));
+            if (map.containsKey("unbreakable"))
+                meta.spigot().setUnbreakable(Boolean.parseBoolean(String.valueOf(map.get("unbreakable"))));
             if (map.containsKey("enchants")) {
                 Map<String, Integer> enchants = (Map<String, Integer>) map.get("enchants");
                 for (Map.Entry<String, Integer> e : enchants.entrySet()) {

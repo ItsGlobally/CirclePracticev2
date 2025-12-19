@@ -137,20 +137,20 @@ public class Kit {
         allowBreakBlocks.add(m);
     }
 
-    public void setFreezeOnCooldown(boolean freezeOnCooldown) {
-        this.freezeOnCooldown = freezeOnCooldown;
-    }
-
     public boolean isFreezeOnCooldown() {
         return freezeOnCooldown;
     }
 
-    public void setNodamage(boolean nodamage) {
-        this.nodamage = nodamage;
+    public void setFreezeOnCooldown(boolean freezeOnCooldown) {
+        this.freezeOnCooldown = freezeOnCooldown;
     }
 
     public boolean isNodamage() {
         return nodamage;
+    }
+
+    public void setNodamage(boolean nodamage) {
+        this.nodamage = nodamage;
     }
 
     public boolean isCountHit() {
@@ -161,43 +161,43 @@ public class Kit {
         this.countHit = countHit;
     }
 
-    public void setCountHitToDie(int countHitToDie) {
-        this.countHitToDie = countHitToDie;
-    }
-
     public int getCountHitToDie() {
         return countHitToDie;
     }
 
-    public void setVoidaddcount(int voidaddcount) {
-        this.voidaddcount = voidaddcount;
+    public void setCountHitToDie(int countHitToDie) {
+        this.countHitToDie = countHitToDie;
     }
 
     public int getVoidaddcount() {
         return voidaddcount;
     }
 
-    public void setIcon(Material icon) {
-        this.icon = icon;
+    public void setVoidaddcount(int voidaddcount) {
+        this.voidaddcount = voidaddcount;
     }
 
     public Material getIcon() {
         return icon;
     }
 
-    public void setVoidAddHits(int voidAddHits) {
-        this.voidAddHits = voidAddHits;
-    }
-
-    public void setVoidTpBack(boolean voidTpBack) {
-        this.voidTpBack = voidTpBack;
+    public void setIcon(Material icon) {
+        this.icon = icon;
     }
 
     public int getVoidAddHits() {
         return voidAddHits;
     }
 
+    public void setVoidAddHits(int voidAddHits) {
+        this.voidAddHits = voidAddHits;
+    }
+
     public boolean isVoidTpBack() {
         return voidTpBack;
+    }
+
+    public void setVoidTpBack(boolean voidTpBack) {
+        this.voidTpBack = voidTpBack;
     }
 }

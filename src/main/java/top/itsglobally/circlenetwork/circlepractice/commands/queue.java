@@ -5,7 +5,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
-import top.itsglobally.circlenetwork.circlepractice.utils.Menus;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
 

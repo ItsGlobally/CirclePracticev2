@@ -2,8 +2,8 @@ package top.itsglobally.circlenetwork.circlepractice.managers;
 
 import net.luckperms.api.model.user.User;
 import org.bukkit.entity.Player;
-import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
+import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 
 import java.util.HashMap;
 import java.util.Map;

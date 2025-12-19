@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 
 
-public class PracticePlayer implements GlobalInterface{
+public class PracticePlayer implements GlobalInterface {
     private final UUID uuid;
     private final String name;
     private final Player player;
@@ -81,9 +81,11 @@ public class PracticePlayer implements GlobalInterface{
     public boolean isInSpawnNotEditingOrQueuing() {
         return state == PlayerState.SPAWN;
     }
+
     public boolean isQueuing() {
         return state == PlayerState.QUEUE;
     }
+
     public boolean isInSpawnOrEditingNotQueuing() {
         return state == PlayerState.SPAWN || state == PlayerState.EDITING;
     }

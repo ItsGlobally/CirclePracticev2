@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
-import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
 
@@ -32,7 +31,7 @@ public class spec implements NontageCommand, GlobalInterface {
             return;
         }
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);
-        PracticePlayer targetpp =  plugin.getPlayerManager().getPlayer(p);
+        PracticePlayer targetpp = plugin.getPlayerManager().getPlayer(p);
         if (!pp.isInSpawnNotEditingOrQueuing()) {
             fail(p, "You're not in the spawn.");
             return;

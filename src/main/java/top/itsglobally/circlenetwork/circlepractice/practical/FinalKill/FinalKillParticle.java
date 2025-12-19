@@ -3,13 +3,13 @@ package top.itsglobally.circlenetwork.circlepractice.practical.FinalKill;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 public enum FinalKillParticle {
 
     NONE("none", Material.BARRIER, "") {
         @Override
-        public void play(Location l) {}
+        public void play(Location l) {
+        }
     },
 
     REDSTONE("redstone", Material.REDSTONE_BLOCK, "circlepractice.FinalKillParticle.redstone") {
@@ -24,10 +24,20 @@ public enum FinalKillParticle {
     private final String id;
     private final Material icon;
     private final String permission;
+
     FinalKillParticle(String id, Material icon, String permission) {
         this.id = id;
         this.icon = icon;
         this.permission = permission;
+    }
+
+    public static FinalKillParticle fromId(String id) {
+        for (FinalKillParticle p : values()) {
+            if (p.id.equalsIgnoreCase(id)) {
+                return p;
+            }
+        }
+        return NONE;
     }
 
     public String getId() {
@@ -43,14 +53,5 @@ public enum FinalKillParticle {
     }
 
     public abstract void play(Location l);
-
-    public static FinalKillParticle fromId(String id) {
-        for (FinalKillParticle p : values()) {
-            if (p.id.equalsIgnoreCase(id)) {
-                return p;
-            }
-        }
-        return NONE;
-    }
 }
 

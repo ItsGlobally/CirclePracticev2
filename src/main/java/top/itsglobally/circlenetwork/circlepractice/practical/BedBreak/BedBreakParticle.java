@@ -8,7 +8,8 @@ import org.bukkit.Sound;
 public enum BedBreakParticle {
     NONE("none", Material.BARRIER, "") {
         @Override
-        public void play(Location l) {}
+        public void play(Location l) {
+        }
     },
 
     EXPLOSION("explosion", Material.REDSTONE_BLOCK, "circlepractice.BedBreak.explosion") {
@@ -59,10 +60,20 @@ public enum BedBreakParticle {
     private final String id;
     private final Material icon;
     private final String permission;
+
     BedBreakParticle(String id, Material icon, String permission) {
         this.id = id;
         this.icon = icon;
         this.permission = permission;
+    }
+
+    public static BedBreakParticle fromId(String id) {
+        for (BedBreakParticle p : values()) {
+            if (p.id.equalsIgnoreCase(id)) {
+                return p;
+            }
+        }
+        return NONE;
     }
 
     public String getId() {
@@ -78,13 +89,4 @@ public enum BedBreakParticle {
     }
 
     public abstract void play(Location l);
-
-    public static BedBreakParticle fromId(String id) {
-        for (BedBreakParticle p : values()) {
-            if (p.id.equalsIgnoreCase(id)) {
-                return p;
-            }
-        }
-        return NONE;
-    }
 }

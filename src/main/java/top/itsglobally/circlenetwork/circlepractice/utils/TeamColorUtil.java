@@ -62,9 +62,9 @@ public class TeamColorUtil {
 
     private static boolean isLeatherArmor(Material material) {
         return material == Material.LEATHER_HELMET ||
-               material == Material.LEATHER_CHESTPLATE ||
-               material == Material.LEATHER_LEGGINGS ||
-               material == Material.LEATHER_BOOTS;
+                material == Material.LEATHER_CHESTPLATE ||
+                material == Material.LEATHER_LEGGINGS ||
+                material == Material.LEATHER_BOOTS;
     }
 
     private static boolean isWool(Material material) {
@@ -73,7 +73,7 @@ public class TeamColorUtil {
 
     private static boolean isStainedClay(Material material) {
         return material == Material.STAINED_CLAY ||
-               material == Material.HARD_CLAY;
+                material == Material.HARD_CLAY;
     }
 
     private static boolean isStainedGlass(Material material) {
@@ -90,7 +90,7 @@ public class TeamColorUtil {
 
     private static boolean isBanner(Material material) {
         return material == Material.BANNER ||
-               material == Material.WALL_BANNER ||
-               material == Material.STANDING_BANNER;
+                material == Material.WALL_BANNER ||
+                material == Material.STANDING_BANNER;
     }
 }

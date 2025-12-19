@@ -6,9 +6,9 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PlayerState;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
-import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 
 import java.util.*;
 
@@ -22,34 +22,27 @@ public class ScoreboardUtils implements GlobalInterface {
         switch (pp.getState()) {
             case PlayerState.DUEL -> {
                 Game game = pp.getCurrentGame();
-                PracticePlayer opponent = game.getOpponent(pp);
-                lines.add("&fYour opponent: &d: " + opponent.getName());
-                lines.add("&d");
-                if (game.getKit().isRespawnable()) {
-                    lines.add("&fYour bed: " + (game.getPlayerRespawnable(pp) ? "&d✓" : "&c✗"));
-                    lines.add("&fTheir bed: " + (game.getPlayerRespawnable(opponent) ? "&d✓" : "&c✗"));
-                    lines.add("&d&f");
-                }
-                if (game.getKit().isCountHit()) {
-                    lines.add("&fYour hits&d: " + game.getPlayerhit(pp) + "&f/&d" + game.getKit().getCountHitToDie());
-                    lines.add("&fTheir hits&d: " + game.getPlayerhit(opponent) + "&f/&d" + game.getKit().getCountHitToDie());
-                    lines.add("&d&f");
-                }
-                lines.add("&fYour ping&d: " + NMSUtils.getPing(p));
-                lines.add("&fTheir ping&d: " + NMSUtils.getPing(opponent.getPlayer()));
-                lines.add("&f");
+                if (game == null) break;
+
+                buildDuelLikeLines(lines, pp, game, false);
             }
-            case PlayerState.SPAWN -> {
+
+            case PlayerState.EDITING, PlayerState.EDITINGGLOBALLY, PlayerState.QUEUE, PlayerState.SPAWN -> {
                 lines.add("&d&lServer");
-                lines.add("&f* Online&d: " + Bukkit.getOnlinePlayers().size());
+                lines.add("&f» Online&d: " + Bukkit.getOnlinePlayers().size());
                 lines.add("&d&lPersonal Info");
-                lines.add("&f* Your ping&d: " + NMSUtils.getPing(p));
+                lines.add("&f» Your ping&d: " + NMSUtils.getPing(p));
                 lines.add("&f");
 
             }
             case PlayerState.SPECTATING -> {
+                Game game = pp.getCurrentGame();
+                if (game == null) break;
 
+                buildDuelLikeLines(lines, pp, game, true);
             }
+
+
         }
         lines.add("&dtw4.shdctw.com:25476");
         lines.add("&7&m                            ");
@@ -60,6 +53,48 @@ public class ScoreboardUtils implements GlobalInterface {
 
     Your ping
      */
+
+    private static void buildDuelLikeLines(
+            List<String> lines,
+            PracticePlayer viewer,
+            Game game,
+            boolean spectating
+    ) {
+        PracticePlayer p1 = game.getPlayer1();
+        PracticePlayer p2 = game.getPlayer2();
+
+        if (spectating) {
+            lines.add("&d&lMatch");
+            lines.add("&c" + p1.getName() + " &fvs &9" + p2.getName());
+            lines.add("&f");
+        }
+
+        if (game.getKit().isRespawnable()) {
+            lines.add("&cRed's bed&d: " +
+                    (game.getPlayerRespawnable(p1) ? "&d✓" : "&c✗"));
+            lines.add("&9Blue's bed&d: " +
+                    (game.getPlayerRespawnable(p2) ? "&d✓" : "&c✗"));
+            lines.add("&f");
+        }
+
+        if (game.getKit().isCountHit()) {
+            lines.add("&cRed's hits&d: &f" +
+                    game.getPlayerhit(p1) +
+                    "&7/&d" + game.getKit().getCountHitToDie());
+
+            lines.add("&9Blue's hits&d: &f" +
+                    game.getPlayerhit(p2) +
+                    "&7/&d" + game.getKit().getCountHitToDie());
+            lines.add("&f");
+        }
+
+        lines.add("&cRed's ping&d: &f" +
+                NMSUtils.getPing(p1.getPlayer()) + "ms");
+        lines.add("&9Blue's ping&d: &f" +
+                NMSUtils.getPing(p2.getPlayer()) + "ms");
+        lines.add("&f");
+    }
+
 
     public static void setScoreboard(Player player, String title, List<String> lines) {
         Scoreboard scoreboard = player.getScoreboard();
@@ -89,7 +124,7 @@ public class ScoreboardUtils implements GlobalInterface {
         int score = lines.size();
         for (int i = 0; i < lines.size(); i++) {
             String newLine = lines.get(i);
-            String oldLine = lastLines.size() > i+1 ? lastLines.get(i) : "";
+            String oldLine = lastLines.size() > i + 1 ? lastLines.get(i) : "";
 
             if (!Objects.equals(newLine, oldLine)) {
                 scoreboard.resetScores(oldLine);

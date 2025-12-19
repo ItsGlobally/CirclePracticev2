@@ -75,7 +75,6 @@ public class PlayerDataManager implements GlobalInterface {
         private String bedBreakParticle = "none";
 
 
-
         public PlayerData(UUID uuid) {
             this.uuid = uuid;
         }
@@ -121,15 +120,19 @@ public class PlayerDataManager implements GlobalInterface {
                 this.xps = totalXp;
             }
         }
+
         public FinalKillParticle getFinalKillParticle() {
             return FinalKillParticle.fromId(finalKillParticle);
         }
+
         public void setFinalKillParticle(FinalKillParticle p) {
             this.finalKillParticle = p.getId();
         }
+
         public BedBreakParticle getBedBreakParticle() {
             return BedBreakParticle.fromId(bedBreakParticle);
         }
+
         public void setBedBreakParticle(BedBreakParticle p) {
             this.bedBreakParticle = p.getId();
         }

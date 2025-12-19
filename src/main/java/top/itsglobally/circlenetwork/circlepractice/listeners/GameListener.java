@@ -2,11 +2,11 @@ package top.itsglobally.circlenetwork.circlepractice.listeners;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -53,6 +53,7 @@ public class GameListener implements Listener, GlobalInterface {
             e.setCancelled(true);
         }
     }
+
     private void respawnPlayer(Player vic, PracticePlayer vicp, Game game, Player killer, int voidadddcount) {
         Location spawn = findSpawnpoint(game.getPlayerSpawnPoint(vicp));
 
@@ -84,6 +85,7 @@ public class GameListener implements Listener, GlobalInterface {
             game.addPlayerhit(game.getOpponent(vicp), voidadddcount);
         }
     }
+
     private Location findSpawnpoint(Location l) {
 
         if (l.getBlock().getType() != Material.AIR) {
@@ -134,7 +136,6 @@ public class GameListener implements Listener, GlobalInterface {
             e.setCancelled(true);
             return;
         }
-
 
 
         gotHitted.put(vic.getUniqueId(), true);
@@ -208,6 +209,7 @@ public class GameListener implements Listener, GlobalInterface {
             }
         }
     }
+
     @EventHandler
     public void drop(PlayerDropItemEvent e) {
         if (respawning.getOrDefault(e.getPlayer().getUniqueId(), false)) {
@@ -217,12 +219,14 @@ public class GameListener implements Listener, GlobalInterface {
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
         if (plugin.getPlayerManager().getPlayer(e.getPlayer()).isInSpawn()) e.setCancelled(true);
     }
+
     @EventHandler
     public void pickup(PlayerPickupItemEvent e) {
         if (respawning.getOrDefault(e.getPlayer().getUniqueId(), false)) {
             e.setCancelled(true);
         }
     }
+
     @EventHandler
     public void move(PlayerMoveEvent e) {
         Player vic = e.getPlayer();
@@ -266,8 +270,8 @@ public class GameListener implements Listener, GlobalInterface {
                 vic.getInventory().setArmorContents(null);
 
 
-                if (gotHitted.getOrDefault(vic.getUniqueId(), false)) game.getOpponent(vicp).getPlayer().playSound(game.getOpponent(vicp).getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
-
+                if (gotHitted.getOrDefault(vic.getUniqueId(), false))
+                    game.getOpponent(vicp).getPlayer().playSound(game.getOpponent(vicp).getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
 
 
                 int[] countdown = {game.getKit().getRespawnTime()};
@@ -298,7 +302,8 @@ public class GameListener implements Listener, GlobalInterface {
                         + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(game.getOpponent(vicp)) + "!" : "&d" + game.getPrefixedTeamPlayerName(vicp)
                         + " &ffell into the void!");
 
-                if (gotHitted.getOrDefault(vic.getUniqueId(), false)) game.getOpponent(vicp).getPlayer().playSound(game.getOpponent(vicp).getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
+                if (gotHitted.getOrDefault(vic.getUniqueId(), false))
+                    game.getOpponent(vicp).getPlayer().playSound(game.getOpponent(vicp).getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
                 vicp.getPlayerData().getFinalKillParticle().play(vic.getLocation());
                 plugin.getGameManager().endGame(game, killerPp);
             }
@@ -410,7 +415,7 @@ public class GameListener implements Listener, GlobalInterface {
                         game.setRespawnable(game.getOpponent(pp), false);
                         MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&c&lBED DESTROYED", "&fYou won't be able to respawn again!");
                         game.broadcast("&d&lBED DESTROYED &f» &d" + game.getOpponent(pp).getPlayer().getName() +
-                                        "&f's bed has been destroyed by &d" + e.getPlayer().getName() + "&f!");
+                                "&f's bed has been destroyed by &d" + e.getPlayer().getName() + "&f!");
                         game.getOpponent(pp).getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.WITHER_DEATH, 1.0f, 1.0f);
                         e.getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
                         pp.getPlayerData().getFinalKillParticle().play(e.getPlayer().getLocation());
@@ -465,6 +470,7 @@ public class GameListener implements Listener, GlobalInterface {
             e.setCancelled(true);
         }
     }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player p)) return;

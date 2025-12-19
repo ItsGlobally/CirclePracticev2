@@ -24,28 +24,28 @@ public class particle implements NontageCommand, GlobalInterface {
         }
         switch (strings[0]) {
             case "finalkill" -> {
-                    if (strings[1].equals("list")) {
-                        StringBuilder builder = new StringBuilder();
-                        builder.append("&dAll Final Kill Particles");
-                        for (FinalKillParticle fkp : FinalKillParticle.values()) {
-                            builder.append("\n").append("&e&l").append(fkp.name());
-                        }
-                        MessageUtil.sendMessage(p, builder.toString());
+                if (strings[1].equals("list")) {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("&dAll Final Kill Particles");
+                    for (FinalKillParticle fkp : FinalKillParticle.values()) {
+                        builder.append("\n").append("&e&l").append(fkp.name());
+                    }
+                    MessageUtil.sendMessage(p, builder.toString());
+                    return;
+                }
+                try {
+                    FinalKillParticle target = FinalKillParticle.valueOf(strings[1]);
+                    if (!p.hasPermission(target.getPermission())) {
+                        fail(p, "You do not own this particle!");
                         return;
                     }
-                    try {
-                        FinalKillParticle target = FinalKillParticle.valueOf(strings[1]);
-                        if (!p.hasPermission(target.getPermission())) {
-                            fail(p, "You do not own this particle!");
-                            return;
-                        }
-                        plugin.getPlayerDataManager().getData(p).setFinalKillParticle(target);
-                        success(p, "Changed your final kill particle effect to " + target.name());
-                    } catch (IllegalArgumentException e) {
-                        fail(p, "Particle not found.");
-                        e.printStackTrace();
-                    }
+                    plugin.getPlayerDataManager().getData(p).setFinalKillParticle(target);
+                    success(p, "Changed your final kill particle effect to " + target.name());
+                } catch (IllegalArgumentException e) {
+                    fail(p, "Particle not found.");
+                    e.printStackTrace();
                 }
+            }
             case "bedbreak" -> {
                 if (strings[1].equals("list")) {
                     StringBuilder builder = new StringBuilder();

@@ -132,7 +132,8 @@ public class serializer {
         }
         if (map.containsKey("respawntime")) kit.setRespawnTime(((Number) map.get("respawntime")).intValue());
 
-        if (map.containsKey("freezeoncooldown")) kit.setFreezeOnCooldown(Boolean.parseBoolean(String.valueOf(map.get("freezeoncooldown"))));
+        if (map.containsKey("freezeoncooldown"))
+            kit.setFreezeOnCooldown(Boolean.parseBoolean(String.valueOf(map.get("freezeoncooldown"))));
 
         if (map.containsKey("nodamage")) kit.setNodamage(Boolean.parseBoolean(String.valueOf(map.get("nodamage"))));
         if (map.containsKey("counthit")) {
@@ -142,7 +143,8 @@ public class serializer {
             kit.setCountHitToDie(((Number) map.get("counthittodie")).intValue());
         }
         if (map.containsKey("voidaddcount")) kit.setVoidaddcount(((Number) map.get("voidaddcount")).intValue());
-        if (map.containsKey("voidtpback")) kit.setVoidTpBack(Boolean.parseBoolean(String.valueOf(map.get("voidtpback"))));
+        if (map.containsKey("voidtpback"))
+            kit.setVoidTpBack(Boolean.parseBoolean(String.valueOf(map.get("voidtpback"))));
 
         if (map.containsKey("icon")) {
             String mname = String.valueOf(map.get("icon"));

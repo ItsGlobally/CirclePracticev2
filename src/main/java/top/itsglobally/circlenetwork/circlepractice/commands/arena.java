@@ -4,7 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
-import top.itsglobally.circlenetwork.circlepractice.data.GameArena;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;

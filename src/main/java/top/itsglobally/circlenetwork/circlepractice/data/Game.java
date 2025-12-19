@@ -57,6 +57,7 @@ public class Game {
     public void addSpectator(UUID u) {
         spectators.add(u);
     }
+
     public void removeSpectator(UUID u) {
         spectators.remove(u);
     }
@@ -160,9 +161,11 @@ public class Game {
         Location ownBedFoot = ownBed.clone().add(1, 0, 0);
         return isNear(loc, ownBedHead, 1) || isNear(loc, ownBedFoot, 1);
     }
+
     public void broadcast(String m) {
         MessageUtil.sendMessage(player1.getPlayer(), player2.getPlayer(), m);
     }
+
     public String getPrefixedTeamPlayerName(PracticePlayer pp) {
         if (getPlayer1OrPlayer2(pp) == 1) {
             return "&c" + pp.getPlayer().getName();
@@ -170,36 +173,32 @@ public class Game {
         return "&9" + pp.getPlayer().getName();
     }
 
+    public boolean isP1attackable() {
+        return p1attackable;
+    }
+
     public void setP1attackable(boolean p1attackable) {
         this.p1attackable = p1attackable;
+    }
+
+    public boolean isP2attackable() {
+        return p2attackable;
     }
 
     public void setP2attackable(boolean p2attackable) {
         this.p2attackable = p2attackable;
     }
 
-    public boolean isP1attackable() {
-        return p1attackable;
-    }
-
-    public boolean isP2attackable() {
-        return p2attackable;
-    }
     public boolean isPlayerAttackable(PracticePlayer pp) {
         if (getPlayer1OrPlayer2(pp) == 1) return isP1attackable();
         return isP2attackable();
     }
+
     public void setPlayerAttackable(PracticePlayer pp, boolean s) {
-        if (getPlayer1OrPlayer2(pp) == 1) setP1attackable(s); else setP2attackable(s);
+        if (getPlayer1OrPlayer2(pp) == 1) setP1attackable(s);
+        else setP2attackable(s);
     }
 
-    public void setP1hit(int p1hit) {
-        this.p1hit = p1hit;
-    }
-
-    public void setP2hit(int p2hit) {
-        this.p2hit = p2hit;
-    }
     public void addP1hit(int p1hit) {
         this.p1hit = this.p1hit + p1hit;
     }
@@ -209,19 +208,31 @@ public class Game {
     }
 
     public void setPlayerhit(PracticePlayer pp, int hit) {
-        if (getPlayer1OrPlayer2(pp) == 1) setP1hit(hit); else setP2hit(hit);
+        if (getPlayer1OrPlayer2(pp) == 1) setP1hit(hit);
+        else setP2hit(hit);
     }
+
     public void addPlayerhit(PracticePlayer pp, int hit) {
-        if (getPlayer1OrPlayer2(pp) == 1) addP1hit(hit); else addP2hit(hit);
+        if (getPlayer1OrPlayer2(pp) == 1) addP1hit(hit);
+        else addP2hit(hit);
     }
 
     public int getP1hit() {
         return p1hit;
     }
 
+    public void setP1hit(int p1hit) {
+        this.p1hit = p1hit;
+    }
+
     public int getP2hit() {
         return p2hit;
     }
+
+    public void setP2hit(int p2hit) {
+        this.p2hit = p2hit;
+    }
+
     public int getPlayerhit(PracticePlayer pp) {
         if (getPlayer1OrPlayer2(pp) == 1) return getP1hit();
         return getP2hit();

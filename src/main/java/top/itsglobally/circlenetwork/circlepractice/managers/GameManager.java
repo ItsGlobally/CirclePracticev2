@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
@@ -107,6 +106,7 @@ public class GameManager implements GlobalInterface {
                 })
                 .toList();
     }
+
     public void processNewGame(Player p1, Player p2, Kit kit) {
         GameArena ga = null;
 
@@ -169,6 +169,7 @@ public class GameManager implements GlobalInterface {
         arena.setInUse(true);
         startCooldown(game);
     }
+
     public void startCooldown(Game game) {
         new BukkitRunnable() {
 
@@ -205,6 +206,7 @@ public class GameManager implements GlobalInterface {
             }
         }.runTaskTimer(plugin, 0L, 20L);
     }
+
     public void endGame(Game game, PracticePlayer winner) {
         game.setState(GameState.ENDING);
 
@@ -251,7 +253,7 @@ public class GameManager implements GlobalInterface {
     private void resetPlayer(Player player) {
         if (player == null) return;
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(player);
-        if (pp.isInSpawn() && !player.getLocation().getWorld().equals(plugin.getConfigManager().getMainConfig().getSpawn().getWorld())){
+        if (pp.isInSpawn() && !player.getLocation().getWorld().equals(plugin.getConfigManager().getMainConfig().getSpawn().getWorld())) {
             plugin.getConfigManager().teleportToSpawn(player);
             player.getActivePotionEffects().forEach(p -> player.removePotionEffect(p.getType()));
             player.setFireTicks(0);
@@ -278,6 +280,7 @@ public class GameManager implements GlobalInterface {
         Player player = game.getOpponent(winner).getPlayer();
         playFakeDeath(player, viewers);
     }
+
     private void playFakeDeath(Player target, Collection<Player> viewers) {
         if (target == null) return;
 
@@ -308,6 +311,7 @@ public class GameManager implements GlobalInterface {
         game.addSpectator(p.getUniqueId());
         game.broadcast(p.getName() + " &dstarted spectating.");
     }
+
     public void stopSpec(Game game, Player p) {
         if (game == null || p == null) return;
         resetPlayer(p);
