@@ -14,9 +14,6 @@ public class Game {
     private final PracticePlayer player1;
     private final PracticePlayer player2;
 
-    private final Party team1;
-    private final Party team2;
-
     private final Kit kit;
     private final GameArena arena;
     private final long startTime;
@@ -32,8 +29,6 @@ public class Game {
         this.id = UUID.randomUUID();
         this.player1 = player1;
         this.player2 = player2;
-        this.team1 = null;
-        this.team2 = null;
         this.kit = kit;
         this.arena = arena;
         this.startTime = System.currentTimeMillis();
@@ -48,25 +43,6 @@ public class Game {
         this.p2hit = 0;
     }
 
-    public Game(Party team1, Party team2, Kit kit, GameArena arena) {
-        this.id = UUID.randomUUID();
-        this.player1 = null;
-        this.player2 = null;
-        this.team1 = team1;
-        this.team2 = team2;
-        this.kit = kit;
-        this.arena = arena;
-        this.startTime = System.currentTimeMillis();
-        this.spectators = new ArrayList<>();
-        this.state = GameState.STARTING;
-        this.countdown = 5;
-        this.p1respawnable = kit.isRespawnable();
-        this.p2respawnable = kit.isRespawnable();
-        this.p1attackable = true;
-        this.p2attackable = true;
-        this.p1hit = 0;
-        this.p2hit = 0;
-    }
     public GameArena getArena() { return arena; }
     public long getStartTime() { return startTime; }
     public List<UUID> getSpectators() { return spectators; }
@@ -91,23 +67,11 @@ public class Game {
         if (player.equals(player2)) return player1;
         return null;
     }
-
-    public Party getTeam1() { return team1; }
-    public Party getTeam2() { return team2; }
-
     public List<PracticePlayer> getAllPlayers() {
         List<PracticePlayer> all = new ArrayList<>();
         if (player1 != null) all.add(player1);
         if (player2 != null) all.add(player2);
-        if (team1 != null) all.addAll(team1.getPlayers());
-        if (team2 != null) all.addAll(team2.getPlayers());
         return all;
-    }
-
-    public PracticePlayer getOpponentTeamPlayer(PracticePlayer player) {
-        if (team1 != null && team1.getPlayers().contains(player)) return team2.getPlayers().get(0);
-        if (team2 != null && team2.getPlayers().contains(player)) return team1.getPlayers().get(0);
-        return null;
     }
 
     public void broadcast(String m) {

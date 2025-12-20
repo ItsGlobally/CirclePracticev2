@@ -70,27 +70,27 @@ public class ScoreboardUtils implements GlobalInterface {
         }
 
         if (game.getKit().isRespawnable()) {
-            lines.add("&cRed's bed&d: " +
+            lines.add("&cRed's &fbed&d: " +
                     (game.getPlayerRespawnable(p1) ? "&d✓" : "&c✗"));
-            lines.add("&9Blue's bed&d: " +
+            lines.add("&9Blue's &fbed&d: " +
                     (game.getPlayerRespawnable(p2) ? "&d✓" : "&c✗"));
             lines.add("&f");
         }
 
         if (game.getKit().isCountHit()) {
-            lines.add("&cRed's hits&d: &f" +
+            lines.add("&cRed's &fhits&d: &f" +
                     game.getPlayerhit(p1) +
                     "&7/&d" + game.getKit().getCountHitToDie());
 
-            lines.add("&9Blue's hits&d: &f" +
+            lines.add("&9Blue's &fhits&d: &f" +
                     game.getPlayerhit(p2) +
                     "&7/&d" + game.getKit().getCountHitToDie());
             lines.add("&f");
         }
 
-        lines.add("&cRed's ping&d: &f" +
+        lines.add("&dRed's &fping&d: &f" +
                 NMSUtils.getPing(p1.getPlayer()) + "ms");
-        lines.add("&9Blue's ping&d: &f" +
+        lines.add("&dBlue's &fping&d: &f" +
                 NMSUtils.getPing(p2.getPlayer()) + "ms");
         lines.add("&f");
     }

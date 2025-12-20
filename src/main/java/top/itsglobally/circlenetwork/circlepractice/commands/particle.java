@@ -3,8 +3,9 @@ package top.itsglobally.circlenetwork.circlepractice.commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
-import top.itsglobally.circlenetwork.circlepractice.practical.BedBreak.BedBreakParticle;
-import top.itsglobally.circlenetwork.circlepractice.practical.FinalKill.FinalKillParticle;
+import top.itsglobally.circlenetwork.circlepractice.practical.BedBreakParticle;
+import top.itsglobally.circlenetwork.circlepractice.practical.FinalKillParticle;
+import top.itsglobally.circlenetwork.circlepractice.practical.Particles;
 import top.itsglobally.circlenetwork.circlepractice.utils.Menus;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
@@ -18,12 +19,16 @@ public class particle implements NontageCommand, GlobalInterface {
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
 
-        if (strings.length < 2) {
-            p.openInventory(Menus.particleMenu(p));
+        if (strings.length < 1) {
+            usage(p, "/particle <finalkill|bedbreak> <list|particleName>");
             return;
         }
         switch (strings[0]) {
             case "finalkill" -> {
+                if (strings.length < 2) {
+                    p.openInventory(Menus.particleMenu(p, Particles.FinalKill));
+                    return;
+                }
                 if (strings[1].equals("list")) {
                     StringBuilder builder = new StringBuilder();
                     builder.append("&dAll Final Kill Particles");
@@ -47,6 +52,10 @@ public class particle implements NontageCommand, GlobalInterface {
                 }
             }
             case "bedbreak" -> {
+                if (strings.length < 2) {
+                    p.openInventory(Menus.particleMenu(p, Particles.BedBreak));
+                    return;
+                }
                 if (strings[1].equals("list")) {
                     StringBuilder builder = new StringBuilder();
                     builder.append("&dAll Bed Break Particles");

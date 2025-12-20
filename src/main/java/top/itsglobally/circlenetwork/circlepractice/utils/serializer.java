@@ -8,8 +8,8 @@ import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.managers.PlayerDataManager;
-import top.itsglobally.circlenetwork.circlepractice.practical.BedBreak.BedBreakParticle;
-import top.itsglobally.circlenetwork.circlepractice.practical.FinalKill.FinalKillParticle;
+import top.itsglobally.circlenetwork.circlepractice.practical.BedBreakParticle;
+import top.itsglobally.circlenetwork.circlepractice.practical.FinalKillParticle;
 
 import java.util.*;
 
