@@ -10,6 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
+import top.itsglobally.circlenetwork.circlepractice.utils.NMSUtils;
 import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
 
@@ -51,7 +52,7 @@ public class GameManager implements GlobalInterface {
         DuelRequest request = new DuelRequest(p1, p2, kit);
 
         BukkitTask task = new BukkitRunnable() {
-            int time = 60;
+            int time = plugin.getConfigManager().getMainConfig().duelRequestExpire;
 
             @Override
             public void run() {
@@ -70,8 +71,8 @@ public class GameManager implements GlobalInterface {
 
         MessageUtil.sendMessage(p2, "&d&l⚔ &d" + p1.getName() + " &fwants to duel!");
         MessageUtil.sendMessage(p1, "&d&l✓ &fDuel request sent!");
-        p1.playSound(p1.getLocation(), Sound.NOTE_BASS, 1f, 1f);
-        p2.playSound(p2.getLocation(), Sound.NOTE_BASS, 1f, 1f);
+        p1.playSound(p1.getLocation(), Sound.CLICK, 1f, 1f);
+        p2.playSound(p2.getLocation(), Sound.ORB_PICKUP, 1f, 1f);
     }
 
     public void acceptDuelRequest(Player p2, Player p1) {
@@ -278,26 +279,7 @@ public class GameManager implements GlobalInterface {
         }
 
         Player player = game.getOpponent(winner).getPlayer();
-        playFakeDeath(player, viewers);
-    }
-
-    private void playFakeDeath(Player target, Collection<Player> viewers) {
-        if (target == null) return;
-
-        PacketPlayOutEntityStatus packet =
-                new PacketPlayOutEntityStatus(
-                        ((CraftPlayer) target).getHandle(),
-                        (byte) 3
-                );
-
-        for (Player viewer : viewers) {
-            if (viewer == null) continue;
-            ((CraftPlayer) viewer).getHandle()
-                    .playerConnection
-                    .sendPacket(packet);
-
-            viewer.hidePlayer(target);
-        }
+        NMSUtils.playFakeDeath(player, viewers);
     }
 
     public void joinSpec(Game game, Player p) {

@@ -1,9 +1,11 @@
 package top.itsglobally.circlenetwork.circlepractice.data;
 
 import org.bukkit.Location;
+import top.itsglobally.circlenetwork.circlepractice.handlers.GameHandler;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +26,11 @@ public class Game {
     private boolean p1respawnable, p2respawnable;
     private boolean p1attackable, p2attackable;
     private int p1hit, p2hit;
+    public final HashMap<UUID, Boolean> respawning;
+    public final HashMap<UUID, Boolean> gotHitted;
+
+    private final GameHandler handler;
+
 
     public Game(PracticePlayer player1, PracticePlayer player2, Kit kit, GameArena arena) {
         this.id = UUID.randomUUID();
@@ -41,6 +48,9 @@ public class Game {
         this.p2attackable = true;
         this.p1hit = 0;
         this.p2hit = 0;
+        this.respawning = new HashMap<>();
+        this.gotHitted = new HashMap<>();
+        this.handler = new GameHandler(this);
     }
 
     public GameArena getArena() { return arena; }
@@ -58,8 +68,8 @@ public class Game {
     public PracticePlayer getPlayer1() { return player1; }
     public PracticePlayer getPlayer2() { return player2; }
     public int getPlayer1OrPlayer2(PracticePlayer player) {
-        if (player1 != null && player.equals(player1)) return 1;
-        if (player2 != null && player.equals(player2)) return 2;
+        if (player.equals(player1)) return 1;
+        if (player.equals(player2)) return 2;
         return -1;
     }
     public PracticePlayer getOpponent(PracticePlayer player) {
@@ -208,5 +218,9 @@ public class Game {
         Location ownBedHead = ownBed.clone();
         Location ownBedFoot = ownBed.clone().add(1, 0, 0);
         return isNear(loc, ownBedHead, 1) || isNear(loc, ownBedFoot, 1);
+    }
+
+    public GameHandler getHandler() {
+        return handler;
     }
 }

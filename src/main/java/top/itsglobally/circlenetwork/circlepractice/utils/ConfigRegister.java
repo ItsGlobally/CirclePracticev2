@@ -7,10 +7,9 @@ import java.io.File;
 
 public class ConfigRegister {
     private static final CirclePractice plugin = CirclePractice.getPlugin();
-    private static File configDir;
 
     public static <T extends BaseConfig> T register(T config, String name) {
-        configDir = plugin.getDataFolder();
+        File configDir = plugin.getDataFolder();
         if (!configDir.exists()) configDir.mkdirs();
         File file = new File(configDir, name + ".yml");
         config.initFile(file);

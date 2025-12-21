@@ -96,7 +96,7 @@ public class Menus implements GlobalInterface {
                 if (!p.hasPermission(fkp.getPermission())) continue;
                 ib.setItem(new ItemBuilder(fkp.getIcon()).setName("&e&l" + fkp.name()).build(), currentSlot);
                 ib.setClickEvent(clickInventoryEvent -> {
-                    p.performCommand("particle " + fkp.name());
+                    p.performCommand("particle finalkill " + fkp.name());
                 }, currentSlot);
                 currentSlot++;
             }
@@ -108,7 +108,7 @@ public class Menus implements GlobalInterface {
                 if (!p.hasPermission(fkp.getPermission())) continue;
                 ib.setItem(new ItemBuilder(fkp.getIcon()).setName("&e&l" + fkp.name()).build(), currentSlot);
                 ib.setClickEvent(clickInventoryEvent -> {
-                    p.performCommand("particle " + fkp.name());
+                    p.performCommand("particle bedbreak " + fkp.name());
                 }, currentSlot);
                 currentSlot++;
             }
