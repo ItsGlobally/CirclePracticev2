@@ -4,19 +4,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
+import top.itsglobally.circlenetwork.circlepractice.data.Kit;
+import top.itsglobally.circlenetwork.circlepractice.utils.Menus;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
 
 import java.util.List;
 
-@CommandInfo(name = "accept")
-public class accept implements NontageCommand, GlobalInterface {
+@CommandInfo(name = "duel")
+public class DuelCommand implements NontageCommand, GlobalInterface {
+
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
 
         if (strings.length < 1) {
-            usage(p, "/accept <player>");
+            usage(p, "/duel <player> <kit>");
             return;
         }
 
@@ -27,9 +30,22 @@ public class accept implements NontageCommand, GlobalInterface {
             fail(p, "That player is not online!");
             return;
         }
+        if (strings.length < 2) {
+            p.openInventory(Menus.duel(p, target));
+            return;
+        }
+        String kitName = strings[1];
+        if (!plugin.getKitManager().kitAlreadyExist(kitName)) {
+            fail(p, "That kit does not exist!");
+            return;
+        }
 
+        if (!plugin.getKitManager().getKit(kitName).isForDuels()) {
+            fail(p, "That kit is not for duels!");
+            return;
+        }
 
-        plugin.getGameManager().acceptDuelRequest(p, target);
+        plugin.getGameManager().sendDuelRequest(p, target, kitName);
     }
 
     @Override
@@ -37,6 +53,11 @@ public class accept implements NontageCommand, GlobalInterface {
         if (args.length == 1) {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
+                    .toList();
+        }
+        if (args.length == 2) {
+            return plugin.getKitManager().getKits().stream()
+                    .map(Kit::getName)
                     .toList();
         }
         return List.of();

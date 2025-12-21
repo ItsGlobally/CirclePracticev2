@@ -12,7 +12,7 @@ import top.nontage.nontagelib.command.NontageCommand;
 import java.util.List;
 
 @CommandInfo(name = "arena")
-public class arena implements NontageCommand, GlobalInterface {
+public class ArenaCommand implements NontageCommand, GlobalInterface {
 
     @Override
     public void execute(CommandSender commandSender, String s, String[] args) {

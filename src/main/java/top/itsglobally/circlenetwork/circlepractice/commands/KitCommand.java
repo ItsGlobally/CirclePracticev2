@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 @CommandInfo(name = "kit")
-public class kit implements NontageCommand, GlobalInterface {
+public class KitCommand implements NontageCommand, GlobalInterface {
     @Override
     public void execute(CommandSender commandSender, String s, String[] args) {
         if (!(commandSender instanceof Player p)) return;

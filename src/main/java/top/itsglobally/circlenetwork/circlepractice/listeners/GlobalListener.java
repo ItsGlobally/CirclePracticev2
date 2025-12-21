@@ -21,7 +21,7 @@ import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.ScoreboardUtils;
-import top.itsglobally.circlenetwork.circlepractice.utils.starUtils;
+import top.itsglobally.circlenetwork.circlepractice.utils.StarUtils;
 import top.nontage.nontagelib.annotations.AutoListener;
 
 @AutoListener
@@ -60,7 +60,7 @@ public class GlobalListener implements Listener, GlobalInterface {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
         e.setFormat(MessageUtil.formatMessage(
-                starUtils.getColoredStars(plugin.getPlayerDataManager().getData(e.getPlayer()).getStars()) + "&r " +
+                StarUtils.getColoredStars(plugin.getPlayerDataManager().getData(e.getPlayer()).getStars()) + "&r " +
                         plugin.getPlayerManager().getPrefixedName(e.getPlayer()) +
                         "&r » %2$s"
         ));

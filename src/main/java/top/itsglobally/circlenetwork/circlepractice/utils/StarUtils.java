@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 
 import java.text.DecimalFormat;
 
-public class starUtils {
+public class StarUtils {
 
     private static final ChatColor[] RAINBOW = new ChatColor[]{
             ChatColor.RED,
@@ -16,7 +16,7 @@ public class starUtils {
             ChatColor.LIGHT_PURPLE
     };
 
-    private starUtils() {
+    private StarUtils() {
     }
 
     public static String getColoredStars(long stars) {

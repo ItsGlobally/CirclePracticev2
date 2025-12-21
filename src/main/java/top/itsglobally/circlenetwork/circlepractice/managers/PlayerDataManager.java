@@ -11,7 +11,7 @@ import top.itsglobally.circlenetwork.circlepractice.practical.BedBreakParticle;
 import top.itsglobally.circlenetwork.circlepractice.practical.FinalKillParticle;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
-import top.itsglobally.circlenetwork.circlepractice.utils.serializer;
+import top.itsglobally.circlenetwork.circlepractice.utils.ConfigSerializer;
 import top.nontage.nontagelib.config.BaseConfig;
 
 import java.util.*;
@@ -33,7 +33,7 @@ public class PlayerDataManager implements GlobalInterface {
     public void saveAll() {
         playerDatas.datas.clear();
         for (Map.Entry<UUID, PlayerData> e : apds.entrySet()) {
-            playerDatas.datas.put(e.getKey(), serializer.serializePlayerData(e.getValue()));
+            playerDatas.datas.put(e.getKey(), ConfigSerializer.serializePlayerData(e.getValue()));
         }
         playerDatas.save();
     }
@@ -53,7 +53,7 @@ public class PlayerDataManager implements GlobalInterface {
             }
 
             Map<String, Object> dataMap = (Map<String, Object>) e.getValue();
-            apds.put(uuid, serializer.deserializePlayerData(dataMap));
+            apds.put(uuid, ConfigSerializer.deserializePlayerData(dataMap));
         }
     }
 

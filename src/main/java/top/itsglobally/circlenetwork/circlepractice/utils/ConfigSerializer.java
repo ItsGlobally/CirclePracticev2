@@ -13,7 +13,7 @@ import top.itsglobally.circlenetwork.circlepractice.practical.FinalKillParticle;
 
 import java.util.*;
 
-public class serializer {
+public class ConfigSerializer {
     public static Map<String, Object> serializeArena(Arena arena) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("worldName", arena.getWorldName());

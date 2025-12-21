@@ -5,36 +5,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
-import top.itsglobally.circlenetwork.circlepractice.utils.Menus;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
 
 import java.util.List;
 
-@CommandInfo(name = "duel")
-public class duel implements NontageCommand, GlobalInterface {
+@CommandInfo(name = "queue")
+public class QueueCommand implements NontageCommand, GlobalInterface {
 
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player p)) return;
 
         if (strings.length < 1) {
-            usage(p, "/duel <player> <kit>");
+            usage(p, "/queue <kit>");
             return;
         }
-
-        String targetName = strings[0];
-        Player target = Bukkit.getPlayerExact(targetName);
-
-        if (target == null) {
-            fail(p, "That player is not online!");
-            return;
-        }
-        if (strings.length < 2) {
-            p.openInventory(Menus.duel(p, target));
-            return;
-        }
-        String kitName = strings[1];
+        String kitName = strings[0];
         if (!plugin.getKitManager().kitAlreadyExist(kitName)) {
             fail(p, "That kit does not exist!");
             return;
@@ -45,7 +32,7 @@ public class duel implements NontageCommand, GlobalInterface {
             return;
         }
 
-        plugin.getGameManager().sendDuelRequest(p, target, kitName);
+        plugin.getQueueManager().joinQueue(p, kitName);
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
-import top.itsglobally.circlenetwork.circlepractice.utils.serializer;
+import top.itsglobally.circlenetwork.circlepractice.utils.ConfigSerializer;
 import top.nontage.nontagelib.config.BaseConfig;
 import top.nontage.nontagelib.utils.item.ItemBuilder;
 
@@ -102,7 +102,7 @@ public class KitManager implements GlobalInterface {
         List<Kit> loadedKits = new ArrayList<>();
         for (Map.Entry<String, Map<String, Object>> entry : kitConfig.kits.entrySet()) {
             try {
-                Kit kit = serializer.deserializeKit(entry.getValue());
+                Kit kit = ConfigSerializer.deserializeKit(entry.getValue());
                 if (kit != null) {
                     loadedKits.add(kit);
                 }
@@ -117,7 +117,7 @@ public class KitManager implements GlobalInterface {
     public void saveAllKits() {
         kitConfig.kits.clear();
         for (Kit kit : getKits()) {
-            kitConfig.kits.put(kit.getName(), serializer.serializeKit(kit));
+            kitConfig.kits.put(kit.getName(), ConfigSerializer.serializeKit(kit));
         }
         kitConfig.save();
     }

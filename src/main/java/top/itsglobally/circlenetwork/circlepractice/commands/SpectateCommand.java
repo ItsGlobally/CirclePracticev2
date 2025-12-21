@@ -14,9 +14,9 @@ import top.nontage.nontagelib.command.NontageCommand;
 import java.util.List;
 
 @CommandInfo(name = "spectate", aliases = {"spec"})
-public class spec implements NontageCommand, GlobalInterface {
+public class SpectateCommand implements NontageCommand, GlobalInterface {
 
-    private static final Logger log = LoggerFactory.getLogger(spec.class);
+    private static final Logger log = LoggerFactory.getLogger(SpectateCommand.class);
 
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {
