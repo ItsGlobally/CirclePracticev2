@@ -95,9 +95,7 @@ public class Menus implements GlobalInterface {
             for (FinalKillParticle fkp : FinalKillParticle.values()) {
                 if (!p.hasPermission(fkp.getPermission())) continue;
                 ib.setItem(new ItemBuilder(fkp.getIcon()).setName("&e&l" + fkp.name()).build(), currentSlot);
-                ib.setClickEvent(clickInventoryEvent -> {
-                    p.performCommand("particle finalkill " + fkp.name());
-                }, currentSlot);
+                ib.setClickEvent(clickInventoryEvent -> p.performCommand("particle finalkill " + fkp.name()), currentSlot);
                 currentSlot++;
             }
         }
@@ -107,9 +105,7 @@ public class Menus implements GlobalInterface {
             for (BedBreakParticle fkp : BedBreakParticle.values()) {
                 if (!p.hasPermission(fkp.getPermission())) continue;
                 ib.setItem(new ItemBuilder(fkp.getIcon()).setName("&e&l" + fkp.name()).build(), currentSlot);
-                ib.setClickEvent(clickInventoryEvent -> {
-                    p.performCommand("particle bedbreak " + fkp.name());
-                }, currentSlot);
+                ib.setClickEvent(clickInventoryEvent -> p.performCommand("particle bedbreak " + fkp.name()), currentSlot);
                 currentSlot++;
             }
         }
@@ -121,13 +117,9 @@ public class Menus implements GlobalInterface {
     public static Inventory settings(Player p) {
         InventoryBuilder ib = filledBackground(new InventoryBuilder(9 * 5, "Setings"));
         ib.setItem(new ItemBuilder(Material.DIAMOND_SWORD).setName("&e&lFinal Kill Particles").build(), 22);
-        ib.setClickEvent(clickInventoryEvent -> {
-            p.openInventory(particleMenu(p, Particles.FinalKill));
-        }, 21);
+        ib.setClickEvent(clickInventoryEvent -> p.openInventory(particleMenu(p, Particles.FinalKill)), 21);
         ib.setItem(new ItemBuilder(Material.DIAMOND_SWORD).setName("&e&lBed Break Particles").build(), 22);
-        ib.setClickEvent(clickInventoryEvent -> {
-            p.openInventory(particleMenu(p, Particles.BedBreak));
-        }, 23);
+        ib.setClickEvent(clickInventoryEvent -> p.openInventory(particleMenu(p, Particles.BedBreak)), 23);
         ib.setAllowableDrag(false);
         ib.setAllClickable(false);
         return ib.getInventory();

@@ -13,6 +13,7 @@ import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
 
 public class GameHandler implements GlobalInterface {
     private final Game game;
+
     public GameHandler(Game g) {
         this.game = g;
     }
@@ -59,7 +60,7 @@ public class GameHandler implements GlobalInterface {
         }
     }
 
-    public void onKill(PracticePlayer victimpp, PracticePlayer killerpp, KillReason kr){
+    public void onKill(PracticePlayer victimpp, PracticePlayer killerpp, KillReason kr) {
         Player victim = victimpp.getPlayer();
         Player killer = killerpp.getPlayer();
         if (game.getKit().isRespawnable() && game.getPlayerRespawnable(victimpp)) {

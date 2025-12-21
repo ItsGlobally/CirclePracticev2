@@ -6,9 +6,9 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
+import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PlayerState;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
-import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 
 import java.util.*;
 
@@ -104,7 +104,7 @@ public class ScoreboardUtils implements GlobalInterface {
         int score = lines.size();
         for (int i = 0; i < lines.size(); i++) {
             String newLine = lines.get(i);
-            String oldLine = lastLines.size() > i+1 ? lastLines.get(i) : "";
+            String oldLine = lastLines.size() > i + 1 ? lastLines.get(i) : "";
 
             if (!Objects.equals(newLine, oldLine)) {
                 scoreboard.resetScores(oldLine);

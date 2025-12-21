@@ -3,8 +3,6 @@ package top.itsglobally.circlenetwork.circlepractice.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
@@ -15,8 +13,6 @@ import java.util.List;
 
 @CommandInfo(name = "spectate", aliases = {"spec"})
 public class SpectateCommand implements NontageCommand, GlobalInterface {
-
-    private static final Logger log = LoggerFactory.getLogger(SpectateCommand.class);
 
     @Override
     public void execute(CommandSender commandSender, String s, String[] strings) {

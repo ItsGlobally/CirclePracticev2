@@ -10,3 +10,7 @@ permissions:
     default: op
   circlepractice.fly:
     default: false
+  circlepractice.FinalKillParticle.redstone:
+    default: op
+  circlepractice.BedBreak.explosion:
+    default: op

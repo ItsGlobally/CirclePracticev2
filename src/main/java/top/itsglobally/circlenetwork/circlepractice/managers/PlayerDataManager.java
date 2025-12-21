@@ -10,8 +10,8 @@ import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.practical.BedBreakParticle;
 import top.itsglobally.circlenetwork.circlepractice.practical.FinalKillParticle;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
-import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigSerializer;
+import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.config.BaseConfig;
 
 import java.util.*;

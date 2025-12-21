@@ -1,9 +1,7 @@
 package top.itsglobally.circlenetwork.circlepractice.managers;
 
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;

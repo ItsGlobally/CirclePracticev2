@@ -25,7 +25,7 @@ public class ConfigManager implements GlobalInterface {
         p.getInventory().setContents(Items.spawnInv());
     }
 
-    public class MainConfig extends BaseConfig {
+    public static class MainConfig extends BaseConfig {
         public String defaultKit = "NoDebuff";
         public boolean allowSpectators = true;
         public int duelRequestExpire = 60;

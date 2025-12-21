@@ -1,6 +1,9 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,18 +20,13 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.scheduler.BukkitRunnable;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
 import top.itsglobally.circlenetwork.circlepractice.data.GameState;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.handlers.GameHandler;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
-import top.itsglobally.circlenetwork.circlepractice.utils.TeamColorUtil;
 import top.nontage.nontagelib.annotations.AutoListener;
-
-import java.util.HashMap;
-import java.util.UUID;
 
 @AutoListener
 public class GameListener implements Listener, GlobalInterface {
@@ -51,7 +49,6 @@ public class GameListener implements Listener, GlobalInterface {
             e.setCancelled(true);
         }
     }
-
 
 
     @EventHandler

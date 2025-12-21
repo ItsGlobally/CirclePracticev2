@@ -103,9 +103,7 @@ public class KitManager implements GlobalInterface {
         for (Map.Entry<String, Map<String, Object>> entry : kitConfig.kits.entrySet()) {
             try {
                 Kit kit = ConfigSerializer.deserializeKit(entry.getValue());
-                if (kit != null) {
-                    loadedKits.add(kit);
-                }
+                loadedKits.add(kit);
             } catch (Exception e) {
                 Bukkit.getLogger().warning("Failed to deserialize kit: " + entry.getKey());
                 e.printStackTrace();

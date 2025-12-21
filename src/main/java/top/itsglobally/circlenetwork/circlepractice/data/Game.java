@@ -11,25 +11,21 @@ import java.util.UUID;
 
 public class Game {
 
+    public final HashMap<UUID, Boolean> respawning;
+    public final HashMap<UUID, Boolean> gotHitted;
     private final UUID id;
-
     private final PracticePlayer player1;
     private final PracticePlayer player2;
-
     private final Kit kit;
     private final GameArena arena;
     private final long startTime;
     private final List<UUID> spectators;
+    private final GameHandler handler;
     private GameState state;
     private int countdown;
-
     private boolean p1respawnable, p2respawnable;
     private boolean p1attackable, p2attackable;
     private int p1hit, p2hit;
-    public final HashMap<UUID, Boolean> respawning;
-    public final HashMap<UUID, Boolean> gotHitted;
-
-    private final GameHandler handler;
 
 
     public Game(PracticePlayer player1, PracticePlayer player2, Kit kit, GameArena arena) {
@@ -53,30 +49,70 @@ public class Game {
         this.handler = new GameHandler(this);
     }
 
-    public GameArena getArena() { return arena; }
-    public long getStartTime() { return startTime; }
-    public List<UUID> getSpectators() { return spectators; }
-    public void addSpectator(UUID u) { spectators.add(u); }
-    public void removeSpectator(UUID u) { spectators.remove(u); }
-    public GameState getState() { return state; }
-    public void setState(GameState state) { this.state = state; }
-    public int getCountdown() { return countdown; }
-    public void setCountdown(int countdown) { this.countdown = countdown; }
-    public Kit getKit() { return kit; }
-    public UUID getId() { return id; }
+    public GameArena getArena() {
+        return arena;
+    }
 
-    public PracticePlayer getPlayer1() { return player1; }
-    public PracticePlayer getPlayer2() { return player2; }
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public List<UUID> getSpectators() {
+        return spectators;
+    }
+
+    public void addSpectator(UUID u) {
+        spectators.add(u);
+    }
+
+    public void removeSpectator(UUID u) {
+        spectators.remove(u);
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public int getCountdown() {
+        return countdown;
+    }
+
+    public void setCountdown(int countdown) {
+        this.countdown = countdown;
+    }
+
+    public Kit getKit() {
+        return kit;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public PracticePlayer getPlayer1() {
+        return player1;
+    }
+
+    public PracticePlayer getPlayer2() {
+        return player2;
+    }
+
     public int getPlayer1OrPlayer2(PracticePlayer player) {
         if (player.equals(player1)) return 1;
         if (player.equals(player2)) return 2;
         return -1;
     }
+
     public PracticePlayer getOpponent(PracticePlayer player) {
         if (player.equals(player1)) return player2;
         if (player.equals(player2)) return player1;
         return null;
     }
+
     public List<PracticePlayer> getAllPlayers() {
         List<PracticePlayer> all = new ArrayList<>();
         if (player1 != null) all.add(player1);
@@ -89,6 +125,7 @@ public class Game {
             MessageUtil.sendMessage(pp.getPlayer(), m);
         }
     }
+
     public String getPrefixedTeamPlayerName(PracticePlayer pp) {
         if (getPlayer1OrPlayer2(pp) == 1) {
             return "&c" + pp.getPlayer().getName();
@@ -160,6 +197,7 @@ public class Game {
         if (getPlayer1OrPlayer2(pp) == 1) return getP1hit();
         return getP2hit();
     }
+
     public Location getPlayerSpawnPoint(PracticePlayer pp) {
         if (getPlayer1OrPlayer2(pp) == 1) {
             return getArena().getPos1();

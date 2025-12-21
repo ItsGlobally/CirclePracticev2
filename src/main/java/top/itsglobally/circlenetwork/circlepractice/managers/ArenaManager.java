@@ -17,9 +17,9 @@ import top.itsglobally.circlenetwork.circlepractice.data.GameArena;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.utils.ConfigRegister;
+import top.itsglobally.circlenetwork.circlepractice.utils.ConfigSerializer;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.RandomUtil;
-import top.itsglobally.circlenetwork.circlepractice.utils.ConfigSerializer;
 import top.nontage.nontagelib.config.BaseConfig;
 
 import java.io.IOException;
@@ -116,9 +116,7 @@ public class ArenaManager implements GlobalInterface {
         for (Map.Entry<String, Map<String, Object>> entry : arenaConfig.arenas.entrySet()) {
             try {
                 Arena arena = ConfigSerializer.deserializeArena(entry.getValue());
-                if (arena != null) {
-                    arenaMap.put(entry.getKey(), arena);
-                }
+                arenaMap.put(entry.getKey(), arena);
             } catch (Exception e) {
                 Bukkit.getLogger().warning("Failed to deserialize arena: " + entry.getKey());
                 e.printStackTrace();

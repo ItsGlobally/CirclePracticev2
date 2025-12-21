@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.Arena;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
+import top.itsglobally.circlenetwork.circlepractice.data.Kit;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.CommandInfo;
 import top.nontage.nontagelib.command.NontageCommand;
@@ -267,7 +268,7 @@ public class ArenaCommand implements NontageCommand, GlobalInterface {
             }
             if (subCommand.equals("addkit")) {
                 return plugin.getKitManager().getKits().stream()
-                        .map(kit -> kit.getName())
+                        .map(Kit::getName)
                         .toList();
             }
         }
