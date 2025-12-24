@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import top.itsglobally.circlenetwork.circlepractice.achievement.Achievement;
 import top.itsglobally.circlenetwork.circlepractice.data.*;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.itsglobally.circlenetwork.circlepractice.utils.NMSUtils;
@@ -277,6 +278,9 @@ public class GameManager implements GlobalInterface {
         }
 
         Player player = game.getOpponent(winner).getPlayer();
+
+        winner.getPlayerData().unlockAchievement(Achievement.WINFIRSTGAME);
+
         NMSUtils.playFakeDeath(player, viewers);
     }
 

@@ -2,7 +2,8 @@ package top.itsglobally.circlenetwork.circlepractice.achievement;
 
 public enum Achievement {
     JOIN("Welcome!", "Joined the server for the first time!"),
-    FIRSTGAME("First Battle!", "Played your first game!");
+    FIRSTGAME("First Battle!", "Played your first game!"),
+    WINFIRSTGAME("Win First Game!", "Win your first game!");
 
     private final String title;
     private final String description;
