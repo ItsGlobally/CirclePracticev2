@@ -114,6 +114,23 @@ public class GameManager implements GlobalInterface {
         );
     }
 
+    public void processNewGame(List<PracticePlayer> redTeam,
+                               List<PracticePlayer> blueTeam,
+                               Kit kit) {
+
+        GameArena ga = null;
+        List<GameArena> ngas = findAvailableArenas(kit);
+        if (!ngas.isEmpty()) ga = ngas.get(RandomUtil.nextInt(ngas.size()));
+        if (ga == null) ga = plugin.getArenaManager().createGameArena(kit);
+        if (ga == null) {
+            if (!redTeam.isEmpty()) MessageUtil.sendMessage(redTeam.getFirst().getPlayer(), "&d&l✗ &fError creating arena!");
+            return;
+        }
+
+        startNewGame(redTeam, blueTeam, kit, ga);
+    }
+
+
     public void startNewGame(List<PracticePlayer> redTeam,
                              List<PracticePlayer> blueTeam,
                              Kit kit,

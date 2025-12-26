@@ -21,6 +21,7 @@ public class PracticePlayer implements GlobalInterface {
     private ItemStack[] armor;
     private ItemStack[] inventory;
     private boolean playedFirst;
+    private Party party;
 
     public PracticePlayer(Player p) {
         this.uuid = p.getUniqueId();
@@ -129,4 +130,15 @@ public class PracticePlayer implements GlobalInterface {
         return playerData;
     }
 
+    public void setParty(Party party) {
+        this.party = party;
+    }
+
+    public Party getParty() {
+        return party;
+    }
+
+    public boolean isInParty() {
+        return party != null;
+    }
 }
