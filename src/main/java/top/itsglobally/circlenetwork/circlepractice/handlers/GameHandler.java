@@ -28,37 +28,66 @@ public class GameHandler implements GlobalInterface {
         return l;
     }
 
-    public void respawnPlayer(Player vic, PracticePlayer vicp, Game game, Player killer, int voidadddcount) {
+    public void respawnPlayer(Player vic, PracticePlayer vicp, Game game, Player killer, int voidAddHitCount) {
+
         Location spawn = findSpawnpoint(game.getPlayerSpawnPoint(vicp));
 
-        killer.showPlayer(vic);
+        if (killer != null) {
+            killer.showPlayer(vic);
+        }
+
         vic.teleport(spawn);
         vic.setAllowFlight(false);
         vic.setFlying(false);
+        boolean isRedTeam = game.isRed(vicp);
 
-        boolean isRedTeam = game.getPlayer1OrPlayer2(vicp) == 1;
         vic.getInventory().setArmorContents(
-                TeamColorUtil.colorTeamItems(vicp.getPlayerData()
-                        .getKitContents(game.getKit().getName())[1], isRedTeam)
+                TeamColorUtil.colorTeamItems(
+                        vicp.getPlayerData()
+                                .getKitContents(game.getKit().getName())[1],
+                        isRedTeam
+                )
         );
+
         vic.getInventory().setContents(
-                TeamColorUtil.colorTeamItems(vicp.getPlayerData()
-                        .getKitContents(game.getKit().getName())[0], isRedTeam)
+                TeamColorUtil.colorTeamItems(
+                        vicp.getPlayerData()
+                                .getKitContents(game.getKit().getName())[0],
+                        isRedTeam
+                )
         );
         game.setPlayerAttackable(vicp, false);
         game.gotHitted.put(vic.getUniqueId(), false);
-        if (!game.getKit().isVoidTpBack()) MessageUtil.sendMessage(vic, "§dYou have respawned!");
+
+        if (!game.getKit().isVoidTpBack()) {
+            MessageUtil.sendMessage(vic, "&dYou have respawned!");
+        }
+
         new BukkitRunnable() {
             @Override
             public void run() {
                 game.setPlayerAttackable(vicp, true);
             }
-        }.runTaskLater(plugin, plugin.getConfigManager().getMainConfig().getSpawnprot() * 20L);
-        if (game.getKit().isCountHit()) {
-            MessageUtil.sendMessage(vic, "&7-" + voidadddcount + " hits (fell into the void).");
-            game.addPlayerhit(game.getOpponent(vicp), voidadddcount);
+        }.runTaskLater(
+                plugin,
+                plugin.getConfigManager().getMainConfig().getSpawnprot() * 20L
+        );
+        if (game.getKit().isCountHit() && killer != null) {
+
+            PracticePlayer killerPP =
+                    plugin.getPlayerManager().getPlayer(killer);
+
+            if (killerPP != null) {
+                game.addPlayerhit(killerPP, voidAddHitCount);
+
+                MessageUtil.sendMessage(
+                        vic,
+                        "&7-" + voidAddHitCount + " hits (fell into the void)."
+                );
+            }
         }
     }
+
 
     public void onKill(PracticePlayer victimpp, PracticePlayer killerpp, KillReason kr) {
         Player victim = victimpp.getPlayer();
@@ -118,7 +147,7 @@ public class GameHandler implements GlobalInterface {
             killer.playSound(killer.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
             victimpp.getPlayerData().getFinalKillParticle().play(victim.getLocation());
             victim.playSound(victim.getLocation(), Sound.HURT_FLESH, 1.0f, 1.0f);
-            plugin.getGameManager().endGame(game, killerpp);
+            game.removePlayer(victimpp);
         }
     }
 

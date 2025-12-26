@@ -1,9 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.listeners;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,6 +24,8 @@ import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
 import top.itsglobally.circlenetwork.circlepractice.handlers.GameHandler;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 import top.nontage.nontagelib.annotations.AutoListener;
+
+import java.util.Collection;
 
 @AutoListener
 public class GameListener implements Listener, GlobalInterface {
@@ -157,7 +156,7 @@ public class GameListener implements Listener, GlobalInterface {
 
 
         if (vic.getLocation().getY() <= game.getArena().getOrgArena().getVoidY()) {
-            PracticePlayer killerPp = game.getOpponent(vicp);
+            PracticePlayer killerPp = game.getLasthit().get(vicp.getUuid());
             Player killer = killerPp.getPlayer();
 
             if (game.respawning.getOrDefault(vic.getUniqueId(), false)) {
@@ -185,7 +184,7 @@ public class GameListener implements Listener, GlobalInterface {
         e.getDrops().clear();
         e.setDroppedExp(0);
         game.gotHitted.put(vic.getUniqueId(), false);
-        PracticePlayer killerPp = game.getOpponent(vicp);
+        PracticePlayer killerPp = plugin.getPlayerManager().getPlayer(e.getEntity().getKiller());
         game.getHandler().onKill(vicp, killerPp, GameHandler.KillReason.KILL);
     }
 
@@ -197,7 +196,7 @@ public class GameListener implements Listener, GlobalInterface {
         if (pp.isInDuel()) {
             pp.getCurrentGame().broadcast(pp.getCurrentGame().getPrefixedTeamPlayerName(pp)
                     + " &fdisconnected");
-            plugin.getGameManager().endGame(pp.getCurrentGame(), pp.getCurrentGame().getOpponent(pp));
+            pp.getCurrentGame().removePlayer(pp);
 
         }
 
@@ -207,57 +206,95 @@ public class GameListener implements Listener, GlobalInterface {
     @EventHandler
     public void bbreak(BlockBreakEvent e) {
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(e.getPlayer());
+        if (pp == null) return;
+
         Bukkit.getLogger().info("DEBUG " + e.getPlayer().getName() + " broke " + e.getBlock().getType());
-        if (pp.isInDuel()) {
-            Game game = pp.getCurrentGame();
-            if (game.respawning.getOrDefault(pp.getUuid(), false)) {
+        if (!pp.isInDuel()) {
+            if (pp.isInSpawn() && e.getPlayer().getGameMode() != GameMode.CREATIVE) {
                 e.setCancelled(true);
-                return;
             }
-            if (!game.getKit().isCanBuild()) {
-                e.setCancelled(true);
-                return;
-            }
+            return;
+        }
 
-            if (game.getKit().getBrokeToNoSpawn() != null && e.getBlock().getType() == game.getKit().getBrokeToNoSpawn()) {
-                boolean isEnemyBed = game.getIsEnemyBed(pp, e.getBlock().getLocation());
-                boolean isOwnBed = game.getIsOwnBed(pp, e.getBlock().getLocation());
+        Game game = pp.getCurrentGame();
+        if (game.respawning.getOrDefault(pp.getUuid(), false)) {
+            e.setCancelled(true);
+            return;
+        }
 
-                if (game.getKit().getBrokeToNoSpawn() != null &&
-                        e.getBlock().getType() == game.getKit().getBrokeToNoSpawn()) {
+        if (!game.getKit().isCanBuild()) {
+            e.setCancelled(true);
+            return;
+        }
 
-                    if (isEnemyBed) {
-                        game.setRespawnable(game.getOpponent(pp), false);
-                        MessageUtil.sendTitle(game.getOpponent(pp).getPlayer(), "&c&lBED DESTROYED", "&fYou won't be able to respawn again!");
-                        game.broadcast("&d&lBED DESTROYED &f» &d" + game.getOpponent(pp).getPlayer().getName() +
-                                "&f's bed has been destroyed by &d" + e.getPlayer().getName() + "&f!");
-                        game.getOpponent(pp).getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.WITHER_DEATH, 1.0f, 1.0f);
-                        e.getPlayer().playSound(game.getPlayer2().getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
-                        pp.getPlayerData().getFinalKillParticle().play(e.getPlayer().getLocation());
-                        e.setCancelled(false);
-                    } else if (isOwnBed) {
-                        e.setCancelled(true);
-                        MessageUtil.sendMessage(e.getPlayer(), "&d&l✗ &fYou can't break your own bed!");
-                    } else {
-                        e.setCancelled(true);
-                    }
-                    return;
+        if (game.getState() == GameState.STARTING && game.getKit().isFreezeOnCooldown()) {
+            e.setCancelled(true);
+            return;
+        }
+
+        Material bedType = game.getKit().getBrokeToNoSpawn();
+
+        if (bedType != null && e.getBlock().getType() == bedType) {
+
+            Location loc = e.getBlock().getLocation();
+            boolean isEnemyBed = game.getIsEnemyBed(pp, loc);
+            boolean isOwnBed = game.getIsOwnBed(pp, loc);
+
+            if (isEnemyBed) {
+
+                Collection<PracticePlayer> enemyTeam = game.getEnemyTeam(pp);
+
+                for (PracticePlayer enemy : enemyTeam) {
+                    game.setRespawnable(enemy, false);
+
+                    MessageUtil.sendTitle(
+                            enemy.getPlayer(),
+                            "&c&lBED DESTROYED",
+                            "&fYou won't be able to respawn again!"
+                    );
+
+                    enemy.getPlayer().playSound(
+                            enemy.getPlayer().getLocation(),
+                            Sound.WITHER_DEATH,
+                            1.0f,
+                            1.0f
+                    );
                 }
+
+                game.broadcast(
+                        "&d&lBED DESTROYED &f» " +
+                                (game.isRed(pp) ? "&9Blue" : "&cRed") +
+                                " &fteam's bed has been destroyed by &d" +
+                                e.getPlayer().getName() + "&f!"
+                );
+
+                e.getPlayer().playSound(
+                        e.getPlayer().getLocation(),
+                        Sound.ENDERDRAGON_GROWL,
+                        1.0f,
+                        1.0f
+                );
+
+                pp.getPlayerData().getFinalKillParticle().play(e.getPlayer().getLocation());
+                e.setCancelled(false);
                 return;
             }
 
-            if (!game.getKit().getAllowBreakBlocks().contains(e.getBlock().getType())) {
+            if (isOwnBed) {
                 e.setCancelled(true);
+                MessageUtil.sendMessage(e.getPlayer(), "&d&l✗ &fYou can't break your own bed!");
+                return;
             }
 
-            if (game.getState() == GameState.STARTING && game.getKit().isFreezeOnCooldown()) {
-                e.setCancelled(true);
-            }
-
-        } else if (pp.isInSpawn() && e.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            e.setCancelled(true);
+            return;
+        }
+        if (!game.getKit().getAllowBreakBlocks().contains(e.getBlock().getType())) {
             e.setCancelled(true);
         }
     }
+
+
 
     @EventHandler
     public void place(BlockPlaceEvent e) {

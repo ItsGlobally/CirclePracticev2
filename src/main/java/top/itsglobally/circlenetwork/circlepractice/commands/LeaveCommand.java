@@ -35,7 +35,7 @@ public class LeaveCommand implements NontageCommand, GlobalInterface {
             Game game = pp.getCurrentGame();
             game.broadcast(game.getPrefixedTeamPlayerName(pp)
                     + " &fdisconnected");
-            plugin.getGameManager().endGame(game, game.getOpponent(pp));
+            game.removePlayer(pp);
             plugin.getConfigManager().teleportToSpawn(p);
         }
 

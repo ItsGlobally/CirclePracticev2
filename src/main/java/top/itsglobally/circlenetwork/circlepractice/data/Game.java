@@ -4,18 +4,13 @@ import org.bukkit.Location;
 import top.itsglobally.circlenetwork.circlepractice.handlers.GameHandler;
 import top.itsglobally.circlenetwork.circlepractice.utils.MessageUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class Game {
+public class Game implements GlobalInterface{
 
-    public final HashMap<UUID, Boolean> respawning;
-    public final HashMap<UUID, Boolean> gotHitted;
+    public final HashMap<UUID, Boolean> respawning, gotHitted, attackable, respawnable;
     private final UUID id;
-    private final PracticePlayer player1;
-    private final PracticePlayer player2;
+    private final HashMap<UUID, PracticePlayer> red, blue, ored, oblue, lasthit;
     private final Kit kit;
     private final GameArena arena;
     private final long startTime;
@@ -23,30 +18,34 @@ public class Game {
     private final GameHandler handler;
     private GameState state;
     private int countdown;
-    private boolean p1respawnable, p2respawnable;
-    private boolean p1attackable, p2attackable;
-    private int p1hit, p2hit;
+    public final HashMap<UUID, Integer> hit;
 
 
-    public Game(PracticePlayer player1, PracticePlayer player2, Kit kit, GameArena arena) {
+    public Game(HashMap<UUID, PracticePlayer> red, HashMap<UUID, PracticePlayer> blue, Kit kit, GameArena arena) {
         this.id = UUID.randomUUID();
-        this.player1 = player1;
-        this.player2 = player2;
+        this.red = red;
+        this.blue = blue;
+        this.ored = red;
+        this.oblue = blue;
         this.kit = kit;
         this.arena = arena;
         this.startTime = System.currentTimeMillis();
         this.spectators = new ArrayList<>();
         this.state = GameState.STARTING;
         this.countdown = 5;
-        this.p1respawnable = kit.isRespawnable();
-        this.p2respawnable = kit.isRespawnable();
-        this.p1attackable = true;
-        this.p2attackable = true;
-        this.p1hit = 0;
-        this.p2hit = 0;
+        this.attackable = new HashMap<>();
+        this.respawnable = new HashMap<>();
+        this.lasthit = new HashMap<>();
+        this.hit = new HashMap<>();
         this.respawning = new HashMap<>();
         this.gotHitted = new HashMap<>();
         this.handler = new GameHandler(this);
+        for (PracticePlayer pp : red.values()) {
+            attackable.put(pp.getUuid(), true);
+        }
+        for (PracticePlayer pp : blue.values()) {
+            attackable.put(pp.getUuid(), true);
+        }
     }
 
     public GameArena getArena() {
@@ -93,30 +92,18 @@ public class Game {
         return id;
     }
 
-    public PracticePlayer getPlayer1() {
-        return player1;
+    public HashMap<UUID, PracticePlayer> getRed() {
+        return red;
     }
 
-    public PracticePlayer getPlayer2() {
-        return player2;
-    }
-
-    public int getPlayer1OrPlayer2(PracticePlayer player) {
-        if (player.equals(player1)) return 1;
-        if (player.equals(player2)) return 2;
-        return -1;
-    }
-
-    public PracticePlayer getOpponent(PracticePlayer player) {
-        if (player.equals(player1)) return player2;
-        if (player.equals(player2)) return player1;
-        return null;
+    public HashMap<UUID, PracticePlayer> getBlue() {
+        return blue;
     }
 
     public List<PracticePlayer> getAllPlayers() {
         List<PracticePlayer> all = new ArrayList<>();
-        if (player1 != null) all.add(player1);
-        if (player2 != null) all.add(player2);
+        all.addAll(red.values());
+        all.addAll(blue.values());
         return all;
     }
 
@@ -127,115 +114,45 @@ public class Game {
     }
 
     public String getPrefixedTeamPlayerName(PracticePlayer pp) {
-        if (getPlayer1OrPlayer2(pp) == 1) {
+        if (red.containsKey(pp.getUuid())) {
             return "&c" + pp.getPlayer().getName();
         }
         return "&9" + pp.getPlayer().getName();
     }
 
-    public boolean isP1attackable() {
-        return p1attackable;
-    }
-
-    public void setP1attackable(boolean p1attackable) {
-        this.p1attackable = p1attackable;
-    }
-
-    public boolean isP2attackable() {
-        return p2attackable;
-    }
-
-    public void setP2attackable(boolean p2attackable) {
-        this.p2attackable = p2attackable;
-    }
-
     public boolean isPlayerAttackable(PracticePlayer pp) {
-        if (getPlayer1OrPlayer2(pp) == 1) return isP1attackable();
-        return isP2attackable();
+        return attackable.getOrDefault(pp.getUuid(), true);
     }
 
     public void setPlayerAttackable(PracticePlayer pp, boolean s) {
-        if (getPlayer1OrPlayer2(pp) == 1) setP1attackable(s);
-        else setP2attackable(s);
+        attackable.put(pp.getUuid(), s);
     }
 
-    public void addP1hit(int p1hit) {
-        this.p1hit = this.p1hit + p1hit;
+    public void addPlayerhit(PracticePlayer pp, int add) {
+        hit.put(pp.getUuid(), hit.getOrDefault(pp.getUuid(), 0) + 1);
     }
 
-    public void addP2hit(int p2hit) {
-        this.p2hit = this.p2hit + p2hit;
-    }
-
-    public void setPlayerhit(PracticePlayer pp, int hit) {
-        if (getPlayer1OrPlayer2(pp) == 1) setP1hit(hit);
-        else setP2hit(hit);
-    }
-
-    public void addPlayerhit(PracticePlayer pp, int hit) {
-        if (getPlayer1OrPlayer2(pp) == 1) addP1hit(hit);
-        else addP2hit(hit);
-    }
-
-    public int getP1hit() {
-        return p1hit;
-    }
-
-    public void setP1hit(int p1hit) {
-        this.p1hit = p1hit;
-    }
-
-    public int getP2hit() {
-        return p2hit;
-    }
-
-    public void setP2hit(int p2hit) {
-        this.p2hit = p2hit;
+    public void setPlayerhit(PracticePlayer pp, int set) {
+        hit.put(pp.getUuid(), set);
     }
 
     public int getPlayerhit(PracticePlayer pp) {
-        if (getPlayer1OrPlayer2(pp) == 1) return getP1hit();
-        return getP2hit();
+        return hit.getOrDefault(pp.getUuid(), 0);
     }
 
     public Location getPlayerSpawnPoint(PracticePlayer pp) {
-        if (getPlayer1OrPlayer2(pp) == 1) {
+        if (red.containsKey(pp.getUuid())) {
             return getArena().getPos1();
         } else {
             return getArena().getPos2();
         }
     }
-
-    public boolean isP1respawnable() {
-        return p1respawnable;
-    }
-
-    public void setP1respawnable(boolean p1respawnable) {
-        this.p1respawnable = p1respawnable;
-    }
-
-    public boolean isP2respawnable() {
-        return p2respawnable;
-    }
-
-    public void setP2respawnable(boolean p2respawnable) {
-        this.p2respawnable = p2respawnable;
-    }
-
     public boolean getPlayerRespawnable(PracticePlayer pp) {
-        if (getPlayer1OrPlayer2(pp) == 1) {
-            return isP1respawnable();
-        } else {
-            return isP2respawnable();
-        }
+        return respawnable.getOrDefault(pp.getUuid(), kit.isRespawnable());
     }
 
     public void setRespawnable(PracticePlayer pp, boolean status) {
-        if (getPlayer1OrPlayer2(pp) == 1) {
-            setP1respawnable(status);
-        } else {
-            setP2respawnable(status);
-        }
+        respawnable.put(pp.getUuid(), status);
     }
 
     public boolean isNear(Location loc1, Location loc2, int radius) {
@@ -243,22 +160,108 @@ public class Game {
                 Math.abs(loc1.getBlockY() - loc2.getBlockY()) <= radius &&
                 Math.abs(loc1.getBlockZ() - loc2.getBlockZ()) <= radius;
     }
+    private boolean isBedNear(Location bedBase, Location loc) {
+        Location head = bedBase.clone();
+        Location footX = bedBase.clone().add(1, 0, 0);
+        Location footZ = bedBase.clone().add(0, 0, 1);
+
+        return isNear(loc, head, 1)
+                || isNear(loc, footX, 1)
+                || isNear(loc, footZ, 1);
+    }
 
     public boolean getIsEnemyBed(PracticePlayer pp, Location loc) {
-        Location enemyBed = (getPlayer1OrPlayer2(pp) == 1) ? getArena().getBnsb2() : getArena().getBnsb1();
-        Location enemyBedHead = enemyBed.clone();
-        Location enemyBedFoot = enemyBed.clone().add(1, 0, 0);
-        return isNear(loc, enemyBedHead, 1) || isNear(loc, enemyBedFoot, 1);
+        Location enemyBed;
+
+        if (red.containsKey(pp.getUuid())) {
+            enemyBed = arena.getBnsb2();
+        } else if (blue.containsKey(pp.getUuid())) {
+            enemyBed = arena.getBnsb1();
+        } else {
+            return false;
+        }
+
+        return isBedNear(enemyBed, loc);
     }
 
     public boolean getIsOwnBed(PracticePlayer pp, Location loc) {
-        Location ownBed = (getPlayer1OrPlayer2(pp) == 1) ? getArena().getBnsb1() : getArena().getBnsb2();
-        Location ownBedHead = ownBed.clone();
-        Location ownBedFoot = ownBed.clone().add(1, 0, 0);
-        return isNear(loc, ownBedHead, 1) || isNear(loc, ownBedFoot, 1);
+        Location ownBed;
+
+        if (red.containsKey(pp.getUuid())) {
+            ownBed = arena.getBnsb1();
+        } else if (blue.containsKey(pp.getUuid())) {
+            ownBed = arena.getBnsb2();
+        } else {
+            return false;
+        }
+
+        return isBedNear(ownBed, loc);
     }
+
 
     public GameHandler getHandler() {
         return handler;
+    }
+
+    public HashMap<UUID, PracticePlayer> getLasthit() {
+        return lasthit;
+    }
+
+    public boolean isRed(PracticePlayer pp) {
+        return red.containsKey(pp.getUuid());
+    }
+
+    public boolean isBlue(PracticePlayer pp) {
+        return blue.containsKey(pp.getUuid());
+    }
+
+    public Collection<PracticePlayer> getEnemyTeam(PracticePlayer pp) {
+        if (isRed(pp)) {
+            return blue.values();
+        }
+        if (isBlue(pp)) {
+            return red.values();
+        }
+        return List.of();
+    }
+
+    public Collection<PracticePlayer> getOwnTeam(PracticePlayer pp) {
+        if (isRed(pp)) {
+            return red.values();
+        }
+        if (isBlue(pp)) {
+            return blue.values();
+        }
+        return List.of();
+    }
+
+    public void removePlayer(PracticePlayer pp) {
+        if (isRed(pp)) {
+            if (red.size() - 1 == 0) {
+                plugin.getGameManager().endGame(this, getBluePlayers());
+                return;
+            }
+            red.remove(pp.getUuid());
+            return;
+        }
+        if (blue.size() - 1 == 0) {
+            plugin.getGameManager().endGame(this, getRedPlayers());
+            return;
+        }
+        blue.remove(pp.getUuid());
+    }
+    public Collection<PracticePlayer> getRedPlayers() {
+        return red.values();
+    }
+    public Collection<PracticePlayer> getBluePlayers() {
+        return blue.values();
+    }
+
+    public HashMap<UUID, PracticePlayer> getOringnalBlue() {
+        return oblue;
+    }
+
+    public HashMap<UUID, PracticePlayer> getOringnalRed() {
+        return ored;
     }
 }
