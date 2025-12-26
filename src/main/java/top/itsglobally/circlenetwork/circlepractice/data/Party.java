@@ -46,4 +46,14 @@ public class Party implements GlobalInterface{
             MessageUtil.sendMessage(p, "&d&lParty » &r" + plugin.getPlayerManager().getPrefixedName(pp.getPlayer()) + ": &r" + msg);
         }
     }
+    public void add(PracticePlayer pp) {
+        players.put(pp.getUuid(), pp);
+        MessageUtil.sendMessage(leader.getPlayer(), "&d&lParty » &cYou have been invited to the party.");
+    }
+    public void remove(PracticePlayer pp) {
+        if (!players.containsKey(pp.getUuid())) return;
+
+        players.remove(pp.getUuid());
+        MessageUtil.sendMessage(leader.getPlayer(), "&d&lParty » &cYou left the party.");
+    }
 }

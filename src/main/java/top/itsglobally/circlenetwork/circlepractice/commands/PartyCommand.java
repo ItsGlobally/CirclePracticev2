@@ -1,5 +1,6 @@
 package top.itsglobally.circlenetwork.circlepractice.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
@@ -33,9 +34,7 @@ public class PartyCommand implements NontageCommand, GlobalInterface {
                     return;
                 }
 
-                Party newp = new Party(pp);
-                pp.setParty(newp);
-                success(p, "Created a party!");
+                create(p, pp);
             }
             case "disband" -> {
                 if (!pp.isInParty()) {
@@ -44,8 +43,46 @@ public class PartyCommand implements NontageCommand, GlobalInterface {
                 }
                 pp.getParty().disband();
             }
+            case "invite" -> {
+                if (strings.length < 2) {
+                    usage(p, "/party invite <player");
+                    return;
+                }
+                Player target = Bukkit.getPlayerExact(strings[1]);
+
+                if (target == null) {
+                    fail(p, "That player is not online!");
+                    return;
+                }
+
+                PracticePlayer targetPP = plugin.getPlayerManager().getPlayer(target);
+
+                if (targetPP.isInParty()) {
+                    fail(p, "That player is already in a party!");
+                    return;
+                }
+
+                if (!pp.isInParty()) {
+                    create(p, pp);
+                }
+                Party party = pp.getParty();
+                party.add(targetPP);
+
+            }
             case "chat" -> {
                 chat(p, pp, strings);
+            }
+            case "leave" -> {
+                if (!pp.isInParty()) {
+                    fail(p, "You are not in a party!");
+                    return;
+                }
+                Party party = pp.getParty();
+                if (party.getLeader().equals(pp)) {
+                    pp.getParty().disband();
+                    return;
+                }
+                pp.getParty().remove(pp);
             }
             case "split" -> {
                 if (strings.length < 2) {
@@ -84,6 +121,12 @@ public class PartyCommand implements NontageCommand, GlobalInterface {
             }
 
         }
+    }
+
+    private void create(Player p, PracticePlayer pp) {
+        Party newp = new Party(pp);
+        pp.setParty(newp);
+        success(p, "Created a party!");
     }
 
     public void chat(Player p, PracticePlayer pp, String[] strings) {
