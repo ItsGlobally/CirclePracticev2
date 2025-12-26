@@ -149,6 +149,7 @@ public class GameHandler implements GlobalInterface {
             victim.playSound(victim.getLocation(), Sound.HURT_FLESH, 1.0f, 1.0f);
             game.removePlayer(victimpp);
         }
+        game.getLastHit().put(victim.getUniqueId(), null);
     }
 
     public enum KillReason {

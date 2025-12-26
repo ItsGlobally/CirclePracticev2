@@ -22,6 +22,7 @@ public class PartyCommand implements NontageCommand, GlobalInterface {
 
         if (strings.length < 1) {
             usage(p, "/party <subcommand> <args>");
+            return;
         }
 
         PracticePlayer pp = plugin.getPlayerManager().getPlayer(p);

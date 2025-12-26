@@ -78,7 +78,6 @@ public class GameListener implements Listener, GlobalInterface {
             e.setCancelled(true);
             return;
         }
-
         if (!game.isPlayerAttackable(damagerPp)) {
             game.setPlayerAttackable(damagerPp, true);
             MessageUtil.sendMessage(damager, "&dSpawn protection removed because you attacked.");
@@ -92,6 +91,7 @@ public class GameListener implements Listener, GlobalInterface {
 
         game.gotHitted.put(vic.getUniqueId(), true);
 
+
         if (game.getKit().isNodamage()) e.setDamage(0.0);
 
         if (game.getKit().isCountHit()) {
@@ -101,6 +101,8 @@ public class GameListener implements Listener, GlobalInterface {
             }
             return;
         }
+
+        game.getLastHit().put(vic.getUniqueId(), damagerPp);
 
         if (vic.getHealth() <= e.getFinalDamage()) {
             e.setCancelled(true);

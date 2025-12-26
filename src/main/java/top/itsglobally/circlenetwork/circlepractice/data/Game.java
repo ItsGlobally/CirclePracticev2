@@ -48,6 +48,9 @@ public class Game implements GlobalInterface{
         }
     }
 
+    public HashMap<UUID, PracticePlayer> getLastHit() {
+        return lasthit;
+    }
     public GameArena getArena() {
         return arena;
     }
