@@ -138,7 +138,7 @@ public class GameHandler implements GlobalInterface {
                     + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerpp)
                     + "&f!");
             else {
-                game.broadcast(game.gotHitted.getOrDefault(victim.getUniqueId(), false)
+                game.broadcast(game.getLastHit().get(victim.getUniqueId()) != null
                         ? game.getPrefixedTeamPlayerName(victimpp) + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(killerpp) + "!"
                         : "&d" + game.getPrefixedTeamPlayerName(victimpp) + " &ffell into the void!");
 
