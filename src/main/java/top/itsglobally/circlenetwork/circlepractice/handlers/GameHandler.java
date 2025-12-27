@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 import top.itsglobally.circlenetwork.circlepractice.data.Game;
 import top.itsglobally.circlenetwork.circlepractice.data.GlobalInterface;
 import top.itsglobally.circlenetwork.circlepractice.data.PracticePlayer;
@@ -57,7 +58,6 @@ public class GameHandler implements GlobalInterface {
                 )
         );
         game.setPlayerAttackable(vicp, false);
-        game.gotHitted.put(vic.getUniqueId(), false);
 
         if (!game.getKit().isVoidTpBack()) {
             MessageUtil.sendMessage(vic, "&dYou have respawned!");
@@ -89,24 +89,69 @@ public class GameHandler implements GlobalInterface {
     }
 
 
-    public void onKill(PracticePlayer victimpp, PracticePlayer killerpp, KillReason kr) {
+    public void onKill(@NotNull PracticePlayer victimpp, PracticePlayer killerpp, KillReason kr) {
         Player victim = victimpp.getPlayer();
-        Player killer = killerpp.getPlayer();
+
         if (game.getKit().isRespawnable() && game.getPlayerRespawnable(victimpp)) {
+            if (killerpp == null) {
+                victim.spigot().respawn();
+                victim.setHealth(20.0);
+                victim.setFoodLevel(20);
+                victim.setAllowFlight(true);
+                victim.setFlying(true);
+                victim.getInventory().clear();
+                for (PracticePlayer pp : game.getEnemyTeam(victimpp)) {
+                    pp.getPlayer().hidePlayer(victim);
+                }
+                victim.getInventory().setArmorContents(null);
+                if (kr == KillReason.KILL) game.broadcast(game.getPrefixedTeamPlayerName(victimpp)
+                        + " &fdied!");
+                else game.broadcast(game.getPrefixedTeamPlayerName(victimpp)
+                        + " &ffell into the void!");
+                int[] countdown = {game.getKit().getRespawnTime()};
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (victimpp.isInSpawn()) cancel();
+                        if (countdown[0] <= 0) {
+                            respawnPlayer(victim, victimpp, game, null, 0);
+                            game.respawning.put(victim.getUniqueId(), false);
+                            cancel();
+                            return;
+                        }
+                        MessageUtil.sendMessage(victim, "&fRespawning in &d" + countdown[0] + "s&f...");
+                        MessageUtil.sendTitle(victim, "&c&lYOU DIED", "&fRespawning in &d" + countdown[0] + "s&f...");
+                        countdown[0]--;
+                    }
+                }.runTaskTimer(plugin, 0L, 20L);
+                game.respawning.put(victim.getUniqueId(), true);
+
+                return;
+            }
+            Player killer = killerpp.getPlayer();
             victim.spigot().respawn();
             victim.setHealth(20.0);
             victim.setFoodLevel(20);
-            killer.hidePlayer(victim);
-            victim.teleport(killer.getLocation());
+            for (PracticePlayer pp : game.getEnemyTeam(victimpp)) {
+                pp.getPlayer().hidePlayer(victim);
+            }
             victim.setAllowFlight(true);
             victim.setFlying(true);
             victim.getInventory().clear();
             victim.getInventory().setArmorContents(null);
 
-            game.broadcast(game.getPrefixedTeamPlayerName(victimpp)
-                    + " &fwas slain by " + game.getPrefixedTeamPlayerName(killerpp)
+            if (kr == KillReason.KILL) game.broadcast(game.getPrefixedTeamPlayerName(victimpp)
+                    + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerpp)
                     + "&f!");
-            killer.playSound(killer.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
+            else {
+                game.broadcast(game.getLastHit().get(victim.getUniqueId()) != null
+                        ? game.getPrefixedTeamPlayerName(victimpp) + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(killerpp) + "!"
+                        : "&d" + game.getPrefixedTeamPlayerName(victimpp) + " &ffell into the void!");
+
+            }
+            for (PracticePlayer pp : game.getEnemyTeam(victimpp)) {
+                pp.getPlayer().playSound(pp.getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
+            }
 
             int[] countdown = {game.getKit().getRespawnTime()};
             game.respawning.put(victim.getUniqueId(), true);
@@ -131,22 +176,34 @@ public class GameHandler implements GlobalInterface {
             victim.spigot().respawn();
             victim.setHealth(20.0);
             victim.setFoodLevel(20);
+            if (killerpp == null) {
+                if (kr == KillReason.KILL) game.broadcast(game.getPrefixedTeamPlayerName(victimpp)
+                        + " &fdied! &b&lFINAL KILL!");
+                else game.broadcast(game.getPrefixedTeamPlayerName(victimpp)
+                        + " &ffell into the void! &b&lFINAL KILL!");
+                game.removePlayer(victimpp);
+                return;
+            }
+            Player killer = killerpp.getPlayer();
             killer.setHealth(20.0);
             killer.setFoodLevel(20);
 
             if (kr == KillReason.KILL) game.broadcast(game.getPrefixedTeamPlayerName(victimpp)
                     + " &fwas slain by &d" + game.getPrefixedTeamPlayerName(killerpp)
-                    + "&f!");
+                    + "&f! &b&lFINAL KILL!");
             else {
                 game.broadcast(game.getLastHit().get(victim.getUniqueId()) != null
-                        ? game.getPrefixedTeamPlayerName(victimpp) + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(killerpp) + "!"
-                        : "&d" + game.getPrefixedTeamPlayerName(victimpp) + " &ffell into the void!");
+                        ? game.getPrefixedTeamPlayerName(victimpp) + " &fwas hit into the void by " + game.getPrefixedTeamPlayerName(killerpp) + "! &b&lFINAL KILL!"
+                        : "&d" + game.getPrefixedTeamPlayerName(victimpp) + " &ffell into the void! &b&lFINAL KILL!");
 
             }
 
-            killer.playSound(killer.getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
-            victimpp.getPlayerData().getFinalKillParticle().play(victim.getLocation());
+            for (PracticePlayer pp : game.getEnemyTeam(victimpp)) {
+                pp.getPlayer().playSound(pp.getPlayer().getLocation(), Sound.ORB_PICKUP, 1.0f, 1.0f);
+            }
             victim.playSound(victim.getLocation(), Sound.HURT_FLESH, 1.0f, 1.0f);
+            killerpp.getPlayerData().getFinalKillParticle().play(victim.getLocation());
+
             game.removePlayer(victimpp);
         }
         game.getLastHit().put(victim.getUniqueId(), null);

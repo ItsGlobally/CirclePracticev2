@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Game implements GlobalInterface{
 
-    public final HashMap<UUID, Boolean> respawning, gotHitted, attackable, respawnable;
+    public final HashMap<UUID, Boolean> respawning, attackable, respawnable;
     private final UUID id;
     private final HashMap<UUID, PracticePlayer> red, blue, ored, oblue, lasthit;
     private final Kit kit;
@@ -38,7 +38,6 @@ public class Game implements GlobalInterface{
         this.lasthit = new HashMap<>();
         this.hit = new HashMap<>();
         this.respawning = new HashMap<>();
-        this.gotHitted = new HashMap<>();
         this.handler = new GameHandler(this);
         for (PracticePlayer pp : red.values()) {
             attackable.put(pp.getUuid(), true);

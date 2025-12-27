@@ -89,8 +89,6 @@ public class GameListener implements Listener, GlobalInterface {
             return;
         }
 
-        game.gotHitted.put(vic.getUniqueId(), true);
-
 
         if (game.getKit().isNodamage()) e.setDamage(0.0);
 
@@ -159,6 +157,10 @@ public class GameListener implements Listener, GlobalInterface {
 
         if (vic.getLocation().getY() <= game.getArena().getOrgArena().getVoidY()) {
             PracticePlayer killerPp = game.getLasthit().get(vicp.getUuid());
+            if (killerPp == null) {
+                game.getHandler().onKill(vicp, null, GameHandler.KillReason.VOID);
+                return;
+            }
             Player killer = killerPp.getPlayer();
 
             if (game.respawning.getOrDefault(vic.getUniqueId(), false)) {
@@ -173,23 +175,6 @@ public class GameListener implements Listener, GlobalInterface {
             game.getHandler().onKill(vicp, killerPp, GameHandler.KillReason.VOID);
         }
     }
-
-
-    @EventHandler
-    public void died(PlayerDeathEvent e) {
-        Player vic = e.getEntity();
-        PracticePlayer vicp = plugin.getPlayerManager().getPlayer(vic);
-        if (!vicp.isInDuel()) return;
-        Game game = vicp.getCurrentGame();
-
-        e.setDeathMessage(null);
-        e.getDrops().clear();
-        e.setDroppedExp(0);
-        game.gotHitted.put(vic.getUniqueId(), false);
-        PracticePlayer killerPp = plugin.getPlayerManager().getPlayer(e.getEntity().getKiller());
-        game.getHandler().onKill(vicp, killerPp, GameHandler.KillReason.KILL);
-    }
-
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
